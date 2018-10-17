@@ -431,15 +431,15 @@ class WfDbApi(object):
 
       try:
         sql = "select inst_status from dep_last_instance where dep_set_id = '" + str(depID) + "' AND inst_id = '" + str(instID) + "' AND class_id = '" + str(classID) + "'";
-        print sql
+        print(sql)
         rows = self.runSelectSQL(sql);
         self.close()
         for row in rows:
             return row[0]
 
         return None
-      except Exception,e:
-        print "Exception in processOwner " + str(e)
+      except Exception as e:
+        print("Exception in processOwner " + str(e))
         return None
         
     def getReference(self,depId=None,classId=None,instId=None,taskId=None):

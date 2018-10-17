@@ -75,7 +75,7 @@ class DbLoadingApi(object):
             dataDir = sessionDir+"/"+self.__workDir
             log1 = "db-loader.log"
             if not os.path.exists(dataDir):
-                print "Creating "+dataDir
+                print("Creating "+dataDir)
                 os.makedirs(dataDir)
            
             cmd = "cd "+dataDir
@@ -100,21 +100,21 @@ class DbLoadingApi(object):
                     
                     os.system(cmd)
                     if(os.path.exists(log2)):
-                        print "Finished the database commands"
+                        print("Finished the database commands")
                         file = open(log2, 'r')
                         for line in file:
                             for word in line.split():
                                 if(word.upper()=="ERROR"):
-                                    print "DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details."
+                                    print("DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details.")
                                     
                 else:
-                    print "DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details."
+                    print("DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details.")
             else:
-                print "DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists."
+                print("DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists.")
                     
             
         else:
-            print "DbLoadingApi::doDataLoading(): No any cif file found."
+            print("DbLoadingApi::doDataLoading(): No any cif file found.")
 
     def doLoadStatus(self, pdbxFilePath, sessionDir):
         """
@@ -128,7 +128,7 @@ class DbLoadingApi(object):
                 dataDir = sessionDir+"/"+self.__workDir
                 log1 = "db-loader.log"
                 if not os.path.exists(dataDir):
-                    print "Creating "+dataDir
+                    print("Creating "+dataDir)
                     os.makedirs(dataDir)
 
                 cmd = "cd " + dataDir
@@ -194,7 +194,7 @@ class DbLoadingApi(object):
             dataDir = sessionDir+"/"+self.__workDir
             log1 = "db-loader.log"
             if not os.path.exists(dataDir):
-                print "Creating "+dataDir
+                print("Creating "+dataDir)
                 os.makedirs(dataDir)
             
             cmd = "cd "+dataDir
@@ -225,21 +225,21 @@ class DbLoadingApi(object):
                     #print cmd
                     os.system(cmd)
                     if(os.path.exists(log2)):
-                        print "Finished the database commands"
+                        print("Finished the database commands")
                         file = open(log2, 'r')
                         for line in file:
                             for word in line.split():
                                 if(word.upper()=="ERROR"):
-                                    print "DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details."
+                                    print("DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details.")
                                     
                 else:
-                    print "DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER_LOAD.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details."
+                    print("DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER_LOAD.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details.")
             else:
-                print "DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists."
+                print("DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists.")
                     
             
         else:
-            print "DbLoadingApi::doDataLoading(): No any cif file found."
+            print("DbLoadingApi::doDataLoading(): No any cif file found.")
 
     def doDataLoadingByMapping(self, depId, sessionDir, mappingFile, dbName):
         """
@@ -265,7 +265,7 @@ class DbLoadingApi(object):
             dataDir = sessionDir+"/"+self.__workDir
             log1 = "db-loader.log"
             if not os.path.exists(dataDir):
-                print "Creating "+dataDir
+                print("Creating "+dataDir)
                 os.makedirs(dataDir)
             
             cmd = "cd "+dataDir
@@ -296,21 +296,21 @@ class DbLoadingApi(object):
                     #print cmd
                     os.system(cmd)
                     if(os.path.exists(log2)):
-                        print "Finished the database commands"
+                        print("Finished the database commands")
                         file = open(log2, 'r')
                         for line in file:
                             for word in line.split():
                                 if(word.upper()=="ERROR"):
-                                    print "DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details."
+                                    print("DbLoadingApi::doDataLoading(): ERROR found during the database loading. Please check the log file "+log2+" for details.")
                                     
                 else:
-                    print "DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER_LOAD.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details."
+                    print("DbLoadingApi::doDataLoading(): db-loader didn't generate the data file \"DB_LOADER_LOAD.sql\". Please check the log file "+os.path.join(dataDir,log1)+" for details.")
             else:
-                print "DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists."
+                print("DbLoadingApi::doDataLoading(): No cif file found. Please check if the cif file exists.")
                     
             
         else:
-            print "DbLoadingApi::doDataLoading(): No any cif file found."
+            print("DbLoadingApi::doDataLoading(): No any cif file found.")
 
                 
     if __name__ == '__main__':

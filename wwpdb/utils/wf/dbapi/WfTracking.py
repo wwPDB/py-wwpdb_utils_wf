@@ -60,7 +60,7 @@ class WfTracking(object):
               depId + "' and wf_class_id = '" + classId + "' and wf_inst_id = '" + instId + "'"
 
         ok = DBstatusAPI.runUpdateSQL(sql)
-	if ok < 1:
+        if ok < 1:
             self.__lfh.write("+WfTracking.setInstanceStatus() ERROR: failed to update workflow status, current task does not control the workflow\n")
             return False
         else:
