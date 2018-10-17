@@ -1,0 +1,339 @@
+Table descriptions
+
+
+Table: deposition
+       Holds general information for all deposited structures
+Column:
+       dep_set_id   - Structure deposition identifier              
+                    - String, not null, primary key
+       pdb_id       - PDB identifier
+                    - String   
+       initial_deposition_date - The date of initial deposition
+                               - date                 
+       annotator_initials - The initials of the annotator processing this entry
+                          - String 
+       deposit_site - The site where the file was deposited
+                    - String
+       process_site - The site where the file was prodcessed
+                    - String
+       status_code  - Code for status of file
+                    - String
+       author_release_status_code - The release status authorized by the depositor
+                                  - String
+       title        - A title for the entry
+                    - String
+       author_list  - A list of audit authors
+                    - String seperated by comma
+       exp_method   - The method used in the experiment
+                    - String
+       status_code_exp - status of structure factor or NMR constraints file
+                       - String
+       SG_center    - The initials of Structural Genomics Projects
+                    - String
+      
+
+Table: wf_class_dict
+       Holds all work flow classe definitions defined in the XML file
+Column:
+       wf_class_id   - Workflow class identifier
+                     - String, not null, primary key
+       wf_class_name - Workflow class name    
+                     - String  not null
+       title       - Title of a workflow
+                   - String
+       author      - Owner of the class 
+                   - String
+       version     - Version
+                   - String
+
+
+table: wf_instance
+       holds data of actual running workflow insctances.
+column:
+       ordinal     - Ordinal numbers          
+                   - Integer, not null, auto_increment, primary key
+       wf_inst_id  - Workflow class identifier
+                   - String, not null, key
+       wf_class_id - Workflow class identifier
+                   - String, not null, key
+       dep_set_id  - Deposition identifier
+                   - String
+       owner       - The user who launch the instance
+                   - String
+       inst_status - Status of the instance
+                   - String
+       status_timestamp - The time stamp of the status 
+                        - Datetime
+
+
+
+Table: wf_task
+       A child of workflow instance. It holds data for a particular Workflow task
+Column:
+       ordinal     - Ordinal numbers
+                   - int not null auto_increment primary key,
+       wf_task_id  - Workflow task identifier
+                   - String, not null,
+       wf_inst_id  - Workflow class identifier
+                   - String(10)  not null,
+       wf_class_id - Workflow class identifier
+                   - String, not null,
+       dep_set_id  - Deposition identifier        
+                   - String, not null,
+       task_name   - The name of a workflow task
+                   - String
+       task_status - Status of the task
+                   - String, not null,
+       status_timestamp - Time stamp when the status is set/updated
+                        - Datetime
+       task_type   - Type of a task
+                   - String
+
+
+
+Table: wf_reference
+       Information between instances, tasks that are not in other tables
+Column:
+       dep_set_id  - Deposition identifier
+                   - String, not null, key
+       wf_inst_id  - Workflow class identifier
+                   - String, key
+       wf_task_id  - Task identifier         
+                   - String, key
+       wf_class_id - Workflow class identifier         
+                   - String, key
+       hash_id     - Hash key about reference of an instance/task
+                   - String, not null, key
+       value       - Hash value         
+                   - String
+
+
+Table: da_users
+       User information for logging in
+Column:
+       user_name - User name for logging in
+                 - String, not null, primary key
+       password  - Password 
+                 - String, not null
+       groupname - Group code in table da_group
+                 - String, not null
+       email     - Email address
+                 - String, not null
+       initials  - Assigned initials for annotators
+                 - String
+       first_name  - The annotator's or user's first name
+                   - String
+       last_name   - The annotator's or user's last name
+                   - String
+
+
+ 
+Table: process_information
+       Holds all processing recordes of each deposition
+Column:
+       dep_set_id    - Deposition identifier
+                     - String, not null, part of primary key 
+       serial_number - serial number 
+                     - Integer, not null, part of primary key 
+       process_begin - Time of beginning
+                     - Datetime
+       process_end   - Time of ending
+                     - Datetime     
+       remark        - Special remark about the processing
+                     - String
+
+
+Table: da_group 
+       Annotation group codes and full names
+Column:
+       code      - Short name
+                 - String NOT NULL, primary key
+       groupname - Group of roles
+                 - String, NOT NULL
+       site      - Geographic site     
+                 - String, NOT NULL
+       main_page - ?
+                 - String
+
+
+Table: site
+       Name of annotation sites 
+Column:
+       code         - Short name for an annotation site
+                    - String, NOT NULL, primary key
+       verbose_name - Full name
+                    - String
+ 
+
+
+Table: sgcenters 
+       Initials and names of Structural Genomics Projects
+Column:
+       code         - Initials of a structual genomics project
+                    - String, NOT NULL, primary key
+       verbose_name - Full name of a structual genomics project
+                    - String, NOT NULL
+  
+
+
+Table: database_PDB_obs_spr 
+       Holds entries that are obsolete or superseded
+Column: 
+       dep_set_id     - Deposition identifier
+                      - String, not null, part of primary key 
+       id             - other id 
+                      - String
+       date           - Obsolete or superseded date
+                      - datetime
+       pdb_id         - Old PDB ID
+                      - String
+       replace_pdb_id - replaced PDB ID
+                      - String, not null, part of primary key 
+
+
+
+Table: database_related
+       Holds other database related infomation
+Column: 
+       dep_set_id   - Deposition identifier
+                    - String, not null, part of primary key
+       db_name      - The name of related database
+                    - String, not null, part of primary key
+       details      - More information
+                    - String
+       content_type - Type e.g. split
+                    - String
+       db_id        - Related database id
+                    - String, not null, part of primary key
+ 
+
+
+Table: database_ref
+       Hold all related database references.
+Column:
+       dep_set_id    - Deposition identifier
+                     - String, not null, part of primary key
+       database_name - The database name of any other site
+                     - String, not null, part of primary key
+       database_code - Database identifier
+                     - String, not null
+ 
+
+
+Table: author_corrections
+       Holds records of author's correction sent after deposition
+Column:
+       ordinal       - Ordinal numbers
+                     - Integer, not null, auto_increment, primary key
+       dep_set_id    - Deposition identifier
+                     - String, not null, key
+       content       - Content about corrections
+                     - String, not null
+       sending_date  - Date sending new corrections
+                     - date
+       remark        - Other information
+                     - String
+ 
+
+
+Table: dep_with_problems
+       Holds records that have problem during deposition
+Column:
+       ordinal    - Ordinal numbers
+                  - Integer, not null, auto_increment, primary key
+       dep_set_id - Deposition identifier
+                  - String, not null, key
+       type       - type of problems or errors
+                  - String, not null
+       detail     - Details about problem/error
+                  - String
+
+
+
+Table: release_request
+       Holding the entries that author request for release
+Column:
+       dep_set_id   - Deposition identifier
+                    - String, not null, key
+       citation     - Citation in the journal
+                    - String
+       release_date - Requested release date          
+                    - date
+       PubMed_id    - The PubMed identifier
+                    - Integer
+
+
+
+
+Table: contact_author
+       Holds depositor's contact information
+Column:
+       dep_set_id        - Deposition identifier
+                         - String, not null, part of primary key
+       name_salutation   - The salutation of the author, e.g. Dr., Mr.
+                         - String
+       name_first        - The first name of the author
+                         - String, not null, part of primary key
+       name_last         - The last name of the author
+                         - String, not null, part of primary key
+       name_mi           - The middle initial(s) of the author
+                         - String
+       role              - The role of this author in the project
+                         - String, not null
+       email             - The email address
+                         - String, not null
+       address_1         - The mailing address of the author (line 1 of 3)
+                         - String, not null
+       address_2         - The mailing address of the author (line 2 of 3)
+                         - String
+       address_3         - The mailing address of the author (line 3 of 3)
+                         - String
+       city              - The city in the mailing address
+                         - String, not null
+       state_province    - The state or province in the mailing address
+                         - String
+       postal_code       - The zip code in the mailing address
+                         - String, not null
+       country           - The country in the mailing address
+                         - String, not null
+       phone             - The phone number
+                         - String
+       fax               - The fax number
+                         - String
+       organization_type - The organization type to which the author is affiliated
+                         - String, not null
+
+
+
+Table: status
+       The definitions for the processing status code used in PDB
+Column:
+       code         - Status code ('REL','HOLD',...)
+                    - String, primary key
+
+       verbose_name - The meaning of the Status code
+                    - String
+
+
+
+Table: django_session
+       Hold session information generated from the user interface
+Column:
+       session_key  - Session Key
+                    - String, primary key
+       session_data - session data
+                    - Text
+       expire_date  - Expiration date
+                    - Datetime
+
+
+
+Table: manager_site
+       Hold site information of the work flow manager
+Column:
+       id            - unique identifier
+                     - String, not null, primary key
+       code          - Site code
+                     - String
+       display_name  - Full name of a site
+                     - String

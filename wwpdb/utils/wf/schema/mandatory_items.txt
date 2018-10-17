@@ -1,0 +1,21 @@
+Following are mandatory iterms from each data object in WFE:  
+
+deposition:
+dep_set_id 
+
+wf_class_dict:
+wf_class_id 
+
+wf_instance:
+wf_inst_id
+wf_class_id
+
+wf_task:
+wf_task_id
+wf_inst_id
+wf_class_id
+
+wf_reference:
+dep_set_id
+hash_id
+
