@@ -44,7 +44,7 @@ class DataValueContainer(object):
             - datetime
             """
         #
-        self.__valueType = types.NoneType
+        self.__valueType = type(None)
         """ Intrinsic Python type corresponding to the valueTypeName.
 
             Types are defined in the Python class `types`.

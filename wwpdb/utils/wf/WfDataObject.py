@@ -17,7 +17,11 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import cStringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 from wwpdb.utils.wf.DataSelector import DataSelector
 from wwpdb.utils.wf.DataReference import DataFileReference
 from wwpdb.utils.wf.DataValueContainer import DataValueContainer
@@ -65,14 +69,14 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
             ofh.write("+WfDataObject.printMe() undefined data object\n")
 
     def __str__(self):
-        output = cStringIO.StringIO()
+        output = StringIO.StringIO()
         self.printMe(ofh=output)
         contents = output.getvalue()
         output.close()
         return contents
 
     def __repr__(self):
-        output = cStringIO.StringIO()
+        output = StringIO.StringIO()
         self.printMe(ofh=output)
         contents = output.getvalue()
         output.close()
