@@ -6,9 +6,9 @@ File:    DbLoadingApiTest.py
 
 """
 import os,sys
-from DbLoadingApi import DbLoadingApi
+from wwpdb.utils.wf.dbapi.DbLoadingApi import DbLoadingApi
 
-if __name__ == '__main__':
+if __name__ == '__mainold__':
     
     depId = "D_1000000020"
     sessionDir = "/net/techusers/lchen/sources/da-app/wwpdb/api/status/dbapi"

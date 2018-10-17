@@ -18,9 +18,11 @@ __version__   = "V0.07"
 import sys, unittest, traceback
 import time, os, os.path
 
-from wwpdb.apps.seqmodule.util.WfTracking      import WfTracking
+from wwpdb.utils.wf.dbapi.WfTracking      import WfTracking
+from wwpdb.utils.testing.Features import Features
 
 
+@unittest.skipUnless(Features().haveMySqlTestServer(), "Needs MySql test server for testing")
 class WfTrackingTests(unittest.TestCase):
     def setUp(self):
         self.__verbose=True

@@ -10,7 +10,7 @@ import os,sys
 from wwpdb.utils.wf.dbapi.LocalDbApi import LocalDbApi
 from wwpdb.io.misc.FormatOut     import FormatOut
 
-if __name__ == '__main__':
+if __name__ == '__mainold__':
     
     
     __lfh = sys.stderr
