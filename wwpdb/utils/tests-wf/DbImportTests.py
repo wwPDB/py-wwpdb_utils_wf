@@ -1,10 +1,10 @@
 ##
-# File: FileImportTests.py
+# File: DbImportTests.py
 # Date:  10-Oct-2018  E. Peisach
 #
 # Updates:
 ##
-"""Test cases for wwpdb.io.file - simply import everything to ensure imports work"""
+"""Test cases for wwpdb.utils.wf - simply import everything to ensure imports work"""
 
 __docformat__ = "restructuredtext en"
 __author__ = "Ezra Peisach"
