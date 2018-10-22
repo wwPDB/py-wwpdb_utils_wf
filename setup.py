@@ -42,15 +42,15 @@ setup(
     ),
     #
     install_requires=['mysqlclient', 'wwpdb.utils.config', 'wwpdb.io'],
-    packages=find_packages(exclude=['wwpdb.utils.tests-wf', 'mock-data', 'tests.*']),
+    packages=find_packages(exclude=['wwpdb.utils.tests_wf', 'mock-data', 'tests.*']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
         '': ['*.md', '*.rst', "*.txt", "*.cfg"],
     },
     #
     # These basic tests require no database services -
-    test_suite="wwpdb.utils.tests-wf",
-    tests_require=['tox', 'wwpdb.utils.testing'],
+    test_suite="wwpdb.utils.tests_wf",
+    tests_require=['tox', 'wwpdb.utils.testing >= 0.3'],
     #
     # Not configured ...
     extras_require={
