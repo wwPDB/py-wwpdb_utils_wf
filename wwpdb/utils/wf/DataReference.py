@@ -994,6 +994,7 @@ class DataFileReference(DataReferenceBase):
             pth = os.path.join(dirPath, fN)
             return pth
         except Exception as e:
+            logger.exception("Failed to determine internal path")
             return None
 
     def getVersionIdSearchTarget(self):
@@ -1052,6 +1053,7 @@ class DataFileReference(DataReferenceBase):
 
             elif self.__versionId == 'previous':
                 iV = self.__latestVersion(dirPath, baseName)
+                # XXXX should this be <= 1?
                 if (iV <= 2):
                     # No previous version.
                     fn = None

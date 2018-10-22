@@ -24,11 +24,9 @@ class ImportTests(unittest.TestCase):
         pass
 
     def testInstantiate(self):
-        #vc = ProcessRunner()
+        # vc = ProcessRunner()
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
-
-
-    
