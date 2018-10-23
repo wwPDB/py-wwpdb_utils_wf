@@ -5,8 +5,11 @@
 # #
 
 import sys
+import logging
+
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 
+logger = logging.getLogger(__name__)
 '''
 
 Grab bag of methods to execute SQL commands on various WF status tables -
@@ -53,11 +56,11 @@ class dbAPI(object):
         '''
 
         if not table:
-            print "WFE.dbAPI.runSelect : Undefined table"
+            logger.info("WFE.dbAPI.runSelect : Undefined table")
             return []
 
         if not select:
-            print "WFE.dbAPI.runSelect : Undefined select"
+            logger.info("WFE.dbAPI.runSelect : Undefined select")
             return []
 
         depDB = {}
@@ -80,7 +83,7 @@ class dbAPI(object):
                 if limit > 0:
                     sql += ' limit ' + str(limit)
                 if self.verbose:
-                    print "WFE.dbAPI.runSelect > " + str(sql)
+                    logger.info("WFE.dbAPI.runSelect > " + str(sql))
                 if run:
                     ret = self.con.runSelectSQL(sql)
                     return ret
@@ -89,7 +92,7 @@ class dbAPI(object):
             else:
                 return []
         except Exception as e:
-            print "WFE.dbAPI.runSelect :Exception " + str(e)
+            logger.exception("WFE.dbAPI.runSelect :Exception " + str(e))
             return []
 
     def runUpdateOnOrdinal(self, table=None, ordinal=None, data=None, run=True):
@@ -107,28 +110,28 @@ class dbAPI(object):
         '''
 
         if not table:
-            print "WFE.dbAPI.runUpdateOnOrdinal : Undefined table"
+            logger.info("WFE.dbAPI.runUpdateOnOrdinal : Undefined table")
             return False
 
         if not ordinal:
-            print "WFE.dbAPI.runUpdateOnOrdinal : Undefined ordinal"
+            logger.info("WFE.dbAPI.runUpdateOnOrdinal : Undefined ordinal")
             return False
 
         try:
             sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.iteritems()])
             sql = sql + " where ordinal = " + str(ordinal)
             if self.verbose:
-                print "WFE.dbAPI.runInsertUpdate(update) > " + str(sql)
+                logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
 
             if run:
                 ok = self.con.runUpdateSQL(sql)
                 if not ok:
-                    print "WFE.dbAPI.runSelect :False to update/insert data " + str(sql)
+                    logger.info("WFE.dbAPI.runSelect :False to update/insert data " + str(sql))
                 return ok
             else:
                 return sql
         except Exception as e:
-            print "WFE.dbAPI.runSelect :Exception " + str(e)
+            logger.info("WFE.dbAPI.runSelect :Exception " + str(e))
             return False
 
     def runInsertUpdateNQ(self, table=None, depID=None, where=None, data=None, run=True):
@@ -171,14 +174,14 @@ class dbAPI(object):
                 sql += ")"
 
             if self.verbose:
-                print "WFE.dbAPI.runInsertUpdate(insert) > " + str(sql)
+                logger.info("WFE.dbAPI.runInsertUpdate(insert) > " + str(sql))
 
             if run:
                 return self.con.runInsertSQL(sql)
             else:
                 return sql
         except Exception as e:
-            print "WFE.dbAPI.runInsert :Exception " + str(e)
+            logger.exception("WFE.dbAPI.runInsert :Exception " + str(e))
             return False
 
     def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
@@ -191,7 +194,7 @@ class dbAPI(object):
                 sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.iteritems()])
 
             if self.verbose:
-                print "WFE.dbAPI.runInsertUpdate(update) > " + str(sql)
+                logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
 
             if run:
                 return self.con.runUpdateSQL(sql)
@@ -199,7 +202,7 @@ class dbAPI(object):
                 return sql
 
         except Exception as e:
-            print "WFE.dbAPI.runUpdate :Exception " + str(e)
+            logger.exception("WFE.dbAPI.runUpdate :Exception " + str(e))
             return False
 
     def runInsertUpdate(self, table=None, depID=None, where=None, data=None, run=True):
@@ -225,7 +228,7 @@ class dbAPI(object):
         '''
 
         if not table:
-            print "WFE.dbAPI.runUpdateOnOrdinal : Undefined table"
+            logger.info("WFE.dbAPI.runUpdateOnOrdinal : Undefined table")
             return False
 
         rowExists = False
@@ -243,7 +246,7 @@ class dbAPI(object):
                 if rows and len(rows) > 0:
                     rowExists = True
             else:
-                print "WFE.dbAPI.runUpdate: Undefined key "
+                logger.info("WFE.dbAPI.runUpdate: Undefined key ")
 
         ok = True
         try:
@@ -257,18 +260,18 @@ class dbAPI(object):
                 return ok
 
             if not ok:
-                print "WFE.dbAPI.runSelect :False to update/insert data "
+                logger.info("WFE.dbAPI.runSelect :False to update/insert data ")
                 return ok
             else:
                 return ok
         except Exception as e:
-            print "WFE.dbAPI.runSelect :Exception " + str(e)
+            logger.exception("WFE.dbAPI.runSelect :Exception " + str(e))
             return False
 
 
 def main(argv):
 
-    print "starting DBAPI test"
+    print("starting DBAPI test")
 
     depid = 'D_1100201819'
     ss = dbAPI(depid, verbose=True)
@@ -286,23 +289,23 @@ def main(argv):
             "'",
             "wf_instance.wf_inst_id": "'W_001'"},
         run=True)
-    print str(ret)
+    print(str(ret))
 
     ret = ss.runSelectNQ(table='deposition', select=['ordinal', 'dep_set_id', 'depPW', 'annotator_initials'], where={"dep_set_id": depid})
-    print str(ret)
+    print(str(ret))
 
 
 # test the orinal updates
     ret = ss.runSelectNQ(table='deposition', select=['ordinal', 'dep_set_id', 'depPW'], where={"dep_set_id": depid})
-    print str(ret)
+    print(str(ret))
 #   ret = ss.runUpdateOnOrdinal(table='deposition',ordinal='17823',data={"depPW":"'abcdef'"},run=True)
 #   print str(ret)
     ret = ss.runSelectNQ(table='deposition', select=['ordinal', 'dep_set_id', 'depPW'], where={"dep_set_id": depid})
-    print str(ret)
+    print(str(ret))
 #   ret = ss.runUpdateOnOrdinal(table='deposition',ordinal='17823',data={"depPW":"'123456'"},run=True)
-    print str(ret)
+    print(str(ret))
     ret = ss.runSelectNQ(table='deposition', select=['ordinal', 'dep_set_id', 'depPW'], where={"dep_set_id": depid})
-    print str(ret)
+    print(str(ret))
 
     ret = ss.runSelectNQ(
         table='deposition,user_data',
@@ -316,15 +319,15 @@ def main(argv):
 
 # test the dep_set_id updates
 #   ret = ss.runInsertUpdate(table='deposition',depID='D_1000200025',data={"depPW":"'abcdef'"},run=True)
-    print str(ret)
+    print(str(ret))
     ret = ss.runSelect(table='deposition', select=['dep_set_id', 'depPW'], where={"dep_set_id": "'" + depid + "'"})
-    print str(ret)
+    print(str(ret))
 #   ret = ss.runInsertUpdate(table='deposition',depID='D_1000200025',data={"depPW":"'123456'"},run=True)
-    print str(ret)
+    print(str(ret))
     ret = ss.runSelect(table='deposition', select=['dep_set_id', 'depPW'], where={"dep_set_id": "'" + depid + "'"})
-    print str(ret)
+    print(str(ret))
 
-    print "finished"
+    print("finished")
 
 if __name__ == "__main__":
 
