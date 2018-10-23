@@ -23,11 +23,11 @@ import sys
 import json
 import traceback
 
-from wwpdb.api.plugins.UtilsBase import UtilsBase
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.rcsb.RcsbDpUtility import RcsbDpUtility
-from wwpdb.utils.rcsb.PathInfo import PathInfo
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.io.locator.Pathinfo import PathInfo
 
 
 class EmUtils(UtilsBase):

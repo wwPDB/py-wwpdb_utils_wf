@@ -22,6 +22,7 @@ import shutil
 import datetime
 import time
 import difflib
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 #
 

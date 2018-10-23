@@ -18,12 +18,12 @@ __email__     = "jwest@rcsb.rutgers.edu"
 __license__   = "Creative Commons Attribution 3.0 Unported"
 __version__   = "V0.01"
 
-import  os,sys,traceback
-import shutil,datetime,time,difflib
-from wwpdb.api.plugins.UtilsBase import UtilsBase
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+import  os, sys, traceback
+import shutil, datetime, time, difflib
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.rcsb.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 class ChemCompUtils(UtilsBase):
     """ Utility class to perform file format conversions.

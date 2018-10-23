@@ -19,9 +19,9 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
-from wwpdb.api.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from pdbx_v2.core.CorePyWrap import ParseCifSimple
+from  mmcif.core.mmciflib import ParseCifSimple
 
 
 class CifFile(object):

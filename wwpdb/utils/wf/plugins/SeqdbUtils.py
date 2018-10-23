@@ -20,8 +20,8 @@ __license__   = "Creative Commons Attribution 3.0 Unported"
 __version__   = "V0.01"
 
 import  os,sys,traceback
-from wwpdb.api.facade.ConfigInfo                        import getSiteId
-from wwpdb.api.plugins.UtilsBase                        import UtilsBase
+from wwpdb.utils.config.ConfigInfo                        import getSiteId
+from wwpdb.utils.wf.plugins.UtilsBase                        import UtilsBase
 from wwpdb.apps.seqmodule.webapp.SeqModWebRequest       import SeqModInputRequest
 from wwpdb.apps.seqmodule.control.DataImporter          import DataImporter
 

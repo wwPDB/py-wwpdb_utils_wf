@@ -18,9 +18,9 @@ __version__   = "V0.01"
 
 import  os,sys,traceback
 import shutil,datetime,time,difflib
-from wwpdb.api.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 
 

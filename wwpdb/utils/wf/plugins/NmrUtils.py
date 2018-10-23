@@ -27,13 +27,13 @@ import difflib
 import string
 import random
 
-from wwpdb.api.plugins.UtilsBase import UtilsBase
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 sys.stdout = sys.stderr
 from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
-from wwpdb.utils.rcsb.RcsbDpUtility import RcsbDpUtility
-from wwpdb.utils.rcsb.PdbxChemShiftReport import PdbxChemShiftReport
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
 
 class NmrUtils(UtilsBase):
