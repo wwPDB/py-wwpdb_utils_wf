@@ -68,7 +68,7 @@ class DataValueContainer(object):
             True if value and container types correspond to the current type settings or False otherwise.
         """
         if self.__containerTypeName == 'list':
-            if isinstance(self.__value, types.ListType):
+            if isinstance(self.__value, list):
                 for v in self.__value:
                     if not isinstance(v, self.__valueType):
                         return False
@@ -76,7 +76,7 @@ class DataValueContainer(object):
             else:
                 return False
         elif self.__containerTypeName == 'dict':
-            if isinstance(self.__value, types.DictType):
+            if isinstance(self.__value, dict):
                 return True
             else:
                 return False
@@ -121,13 +121,13 @@ class DataValueContainer(object):
         if (str(typeName) in ['boolean', 'int', 'integer', 'float', 'double', 'string', 'date', 'datetime']):
             self.__valueTypeName = str(typeName)
             if typeName == 'bool' or typeName == 'boolean':
-                self.__valueType = types.BooleanType
+                self.__valueType = bool
             elif typeName == 'integer' or typeName == 'int':
-                self.__valueType = types.IntType
+                self.__valueType = int
             elif typeName == 'float' or typeName == 'double':
-                self.__valueType = types.IntType
+                self.__valueType = int
             elif typeName == 'string':
-                self.__valueType = types.StringType
+                self.__valueType = str
             elif typeName == 'date':
                 tt = date(2010, 1, 1)
                 self.__valueType = tt.__class__
