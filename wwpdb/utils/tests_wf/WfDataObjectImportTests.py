@@ -23,6 +23,8 @@ class ImportTests(unittest.TestCase):
     def testInstantiate(self):
         #vT = WfDbApi()
         dO = WfDataObject()
+        # __repr__ should crash if not fixed
+        print dO
         
 if __name__ == '__main__':
     unittest.main()
