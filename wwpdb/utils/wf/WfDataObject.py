@@ -18,9 +18,9 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 try:
-    from cStringIO import StringIO
+    import cStringIO as StringIO
 except ImportError:
-    from io import StringIO
+    import io as StringIO
 
 from wwpdb.utils.wf.DataSelector import DataSelector
 from wwpdb.utils.wf.DataReference import DataFileReference
