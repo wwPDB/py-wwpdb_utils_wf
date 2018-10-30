@@ -36,8 +36,12 @@ import difflib
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.db.RcsbDpUtility import RcsbDpUtility
-from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+try:
+    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
+except ImportError:
+    pass
 from wwpdb.utils.wf.dbapi.DbLoadingApi import DbLoadingApi
 from mmcif.io.IoAdapterCore import IoAdapterCore
 
@@ -1077,15 +1081,15 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - mrgCat: %s\n" % mrgCat)
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
-
-            dIn = ioObj.readFile(pdbxFilePath = srcPath)
+            tmpdir = os.path.abspath(os.path.dirname(srcPath))
+            dIn = ioObj.readFile(pdbxFilePath = srcPath, outDirPath = tmpdir)
             if not dIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() -failed to load src1\n")
                 return False
 
             srcBlock = dIn[0]
 
-            mrgIn = ioObj.readFile(pdbxFilePath = mrgPath, selectList = mrgCat)
+            mrgIn = ioObj.readFile(pdbxFilePath = mrgPath, selectList = mrgCat, outDirPath = tmpdir)
             if not mrgIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - Failed to load src2\n")
                 return False
@@ -1105,7 +1109,7 @@ class AnnotationUtils(UtilsBase):
                     srcBlock.append(cObj)
 
             # Write out
-            ret = ioObj.writeFile(pdbxFilePath = outPath, containerList = dIn)
+            ret = ioObj.writeFile(pdbxFilePath = outPath, containerList = dIn, outDirPath = tmpdir)
             return ret
         except:
             traceback.print_exc(file=self._lfh)
