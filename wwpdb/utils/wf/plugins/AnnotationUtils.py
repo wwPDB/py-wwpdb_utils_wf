@@ -42,7 +42,7 @@ try:
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
 except ImportError:
     pass
-from wwpdb.utils.wf.dbapi.DbLoadingApi import DbLoadingApi
+from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
 from mmcif.io.IoAdapterCore import IoAdapterCore
 
 class AnnotationUtils(UtilsBase):
