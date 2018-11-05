@@ -27,7 +27,7 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
-from wwpdb.io.locator.Pathinfo import PathInfo
+from wwpdb.io.locator.PathInfo import PathInfo
 
 
 class EmUtils(UtilsBase):
