@@ -1082,14 +1082,14 @@ class AnnotationUtils(UtilsBase):
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             tmpdir = os.path.abspath(os.path.dirname(srcPath))
-            dIn = ioObj.readFile(pdbxFilePath = srcPath, outDirPath = tmpdir)
+            dIn = ioObj.readFile(inputFilePath = srcPath, outDirPath = tmpdir)
             if not dIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() -failed to load src1\n")
                 return False
 
             srcBlock = dIn[0]
 
-            mrgIn = ioObj.readFile(pdbxFilePath = mrgPath, selectList = mrgCat, outDirPath = tmpdir)
+            mrgIn = ioObj.readFile(inputFilePath = mrgPath, selectList = mrgCat, outDirPath = tmpdir)
             if not mrgIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - Failed to load src2\n")
                 return False
@@ -1109,7 +1109,7 @@ class AnnotationUtils(UtilsBase):
                     srcBlock.append(cObj)
 
             # Write out
-            ret = ioObj.writeFile(pdbxFilePath = outPath, containerList = dIn, outDirPath = tmpdir)
+            ret = ioObj.writeFile(outputFilePath = outPath, containerList = dIn)
             return ret
         except:
             traceback.print_exc(file=self._lfh)

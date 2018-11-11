@@ -18,6 +18,8 @@ __version__ = "V0.01"
 import sys
 import types
 from datetime import datetime, date
+# For python 2/3 compatible comparsigon with isinstace
+from builtins import str
 
 
 class DataValueContainer(object):
