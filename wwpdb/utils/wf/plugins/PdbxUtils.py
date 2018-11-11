@@ -32,7 +32,7 @@ class CifFile(object):
 
     def __init__(self, fileName):
         self.__fileName = fileName
-        self.__cifFile = ParseCifSimple(self.__fileName)
+        self.__cifFile = ParseCifSimple(self.__fileName, verbose=False, intCaseSense=0, maxLineLength=1024, nullValue="?", parseLogFileName="")
 
     def getCifFile(self):
         return (self.__cifFile)
@@ -92,7 +92,8 @@ class PdbxUtils(UtilsBase):
         try:
             cf = CifFile(pdbxPath)
             self.__cifFile = cf.getCifFile()
-            self.__blockList = self.__cifFile.GetBlockNames()
+            bL = []
+            self.__blockList = self.__cifFile.GetBlockNames(bL)
             # print self.__blockList
 
             # take the target block by name if specified or just the first block otherwise
@@ -186,8 +187,9 @@ class PdbxUtils(UtilsBase):
             targetAttribute = str(attributeList[0])
 
             myTable = self.__block.GetTable(targetCategory)
+            cL = []
             colNames = list(myTable.GetColumnNames())
-            rList = list(myTable.GetColumn(targetAttribute))
+            rList = list(myTable.GetColumn(cL, targetAttribute))
 
             if (outObjD['dst'].getContainerTypeName() == 'value'):
                 outObjD['dst'].setValue(rList[0])
