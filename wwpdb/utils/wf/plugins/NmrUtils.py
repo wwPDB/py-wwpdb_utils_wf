@@ -34,7 +34,11 @@ sys.stdout = sys.stderr
 from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
-from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
+try:
+    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
+except ImportError:
+    pass
 
 class NmrUtils(UtilsBase):
 

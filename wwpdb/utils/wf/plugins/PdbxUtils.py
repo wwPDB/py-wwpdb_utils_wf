@@ -19,6 +19,7 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 from  mmcif.core.mmciflib import ParseCifSimple
@@ -32,7 +33,7 @@ class CifFile(object):
 
     def __init__(self, fileName):
         self.__fileName = fileName
-        self.__cifFile = ParseCifSimple(self.__fileName)
+        self.__cifFile = ParseCifSimple(self.__fileName, verbose=False, intCaseSense=0, maxLineLength=1024, nullValue="?", parseLogFileName="")
 
     def getCifFile(self):
         return (self.__cifFile)
@@ -92,7 +93,8 @@ class PdbxUtils(UtilsBase):
         try:
             cf = CifFile(pdbxPath)
             self.__cifFile = cf.getCifFile()
-            self.__blockList = self.__cifFile.GetBlockNames()
+            bL = []
+            self.__blockList = self.__cifFile.GetBlockNames(bL)
             # print self.__blockList
 
             # take the target block by name if specified or just the first block otherwise
@@ -186,8 +188,9 @@ class PdbxUtils(UtilsBase):
             targetAttribute = str(attributeList[0])
 
             myTable = self.__block.GetTable(targetCategory)
+            cL = []
             colNames = list(myTable.GetColumnNames())
-            rList = list(myTable.GetColumn(targetAttribute))
+            rList = list(myTable.GetColumn(cL, targetAttribute))
 
             if (outObjD['dst'].getContainerTypeName() == 'value'):
                 outObjD['dst'].setValue(rList[0])
@@ -284,7 +287,8 @@ class PdbxUtils(UtilsBase):
                 targetAttribute = 'title'
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
-                rList = list(myTable.GetColumn(targetAttribute))
+                cL = []
+                rList = list(myTable.GetColumn(cL, targetAttribute))
                 if (len(rList) > 0):
                     d['title'] = rList[0]
                 else:
@@ -295,7 +299,8 @@ class PdbxUtils(UtilsBase):
                 targetAttribute = 'method'
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
-                rList = list(myTable.GetColumn(targetAttribute))
+                cL = []
+                rList = list(myTable.GetColumn(cL, targetAttribute))
                 if (len(rList) > 0):
                     d['exp_method'] = rList[0]
                 else:
@@ -315,9 +320,11 @@ class PdbxUtils(UtilsBase):
                 colNames = list(myTable.GetColumnNames())
                 for aTup in aList:
                     if aTup[1] in colNames:
-                        rList = list(myTable.GetColumn(aTup[1]))
+                        cL = []
+                        rList = list(myTable.GetColumn(cL, aTup[1]))
                         if (len(rList) > 0):
-                            d[aTup[0]] = rList[0]
+                            # Cannot be unicode for comparisons
+                            d[aTup[0]] = rList[0].encode('utf-8')
                         else:
                             d[aTup[0]] = None
             #
@@ -330,7 +337,8 @@ class PdbxUtils(UtilsBase):
                 colNames = list(myTable.GetColumnNames())
                 for aTup in aList:
                     if aTup[1] in colNames:
-                        rList = list(myTable.GetColumn(aTup[1]))
+                        cL = []
+                        rList = list(myTable.GetColumn(cL, aTup[1]))
                         if (len(rList) > 0):
                             d[aTup[0]] = rList[0]
                         else:
@@ -361,7 +369,8 @@ class PdbxUtils(UtilsBase):
                 targetAttribute = 'name'
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
-                rList = list(myTable.GetColumn(targetAttribute))
+                cL = []
+                rList = list(myTable.GetColumn(cL, targetAttribute))
                 if (len(rList) > 0):
                     d['audit_author'] = []
                     for r in rList:
