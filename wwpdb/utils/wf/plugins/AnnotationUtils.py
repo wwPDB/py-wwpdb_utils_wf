@@ -475,6 +475,40 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
+    def solventPositionAnalysis(self, **kwArgs):
+        """Performs distant solvent calculation on PDBx format input file and update this data in the PDBx model file.
+
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+
+            pdbxOutputPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "solvent-position-analysis.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            #
+            # if (solventArgs is not None):
+            #    dp.addInput(name="solvent_arguments",value=solventArgs)
+            #
+            dp.op("annot-distant-solvent")
+            dp.expLog(logPath)
+            dp.exp(pdbxOutputPath)
+            if (self.__cleanUp):
+                dp.cleanup()
+            if (self._verbose):
+                self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
     def linkOp(self, **kwArgs):
         """Performs link calculation on PDBx format input file and update this data in the PDBx model file.
 
