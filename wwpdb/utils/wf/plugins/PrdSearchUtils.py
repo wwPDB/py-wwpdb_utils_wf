@@ -17,9 +17,10 @@ __version__   = "V0.01"
 
 import  os,sys,traceback
 import shutil,datetime,time,difflib
+from wwpdb.apps.entity_transform.depict.ProcessPrdSummary import ProcessPrdSummary
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-
+from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 class PrdSearchUtils(UtilsBase):
@@ -67,6 +68,18 @@ class PrdSearchUtils(UtilsBase):
             dp.op("prd-search")
             dp.exp(resultFilePath)
             if (self.__cleanUp): dp.cleanup()            
+            if not os.access(resultFilePath, os.R_OK):
+                return False
+            # 
+            myReqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
+            myReqObj.setValue("TopSessionPath", cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH'))
+            myReqObj.setValue("TopPath", cI.get('SITE_WEB_APPS_TOP_PATH'))
+            myReqObj.setValue("WWPDB_SITE_ID",  siteId)
+            prdUtil = ProcessPrdSummary(reqObj=myReqObj, verbose=self._verbose, log=self._lfh)
+            prdUtil.setTopDirPath(dirPath)
+            prdUtil.setPrdSummaryFile(resultFilePath)
+            prdUtil.run()
+            #
             return True
         except:
             traceback.print_exc(file=self._lfh)            
