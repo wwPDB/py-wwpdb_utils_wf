@@ -17,10 +17,10 @@ __version__   = "V0.01"
 
 import  os,sys,traceback
 import shutil,datetime,time,difflib
-from wwpdb.apps.entity_transform.depict.ProcessPrdSummary import ProcessPrdSummary
+#from wwpdb.apps.entity_transform.depict.ProcessPrdSummary import ProcessPrdSummary
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.session.WebRequest import InputRequest
+#from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 class PrdSearchUtils(UtilsBase):
@@ -71,6 +71,13 @@ class PrdSearchUtils(UtilsBase):
             if not os.access(resultFilePath, os.R_OK):
                 return False
             # 
+            logFilePath = os.path.join(WorkingDirPath, 'process-prd.log')
+            dp1 = RcsbDpUtility(tmpPath=dirPath,siteId=siteId,verbose=self._verbose,log=self._lfh)
+            dp1.addInput(name='resultFile', value=resultFilePath)
+            dp1.addInput(name='logfile', value=logFilePath)
+            dp1.op("prd-process-summary")
+            if (self.__cleanUp): dp1.cleanup()
+            """
             myReqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
             myReqObj.setValue("TopSessionPath", cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH'))
             myReqObj.setValue("TopPath", cI.get('SITE_WEB_APPS_TOP_PATH'))
@@ -80,6 +87,7 @@ class PrdSearchUtils(UtilsBase):
             prdUtil.setPrdSummaryFile(resultFilePath)
             prdUtil.run()
             #
+            """
             return True
         except:
             traceback.print_exc(file=self._lfh)            
