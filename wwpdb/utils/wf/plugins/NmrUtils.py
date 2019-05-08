@@ -5,7 +5,7 @@
 # Updates:
 # 12-Sep-2014 jdw    added formatCheckCsXyzOp() and atomNameCheckCsXyzOp()
 #  4-Aug-2015 jdw    added atomNameCheckCsXyzAltOp() and uploadChemicalShiftAltOp()
-#  7-May-2019 my     added parserCheckNefOp(), parserCheckStarOp(),
+#  8-May-2019 my     added parserCheckNefOp(), parserCheckStarOp(),
 #                          consistencyCheckNefOp(), consistencyCheckStarOp(),
 #                          nef2starDepositOp(), star2starDepositOp()
 ##
@@ -402,8 +402,8 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF parser check
     #   action: nmr-nef-parser-check
-    #   src.content: nmr-unified-data, src.format: nmr-nef
-    #   dst.content: nef-parser-log,   dst.format: json
+    #   src.content: nmr-unified-data,              src.format: nmr-nef
+    #   dst.content: nmr-unified-data-parser-log,   dst.format: json
     def parserCheckNefOp(self, **kwArgs):
         """Parses input NEF and outputs parser log as a JSON file, which provides diagnostic information to depositor.
 
@@ -425,8 +425,8 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 parser check
     #   action: nmr-star-parser-check
-    #   src.content:nmr-unified-data, src.format:nmr-star
-    #   dst.content:star-parser-log,  dst.format:json
+    #   src.content:nmr-unified-data,             src.format:nmr-star
+    #   dst.content:nmr-unified-data-parser-log,  dst.format:json
     def parserCheckStarOp(self, **kwArgs):
         """Parses input NMR-STAR V3.2 and outputs parser log as a JSON file, which provides diagnostic information to depositor.
 
@@ -448,9 +448,9 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF consistency check with model
     #   action: nmr-nef-consistency-check
-    #   src1.content: nmr-unified-data,     src1.format: nmr-nef
-    #   src2.content: model,                src2.format: pdbx
-    #   dst.content: nef-consistency-log,   dst.format: json
+    #   src1.content: nmr-unified-data,                  src1.format: nmr-nef
+    #   src2.content: model,                             src2.format: pdbx
+    #   dst.content: nmr-unified-data-consistency-log,   dst.format: json
     def consistencyCheckNefOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs consistency log as a JSON file, which provides diagnostic information to depositor.
 
@@ -474,9 +474,9 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 consistency check with model
     #   action: nmr-star-consistency-check
-    #   src1.content: nmr-unified-data,     src1.format: nmr-star
-    #   src2.content: model,                src2.format: pdbx
-    #   dst.content: star-consistency-log,   dst.format: json
+    #   src1.content: nmr-unified-data,                  src1.format: nmr-star
+    #   src2.content: model,                             src2.format: pdbx
+    #   dst.content: nmr-unified-data-consistency-log,   dst.format: json
     def consistencyCheckStarOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs consistency log as a JSON file, which provides diagnostic information to depositor.
 
@@ -500,11 +500,11 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2star-deposit
-    #   src1.content: nmr-unified-data,     src1.format: nmr-nef
-    #   src2.content: model,                src2.format: pdbx
-    #   dst1.content: nmr-unified-data,     dst1.format: nmr-nef
-    #   dst2.content: nmr-unified-data,     dst2.format: nmr-star
-    #   dst3.content: nef-deposition-log,   dst3.format: json
+    #   src1.content: nmr-unified-data,                  src1.format: nmr-nef
+    #   src2.content: model,                             src2.format: pdbx
+    #   dst1.content: nmr-unified-data,                  dst1.format: nmr-nef
+    #   dst2.content: nmr-unified-data,                  dst2.format: nmr-star
+    #   dst3.content: nmr-unified-data-deposition-log,   dst3.format: json
     def nef2starDepositOp(self, **kwArgs):
         """Perform NEF to NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -515,8 +515,8 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefSrcPath = inpObjD["src1"].getFilePathReference()
             cifSrcPath = inpObjD["src2"].getFilePathReference()
-            nefDstPath = inpObjD["dst1"].getFilePathReference()
-            starDstPath = inpObjD["dst2"].getFilePathReference()
+            nefDstPath = outObjD["dst1"].getFilePathReference()
+            starDstPath = outObjD["dst2"].getFilePathReference()
             logPath = outObjD["dst3"].getFilePathReference()
             #
             if (self._verbose):
@@ -524,7 +524,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - mmCIF input file path:             %s\n" % cifSrcPath)
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NEF output file path:              %s\n" % nefDstPath)
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % starDstPath)
-                self._lfh.write("+NmrUtils.nef2starDepositOp() - JSON consistency log file path:    %s\n" % logPath)
+                self._lfh.write("+NmrUtils.nef2starDepositOp() - JSON deposit log file path:        %s\n" % logPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -532,10 +532,10 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: copying NMR-STAR V3.2 and deposition
     #   action: nmr-star2star-deposit
-    #   src1.content: nmr-unified-data,      src1.format: nmr-star
-    #   src2.content: model,                 src2.format: pdbx
-    #   dst1.content: nmr-unified-data,      dst1.format: nmr-star
-    #   dst2.content: star-deposition-log,   dst2.format: json
+    #   src1.content: nmr-unified-data,                  src1.format: nmr-star
+    #   src2.content: model,                             src2.format: pdbx
+    #   dst1.content: nmr-unified-data,                  dst1.format: nmr-star
+    #   dst2.content: nmr-unified-data-deposition-log,   dst2.format: json
     def star2starDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -546,14 +546,14 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             starSrcPath = inpObjD["src1"].getFilePathReference()
             cifSrcPath = inpObjD["src2"].getFilePathReference()
-            starDstPath = inpObjD["dst1"].getFilePathReference()
+            starDstPath = outObjD["dst1"].getFilePathReference()
             logPath = outObjD["dst2"].getFilePathReference()
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.star2starDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % starSrcPath)
                 self._lfh.write("+NmrUtils.star2starDepositOp() - mmCIF input file path:             %s\n" % cifSrcPath)
                 self._lfh.write("+NmrUtils.star2starDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % starDstPath)
-                self._lfh.write("+NmrUtils.star2starDepositOp() - JSON consistency log file path:    %s\n" % logPath)
+                self._lfh.write("+NmrUtils.star2starDepositOp() - JSON deposit log file path:        %s\n" % logPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
