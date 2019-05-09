@@ -994,6 +994,7 @@ class DataFileReference(DataReferenceBase):
             pth = os.path.join(dirPath, fN)
             return pth
         except Exception as e:
+            logger.exception(e)
             logger.exception("Failed to determine internal path")
             return None
 
