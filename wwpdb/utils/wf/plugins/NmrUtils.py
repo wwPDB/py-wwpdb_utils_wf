@@ -419,9 +419,10 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(nefPath)
+            dp.setDebugMode()
+            dp.setSource(nefPath)
+            dp.setLog(logPath)
             dp.op("nmr-nef-parser-check")
-            dp.expLog(logPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.parserCheckNefOp() - NEF file path:     %s\n" % nefPath)
@@ -447,9 +448,10 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(starPath)
+            dp.setDebugMode()
+            dp.setSource(starPath)
+            dp.setLog(logPath)
             dp.op("nmr-star-parser-check")
-            dp.expLog(logPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.parserCheckStarOp() - NMR-STAR V3.2 file path:    %s\n" % starPath)
@@ -477,10 +479,11 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(nefPath)
-            dp.addInput(name="coordinate_file_path", value=cifPath)
+            dp.setDebugMode()
+            dp.setSource(nefPath)
+            dp.addInput(name='coordinate_file_path', value=cifPath, type='file')
+            dp.setLog(logPath)
             dp.op("nmr-nef-consistency-check")
-            dp.expLog(logPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.consistencyCheckNefOp() - NEF file path:      %s\n" % nefPath)
@@ -509,10 +512,11 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(starPath)
-            dp.addInput(name="coordinate_file_path", value=cifPath)
+            dp.setDebugMode()
+            dp.setSource(starPath)
+            dp.addInput(name='coordinate_file_path', value=cifPath, type='file')
+            dp.setLog(logPath)
             dp.op("nmr-star-consistency-check")
-            dp.expLog(logPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.consistencyCheckStarOp() - NMR-STAR V3.2 file path:    %s\n" % starPath)
@@ -545,12 +549,13 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst3"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(nefInpPath)
-            dp.addInput(name="coordinate_file_path", value=cifInpPath)
+            dp.setDebugMode()
+            dp.setSource(nefInpPath)
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.setDestination(nefOutPath)
+            dp.addOutput(name='nmr-star_file_path', value=starOutPath, type='file')
+            dp.setLog(logPath)
             dp.op("nmr-nef2star-deposit")
-            dp.expLog(logPath)
-            dp.exp(nefOutPath)
-            dp.addOutput(starOutPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NEF input file path:        %s\n" % nefInpPath)
@@ -583,12 +588,12 @@ class NmrUtils(UtilsBase):
             logPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.imp(starInpPath)
-            dp.addInput(name="coordinate_file_path", value=cifInpPath)
+            dp.setDebugMode()
+            dp.setSource(starInpPath)
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.setDestination(starOutPath)
+            dp.setLog(logPath)
             dp.op("nmr-star2star-deposit")
-            dp.expLog(logPath)
-            dp.exp(starOutPath)
-            dp.addOutput(starOutPath)
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.star2starDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % starInpPath)
