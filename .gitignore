@@ -103,5 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+*~
+
 #
 wwpdb/utils/tests_wf/test-output
