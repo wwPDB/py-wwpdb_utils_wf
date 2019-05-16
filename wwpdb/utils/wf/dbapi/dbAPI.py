@@ -19,7 +19,7 @@ Grab bag of methods to execute SQL commands on various WF status tables -
 
 class dbAPI(object):
 
-    def __init__(self, depID, connection=None, verbose=False):
+    def __init__(self, depID, connection=None, verbose=True):
 
         if connection:
             self.con = connection
@@ -185,7 +185,7 @@ class dbAPI(object):
             return False
 
     def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
-
+        logger.debug("Beginning run update")
         try:
             sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.iteritems()])
             if depID:
@@ -252,7 +252,7 @@ class dbAPI(object):
         try:
             if rowExists:
                 ok = self.runUpdate(table, depID, where, data, run)
-
+                
             else:
                 ok = self.runInsert(table, depID, where, data, run)
 
