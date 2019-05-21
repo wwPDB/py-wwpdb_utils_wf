@@ -5,7 +5,7 @@
 # Updates:
 # 12-Sep-2014 jdw    added formatCheckCsXyzOp() and atomNameCheckCsXyzOp()
 #  4-Aug-2015 jdw    added atomNameCheckCsXyzAltOp() and uploadChemicalShiftAltOp()
-# 13-May-2019 my     added parserCheckNefOp(), parserCheckStarOp(),
+# 21-May-2019 my     added parserCheckNefOp(), parserCheckStarOp(),
 #                          consistencyCheckNefOp(), consistencyCheckStarOp(),
 #                          nef2starDepositOp(), star2starDepositOp()
 ##
@@ -405,7 +405,7 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF parser check
     #   action: nmr-nef-parser-check
-    #   src.content: nmr-unified-data,          src.format: nmr-nef
+    #   src.content: nmr-unified-data,          src.format: nmr-star
     #   dst.content: nmr-unified-data-report,   dst.format: json
     def parserCheckNefOp(self, **kwArgs):
         """Parses input a NEF file and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -415,18 +415,18 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            nefPath = inpObjD["src"].getFilePathReference()
-            logPath = outObjD["dst"].getFilePathReference()
+            nefInpPath = inpObjD["src"].getFilePathReference()
+            logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
-            dp.setSource(nefPath)
-            dp.setLog(logPath)
+            dp.setSource(nefInpPath)
+            dp.setLog(logOutPath)
             dp.op("nmr-nef-parser-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.parserCheckNefOp() - NEF file path:     %s\n" % nefPath)
-                self._lfh.write("+NmrUtils.parserCheckNefOp() - JSON file path:    %s\n" % logPath)
+                self._lfh.write("+NmrUtils.parserCheckNefOp() - NEF input file path:      %s\n" % nefInpPath)
+                self._lfh.write("+NmrUtils.parserCheckNefOp() - JSON output file path:    %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -444,18 +444,18 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            starPath = inpObjD["src"].getFilePathReference()
-            logPath = outObjD["dst"].getFilePathReference()
+            starInpPath = inpObjD["src"].getFilePathReference()
+            logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
-            dp.setSource(starPath)
-            dp.setLog(logPath)
+            dp.setSource(starInpPath)
+            dp.setLog(logOutPath)
             dp.op("nmr-star-parser-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.parserCheckStarOp() - NMR-STAR V3.2 file path:    %s\n" % starPath)
-                self._lfh.write("+NmrUtils.parserCheckStarOp() - JSON file path:             %s\n" % logPath)
+                self._lfh.write("+NmrUtils.parserCheckStarOp() - NMR-STAR V3.2 input file path:    %s\n" % starInpPath)
+                self._lfh.write("+NmrUtils.parserCheckStarOp() - JSON output file path:            %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -463,8 +463,9 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF consistency check with model
     #   action: nmr-nef-consistency-check
-    #   src1.content: nmr-unified-data,         src1.format: nmr-nef
+    #   src1.content: nmr-unified-data,         src1.format: nmr-star
     #   src2.content: model,                    src2.format: pdbx
+    #   src3.content: nmr-unified-data-report,  src3.format: json
     #   dst.content:  nmr-unified-data-report,  dst.format:  json
     def consistencyCheckNefOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -474,21 +475,24 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            nefPath = inpObjD["src1"].getFilePathReference()
-            cifPath = inpObjD["src2"].getFilePathReference()
-            logPath = outObjD["dst"].getFilePathReference()
+            nefInpPath = inpObjD["src1"].getFilePathReference()
+            cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
+            logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
-            dp.setSource(nefPath)
-            dp.addInput(name='coordinate_file_path', value=cifPath, type='file')
-            dp.setLog(logPath)
+            dp.setSource(nefInpPath)
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            dp.setLog(logOutPath)
             dp.op("nmr-nef-consistency-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - NEF file path:      %s\n" % nefPath)
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - mmCIF file path:    %s\n" % cifPath)
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - JSON file path:     %s\n" % logPath)
+                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - NEF input file path:      %s\n" % nefInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - mmCIF input file path:    %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - JSON input file path:     %s\n" % logInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - JSON output file path:    %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -498,6 +502,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-star-consistency-check
     #   src1.content: nmr-unified-data,         src1.format: nmr-star
     #   src2.content: model,                    src2.format: pdbx
+    #   src3.content: nmr-unified-data-report,  src3.format: json
     #   dst.content:  nmr-unified-data-report,  dst.format:  json
     def consistencyCheckStarOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -507,21 +512,24 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            starPath = inpObjD["src1"].getFilePathReference()
-            cifPath = inpObjD["src2"].getFilePathReference()
-            logPath = outObjD["dst"].getFilePathReference()
+            starInpPath = inpObjD["src1"].getFilePathReference()
+            cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
+            logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
-            dp.setSource(starPath)
-            dp.addInput(name='coordinate_file_path', value=cifPath, type='file')
-            dp.setLog(logPath)
+            dp.setSource(starInpPath)
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            dp.setLog(logOutPath)
             dp.op("nmr-star-consistency-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - NMR-STAR V3.2 file path:    %s\n" % starPath)
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - mmCIF file path:            %s\n" % cifPath)
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - JSON file path:             %s\n" % logPath)
+                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - NMR-STAR V3.2 input file path:    %s\n" % starInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - mmCIF input file path:            %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - JSON input file path:             %s\n" % logInpPath)
+                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - JSON output file path:            %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -529,9 +537,10 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2star-deposit
-    #   src1.content: nmr-unified-data,         src1.format: nmr-nef
+    #   src1.content: nmr-unified-data,         src1.format: nmr-star
     #   src2.content: model,                    src2.format: pdbx
-    #   dst1.content: nmr-unified-data,         dst1.format: nmr-nef
+    #   src3.content: nmr-unified-data-report,  src3.format: json
+    #   dst1.content: nmr-unified-data,         dst1.format: nmr-star
     #   dst2.content: nmr-unified-data,         dst2.format: nmr-star
     #   dst3.content: nmr-unified-data-report,  dst3.format: json
     def nef2starDepositOp(self, **kwArgs):
@@ -544,25 +553,28 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
             nefOutPath = outObjD["dst1"].getFilePathReference()
             starOutPath = outObjD["dst2"].getFilePathReference()
-            logPath = outObjD["dst3"].getFilePathReference()
+            logOutPath = outObjD["dst3"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=starOutPath, type='file')
-            dp.setLog(logPath)
+            dp.setLog(logOutPath)
             dp.op("nmr-nef2star-deposit")
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NEF input file path:        %s\n" % nefInpPath)
-                self._lfh.write("+NmrUtils.nef2starDepositOp() - mmCIF file path:            %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.nef2starDepositOp() - mmCIF input file path:      %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.nef2starDepositOp() - JSON input file path:       %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NEF output file path:       %s\n" % nefOutPath)
                 self._lfh.write("+NmrUtils.nef2starDepositOp() - NMR-STAR V3.2 file path:    %s\n" % starOutPath)
-                self._lfh.write("+NmrUtils.nef2starDepositOp() - JSON file path:             %s\n" % logPath)
+                self._lfh.write("+NmrUtils.nef2starDepositOp() - JSON output file path:      %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
@@ -572,6 +584,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-star2star-deposit
     #   src1.content: nmr-unified-data,          src1.format: nmr-star
     #   src2.content: model,                     src2.format: pdbx
+    #   src3.content: nmr-unified-data-report,   src3.format: json
     #   dst1.content: nmr-unified-data,          dst1.format: nmr-star
     #   dst2.content: nmr-unified-data-report,   dst2.format: json
     def star2starDepositOp(self, **kwArgs):
@@ -584,22 +597,25 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             starInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
             starOutPath = outObjD["dst1"].getFilePathReference()
-            logPath = outObjD["dst2"].getFilePathReference()
+            logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setDebugMode()
             dp.setSource(starInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(starOutPath)
-            dp.setLog(logPath)
+            dp.setLog(logOutPath)
             dp.op("nmr-star2star-deposit")
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.star2starDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % starInpPath)
-                self._lfh.write("+NmrUtils.star2starDepositOp() - mmCIF file path:                   %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.star2starDepositOp() - mmCIF input file path:             %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.star2starDepositOp() - JSON input file path:              %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.star2starDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % starOutPath)
-                self._lfh.write("+NmrUtils.star2starDepositOp() - JSON file path:                    %s\n" % logPath)
+                self._lfh.write("+NmrUtils.star2starDepositOp() - JSON output file path:             %s\n" % logOutPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)
