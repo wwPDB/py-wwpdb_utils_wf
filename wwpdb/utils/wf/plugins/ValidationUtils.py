@@ -15,6 +15,7 @@
 #  14-Jul-2016 jdw validationReportAllOp() is the only valid entry point here - all others are deprecated.
 #  14-Jul-2016 jdw add 'validation_mode' input parameter -
 #  18-Dec-2016 ep  remove unused validationReportAltOp and validationReportV2Op
+#  10-May-2019 ep  add validationReportAllOpV2 for export of edmap coefficients
 ##
 """
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -33,6 +34,7 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 
 
 class ValidationUtils(UtilsBase):
@@ -150,6 +152,107 @@ class ValidationUtils(UtilsBase):
 
             if (self.__cleanUp):
                 dp.cleanup()
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def validationReportAllOpV2(self, **kwArgs):
+        """Create validation reports, supporting XML data, and image files for the input PDBx model file and
+           the current implementation of all experimental methods  with optional input
+           of experimental data files --
+
+           Supports output of 2fo and fo edmap coefficients
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+            #
+            if "src2" in inpObjD:
+                sfPath = inpObjD["src2"].getFilePathReference()
+            else:
+                sfPath = None
+
+            if "src3" in inpObjD:
+                csPath = inpObjD["src3"].getFilePathReference()
+            else:
+                csPath = None
+
+            if "src4" in inpObjD:
+                volPath = inpObjD["src4"].getFilePathReference()
+            else:
+                volPath = None
+
+            validationReportPath = outObjD["dst1"].getFilePathReference()
+            xmlReportPath = outObjD["dst2"].getFilePathReference()
+
+            validationFullReportPath = outObjD["dst3"].getFilePathReference()
+            pngReportPath = outObjD["dst4"].getFilePathReference()
+            svgReportPath = outObjD["dst5"].getFilePathReference()
+            coeffoReportPath = outObjD["dst6"].getFilePathReference()
+            coef2foReportPath = outObjD["dst7"].getFilePathReference()
+
+            dirPath = outObjD["dst1"].getDirPathReference()
+            logPath = os.path.join(dirPath, "val-report-all.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            vw = ValidationWrapper(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            vw.imp(pdbxPath)
+            #
+            validationMode = str(uD['validation_mode'])
+            if validationMode in ["annotate", "deposit", "server", "release", "legacy"]:
+                vw.addInput(name="request_validation_mode", value=validationMode)
+
+            #  add an control over the report context
+            inAnnotation = str(uD['in_annotation'])
+            if inAnnotation in ["yes", "no"]:
+                vw.addInput(name="request_annotation_context", value=inAnnotation)
+            #
+            # add parameters only if these exist --
+            #
+            if depDataSetId is not None and len(depDataSetId) > 3:
+                vw.addInput(name="entry_id", value=depDataSetId)
+
+            if sfPath is not None and os.access(sfPath, os.R_OK):
+                vw.addInput(name="sf_file_path", value=sfPath)
+            else:
+                sfPath = None
+            #
+            if csPath is not None and os.access(csPath, os.R_OK):
+                vw.addInput(name="cs_file_path", value=csPath)
+            else:
+                csPath = None
+
+            if volPath is not None and os.access(volPath, os.R_OK):
+                vw.addInput(name="vol_file_path", value=volPath)
+            else:
+                volPath = None
+
+            vw.op("annot-wwpdb-validate-all-sf")
+            vw.expLog(logPath)
+            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
+                                    coeffoReportPath, coef2foReportPath])
+
+            if (self._verbose):
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDBx   file path:        %s\n" % pdbxPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SF     file path:        %s\n" % sfPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - CS     file path:        %s\n" % csPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Volume file path:        %s\n" % volPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SVG slider file path:  %s\n" % svgReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - full PDF   file path:  %s\n" % validationFullReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - fo coef file path:     %s\n" % coeffoReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - 2fo coef file path     %s\n" % coef2foReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - validation mode:       %s\n" % validationMode)
+
+            if (self.__cleanUp):
+                vw.cleanup()
             return True
         except:
             traceback.print_exc(file=self._lfh)
