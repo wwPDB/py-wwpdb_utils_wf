@@ -35,11 +35,11 @@ import time
 import difflib
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 try:
     # XXX We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
+    from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
 except ImportError:
     pass
 from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
@@ -58,6 +58,7 @@ class AnnotationUtils(UtilsBase):
         - Solvent reorganization
         - Nucleic acid geometrical features
         - Chemical linkages and cis-peptide linkages
+        - Automatic running of mapfix on archive files
 
         -Various format, dictionary and geometry checks
 
@@ -1148,4 +1149,26 @@ class AnnotationUtils(UtilsBase):
         except:
             traceback.print_exc(file=self._lfh)
             return False
+
+    def em3dAutoMapFixOp(self, **kwArgs):
+        """Performs mapfix if needed automatically.  Typically run on model and map files in archive as they need to be in sync.
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            sessdir = inpObjD["sessdir"].getDirPathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            pdbxOutPath = outObjD["dst"].getFilePathReference()
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+            eaf = EmAutoFix(sessionPath=sessdir, siteId = siteId)
+            ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)
+            # Always return true - even if no work done
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
 
