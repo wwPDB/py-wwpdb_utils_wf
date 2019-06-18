@@ -470,6 +470,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-nef2str-deposit
     #   src1.content: nmr-unified-data-nef,     src1.format: nmr-star
     #   src2.content: model,                    src2.format: pdbx
+    #   src3.content: nmr-unified-data-report,  src3.format: json
     #   dst1.content: nmr-unified-data-nef,     dst1.format: nmr-star
     #   dst2.content: nmr-unified-data-str,     dst2.format: nmr-star
     #   dst3.content: nmr-unified-data-report,  dst3.format: json
@@ -483,6 +484,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = outObjD["src3"].getFilePathReference()
             nefOutPath = outObjD["dst1"].getFilePathReference()
             strOutPath = outObjD["dst2"].getFilePathReference()
             logOutPath = outObjD["dst3"].getFilePathReference()
@@ -491,6 +493,7 @@ class NmrUtils(UtilsBase):
             dp.setDebugMode()
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
             dp.setLog(logOutPath)
@@ -499,6 +502,7 @@ class NmrUtils(UtilsBase):
             if (self._verbose):
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - NEF input file path:        %s\n" % nefInpPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - mmCIF input file path:      %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON input file path:       %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - NEF output file path:       %s\n" % nefOutPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - NMR-STAR V3.2 file path:    %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON output file path:      %s\n" % logOutPath)
@@ -509,10 +513,11 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: copying NMR-STAR V3.2 and deposition
     #   action: nmr-str2str-deposit
-    #   src1.content: nmr-unified-data-str,      src1.format: nmr-star
-    #   src2.content: model,                     src2.format: pdbx
-    #   dst1.content: nmr-unified-data-str,      dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-report,   dst2.format: json
+    #   src1.content: nmr-unified-data-str,     src1.format: nmr-star
+    #   src2.content: model,                    src2.format: pdbx
+    #   src3.content: nmr-unified-data-report,  src3.format: json
+    #   dst1.content: nmr-unified-data-str,     dst1.format: nmr-star
+    #   dst2.content: nmr-unified-data-report,  dst2.format: json
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -523,6 +528,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            logInpPath = outObjD["src3"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
@@ -530,6 +536,7 @@ class NmrUtils(UtilsBase):
             dp.setDebugMode()
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(strOutPath)
             dp.setLog(logOutPath)
             dp.op("nmr-str2str-deposit")
@@ -537,6 +544,7 @@ class NmrUtils(UtilsBase):
             if (self._verbose):
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - mmCIF input file path:             %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON input file path:              %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON output file path:             %s\n" % logOutPath)
             return True
