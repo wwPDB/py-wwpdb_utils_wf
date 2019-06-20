@@ -105,5 +105,9 @@ venv.bak/
 
 *~
 
+# vscode
+.idea
+.vscode
+
 #
 wwpdb/utils/tests_wf/test-output
