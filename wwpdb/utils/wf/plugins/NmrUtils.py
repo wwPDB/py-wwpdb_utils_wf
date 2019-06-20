@@ -418,7 +418,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setDebugMode()
+            dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.setLog(logOutPath)
@@ -451,7 +451,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setDebugMode()
+            dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.setLog(logOutPath)
@@ -492,7 +492,7 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst4"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setDebugMode()
+            dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
@@ -537,7 +537,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setDebugMode()
+            dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
