@@ -498,7 +498,7 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
-            dp.addInput(name='report_file_path', value=logOutPath2, type='file')
+            dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
             dp.setLog(logOutPath)
             dp.op("nmr-nef2str-deposit")
             #
