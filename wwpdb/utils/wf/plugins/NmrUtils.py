@@ -402,9 +402,9 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF consistency check with model
     #   action: nmr-nef-consistency-check
-    #   src1.content: nmr-unified-data-nef,     src1.format: nmr-star
-    #   src2.content: model,                    src2.format: pdbx
-    #   dst.content:  nmr-unified-data-report,  dst.format:  json
+    #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
+    #   src2.content: model,                        src2.format: pdbx
+    #   dst.content:  nmr-unified-data-nef-report,  dst.format:  json
     def nefConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -435,9 +435,9 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 consistency check with model
     #   action: nmr-str-consistency-check
-    #   src1.content: nmr-unified-data-str,     src1.format: nmr-star
-    #   src2.content: model,                    src2.format: pdbx
-    #   dst.content:  nmr-unified-data-report,  dst.format:  json
+    #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
+    #   src2.content: model,                        src2.format: pdbx
+    #   dst.content:  nmr-unified-data-str-report,  dst.format:  json
     def strConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -468,13 +468,13 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2str-deposit
-    #   src1.content: nmr-unified-data-nef,     src1.format: nmr-star
-    #   src2.content: model,                    src2.format: pdbx
-    #   src3.content: nmr-unified-data-report,  src3.format: json
-    #   dst1.content: nmr-unified-data-nef,     dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-str,     dst2.format: nmr-star
-    #   dst3.content: nmr-unified-data-report,  dst3.format: json
-    #   dst4.content: nmr-unified-data-report,  dst4.format: json
+    #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
+    #   src2.content: model,                        src2.format: pdbx
+    #   src3.content: nmr-unified-data-nef-report,  src3.format: json
+    #   dst1.content: nmr-unified-data-nef,         dst1.format: nmr-star
+    #   dst2.content: nmr-unified-data-str,         dst2.format: nmr-star
+    #   dst3.content: nmr-unified-data-nef-report,  dst3.format: json
+    #   dst4.content: nmr-unified-data-str-report,  dst4.format: json
     def nef2strDepositOp(self, **kwArgs):
         """Perform NEF to NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -517,11 +517,11 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 conversion and deposition
     #   action: nmr-str2str-deposit
-    #   src1.content: nmr-unified-data-str,     src1.format: nmr-star
-    #   src2.content: model,                    src2.format: pdbx
-    #   src3.content: nmr-unified-data-report,  src3.format: json
-    #   dst1.content: nmr-unified-data-str,     dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-report,  dst2.format: json
+    #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
+    #   src2.content: model,                        src2.format: pdbx
+    #   src3.content: nmr-unified-data-str-report,  src3.format: json
+    #   dst1.content: nmr-unified-data-str,         dst1.format: nmr-star
+    #   dst2.content: nmr-unified-data-str-report,  dst2.format: json
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
