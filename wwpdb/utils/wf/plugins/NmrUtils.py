@@ -485,7 +485,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
-            logInpPath = outObjD["src3"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
             nefOutPath = outObjD["dst1"].getFilePathReference()
             strOutPath = outObjD["dst2"].getFilePathReference()
             logOutPath1 = outObjD["dst3"].getFilePathReference()
@@ -532,7 +532,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
-            logInpPath = outObjD["src3"].getFilePathReference()
+            logInpPath = inpObjD["src3"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
