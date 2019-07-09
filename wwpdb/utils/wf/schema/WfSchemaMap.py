@@ -41,7 +41,10 @@ class WfSchemaMap:
                         "EMDB_ID"                 : "emdb_id",
                         "BMRB_ID"                 : "bmrb_id",
                         "STATUS_CODE_BMRB"        : "status_code_bmrb",
-                        "STATUS_CODE_OTHER"       : "status_code_other"},
+                        "STATUS_CODE_OTHER"       : "status_code_other",
+                        "POST_REL_STATUS"         : "post_rel_status",
+                        "POST_REL_RECVD_COORD"    : "post_rel_recvd_coord",
+                        "POST_REL_RECVD_COORD_DATE" : "post_rel_recvd_coord_date"},
                 "TABLE_NAME"  : "deposition"},
         "DATABASE_REF" : {
                 "ATTRIBUTES"  : {
