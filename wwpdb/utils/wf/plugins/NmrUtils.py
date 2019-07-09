@@ -404,6 +404,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-nef-consistency-check
     #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
+    #   prc2.content: model (deposit),              prc2.format: pdbx
     #   dst.content:  nmr-unified-data-nef-report,  dst.format:  json
     def nefConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -415,12 +416,14 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            prcInpPath = inpObjD["prc2"].getFilePathReference()
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
             #
@@ -437,6 +440,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-str-consistency-check
     #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
+    #   prc2.content: model (deposit),              prc2.format: pdbx
     #   dst.content:  nmr-unified-data-str-report,  dst.format:  json
     def strConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -448,12 +452,14 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            prcInpPath = inpObjD["prc2"].getFilePathReference()
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
             #
@@ -470,6 +476,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-nef2str-deposit
     #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
+    #   prc2.content: model (deposit),              prc2.format: pdbx
     #   src3.content: nmr-unified-data-nef-report,  src3.format: json
     #   dst1.content: nmr-unified-data-nef,         dst1.format: nmr-star
     #   dst2.content: nmr-unified-data-str,         dst2.format: nmr-star
@@ -485,6 +492,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            prcInpPath = inpObjD["prc2"].getFilePathReference()
             logInpPath = inpObjD["src3"].getFilePathReference()
             nefOutPath = outObjD["dst1"].getFilePathReference()
             strOutPath = outObjD["dst2"].getFilePathReference()
@@ -495,6 +503,7 @@ class NmrUtils(UtilsBase):
             dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
@@ -519,6 +528,7 @@ class NmrUtils(UtilsBase):
     #   action: nmr-str2str-deposit
     #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
+    #   prc2.content: model (deposit),              prc2.format: pdbx
     #   src3.content: nmr-unified-data-str-report,  src3.format: json
     #   dst1.content: nmr-unified-data-str,         dst1.format: nmr-star
     #   dst2.content: nmr-unified-data-str-report,  dst2.format: json
@@ -532,6 +542,7 @@ class NmrUtils(UtilsBase):
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
+            prcInpPath = inpObjD["prc2"].getFilePathReference()
             logInpPath = inpObjD["src3"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
@@ -540,6 +551,7 @@ class NmrUtils(UtilsBase):
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
             dp.setDestination(strOutPath)
             dp.setLog(logOutPath)
