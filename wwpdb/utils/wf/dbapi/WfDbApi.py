@@ -15,6 +15,7 @@
    4-Aug-2014  jdw add debug flag to minimize connection tracking logging
   26-sep-2017  ep  runInsertSQL/runUpdateSQL allow for parameterized arguments
                    to pass to db execute to handle quoting
+  15-Jul-2019  ep  add siteId as optional argument to __init__
      
 """
 
@@ -59,9 +60,9 @@ class WfDbApi(object):
     __orderBy = WfSchemaMap._orderBy
     __userInfo = WfSchemaMap._userInfo
 
-    def __init__(self, log=sys.stderr, verbose=False):
+    def __init__(self, log=sys.stderr, verbose=False, siteId=None):
         """
-          Environmental variable WWPDB_SITE_ID needs to be set in the environment 
+          Either siteId needs to be specified or Environmental variable WWPDB_SITE_ID needs to be set
           for ConfigInfo() to obtain the correct details -
 
         """
@@ -70,7 +71,7 @@ class WfDbApi(object):
         self.__lfh = log
         self.__verbose = verbose
         self.__debug=False
-        cI=ConfigInfo()
+        cI = ConfigInfo(siteId=siteId)
         self.__dbServer  = cI.get("SITE_DB_SERVER")
         self.__dbHost    = cI.get("SITE_DB_HOST_NAME")
         self.__dbName    = cI.get("SITE_DB_DATABASE_NAME")
