@@ -89,6 +89,11 @@ class ValidationUtils(UtilsBase):
             else:
                 volPath = None
 
+            if "src5" in inpObjD:
+                fscPath = inpObjD["src5"].getFilePathReference()
+            else:
+                fscPath = None
+
             validationReportPath = outObjD["dst1"].getFilePathReference()
             xmlReportPath = outObjD["dst2"].getFilePathReference()
 
@@ -132,7 +137,12 @@ class ValidationUtils(UtilsBase):
                 dp.addInput(name="vol_file_path", value=volPath)
             else:
                 volPath = None
-
+                
+            if fscPath is not None and os.access(fscPath, os.R_OK):
+                dp.addInput(name="fsc_file_path", value=fscPath)
+            else:
+                fscPath = None
+            
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
             dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath])
@@ -143,6 +153,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - SF     file path:        %s\n" % sfPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - CS     file path:        %s\n" % csPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Volume file path:        %s\n" % volPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOp() - Fsc    file path:        %s\n" % fscPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - XML report file path:  %s\n" % xmlReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PNG slider file path:  %s\n" % pngReportPath)
@@ -184,7 +195,12 @@ class ValidationUtils(UtilsBase):
                 volPath = inpObjD["src4"].getFilePathReference()
             else:
                 volPath = None
-
+            
+            if "src5" in inpObjD:
+                authorFSCPath = inpObjD["src5"].getFilePathReference()
+            else:
+                authorFSCPath = None
+            
             validationReportPath = outObjD["dst1"].getFilePathReference()
             xmlReportPath = outObjD["dst2"].getFilePathReference()
 
@@ -231,6 +247,13 @@ class ValidationUtils(UtilsBase):
             else:
                 volPath = None
 
+            if authorFSCPath is not None and os.access(authorFSCPath, os.R_OK):
+                vw.addInput(name="author_fsc", value=authorFSCPath)
+            else:
+                authorFSCPath = None
+                
+
+
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
             vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
@@ -242,6 +265,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SF     file path:        %s\n" % sfPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - CS     file path:        %s\n" % csPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Volume file path:        %s\n" % volPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - FSC    file path:        %s\n" % authorFSCPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
