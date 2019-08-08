@@ -424,6 +424,10 @@ class NmrUtils(UtilsBase):
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+            # To raise anomalous_data error, set False
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            # To resolve multiple_data error, set True
+            dp.addInput(name='resolve_conflict', value=False, type='param')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
             #
@@ -460,6 +464,10 @@ class NmrUtils(UtilsBase):
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+            # To raise anomalous_data error, set False
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            # To resolve multiple_data error, set True
+            dp.addInput(name='resolve_conflict', value=False, type='param')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
             #
@@ -505,6 +513,12 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            # To raise anomalous_data error, set False
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            # To resolve multiple_data error, set True
+            dp.addInput(name='resolve_conflict', value=False, type='param')
+            # Set NEED_ACC_NO by default
+            dp.addInput(name='entry_id', value='NEED_ACC_NO', type='param')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
@@ -553,6 +567,12 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            # To raise anomalous_data error, set False
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            # To resolve multiple_data error, set True
+            dp.addInput(name='resolve_conflict', value=False, type='param')
+            # Set NEED_ACC_NO by default
+            dp.addInput(name='entry_id', value='NEED_ACC_NO', type='param')
             dp.setDestination(strOutPath)
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
