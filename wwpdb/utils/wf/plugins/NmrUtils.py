@@ -26,6 +26,7 @@ import time
 import difflib
 import string
 import random
+import json
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
@@ -402,6 +403,7 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF consistency check with model
     #   action: nmr-nef-consistency-check
+    #   src0.content: nmr-unified-data-config,      src0.format: json
     #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
     #   prc2.content: model (deposit),              prc2.format: pdbx
@@ -414,6 +416,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -424,17 +427,26 @@ class NmrUtils(UtilsBase):
             dp.setSource(nefInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
-            # To raise anomalous_data error, set False
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            # To resolve multiple_data error, set True
-            dp.addInput(name='resolve_conflict', value=False, type='param')
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, 'r') as file:
+                    conf = json.loads(file.read())
+
+                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+
+            else:
+                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+                dp.addInput(name='resolve_conflict', value=False, type='param')
+
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - NEF input file path:      %s\n" % nefInpPath)
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - mmCIF input file path:    %s\n" % cifInpPath)
-                self._lfh.write("+NmrUtils.consistencyCheckNefOp() - JSON output file path:    %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - NEF input file path:      %s\n" % nefInpPath)
+                self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
         except:
             traceback.print_exc(file=self._lfh)
@@ -442,6 +454,7 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 consistency check with model
     #   action: nmr-str-consistency-check
+    #   src0.content: nmr-unified-data-config,      src0.format: json
     #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
     #   prc2.content: model (deposit),              prc2.format: pdbx
@@ -454,6 +467,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -464,17 +478,26 @@ class NmrUtils(UtilsBase):
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
-            # To raise anomalous_data error, set False
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            # To resolve multiple_data error, set True
-            dp.addInput(name='resolve_conflict', value=False, type='param')
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, 'r') as file:
+                    conf = json.loads(file.read())
+
+                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+
+            else:
+                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+                dp.addInput(name='resolve_conflict', value=False, type='param')
+
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - mmCIF input file path:            %s\n" % cifInpPath)
-                self._lfh.write("+NmrUtils.consistencyCheckStarOp() - JSON output file path:            %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
+                self._lfh.write("+NmrUtils.strConsistencyCheckOp() - mmCIF input file path:            %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.strConsistencyCheckOp() - JSON output file path:            %s\n" % logOutPath)
             return stat
         except:
             traceback.print_exc(file=self._lfh)
@@ -482,6 +505,7 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2str-deposit
+    #   src0.content: nmr-unified-data-config,      src0.format: json
     #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
     #   prc2.content: model (deposit),              prc2.format: pdbx
@@ -498,6 +522,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -513,10 +538,19 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
-            # To raise anomalous_data error, set False
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            # To resolve multiple_data error, set True
-            dp.addInput(name='resolve_conflict', value=False, type='param')
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, 'r') as file:
+                    conf = json.loads(file.read())
+
+                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+
+            else:
+                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+                dp.addInput(name='resolve_conflict', value=False, type='param')
+
             # Set UNNAMED by default
             dp.addInput(name='entry_id', value='UNNAMED', type='param')
             dp.setDestination(nefOutPath)
@@ -540,6 +574,7 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 conversion and deposition
     #   action: nmr-str2str-deposit
+    #   src0.content: nmr-unified-data-config,      src0.format: json
     #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
     #   src2.content: model,                        src2.format: pdbx
     #   prc2.content: model (deposit),              prc2.format: pdbx
@@ -554,6 +589,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -567,10 +603,19 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
             dp.addInput(name='report_file_path', value=logInpPath, type='file')
-            # To raise anomalous_data error, set False
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            # To resolve multiple_data error, set True
-            dp.addInput(name='resolve_conflict', value=False, type='param')
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, 'r') as file:
+                    conf = json.loads(file.read())
+
+                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+
+            else:
+                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+                dp.addInput(name='resolve_conflict', value=False, type='param')
+
             # Set UNNAMED by default
             dp.addInput(name='entry_id', value='UNNAMED', type='param')
             dp.setDestination(strOutPath)
