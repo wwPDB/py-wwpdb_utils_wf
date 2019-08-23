@@ -517,8 +517,8 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
             # To resolve multiple_data error, set True
             dp.addInput(name='resolve_conflict', value=False, type='param')
-            # Set NEED_ACC_NO by default
-            dp.addInput(name='entry_id', value='NEED_ACC_NO', type='param')
+            # Set UNNAMED by default
+            dp.addInput(name='entry_id', value='UNNAMED', type='param')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
@@ -571,8 +571,8 @@ class NmrUtils(UtilsBase):
             dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
             # To resolve multiple_data error, set True
             dp.addInput(name='resolve_conflict', value=False, type='param')
-            # Set NEED_ACC_NO by default
-            dp.addInput(name='entry_id', value='NEED_ACC_NO', type='param')
+            # Set UNNAMED by default
+            dp.addInput(name='entry_id', value='UNNAMED', type='param')
             dp.setDestination(strOutPath)
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
