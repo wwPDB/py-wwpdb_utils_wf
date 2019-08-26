@@ -434,11 +434,8 @@ class NmrUtils(UtilsBase):
                     conf = json.loads(file.read())
 
                 dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
-
-            else:
-                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-                dp.addInput(name='resolve_conflict', value=False, type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
@@ -485,11 +482,8 @@ class NmrUtils(UtilsBase):
                     conf = json.loads(file.read())
 
                 dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
-
-            else:
-                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-                dp.addInput(name='resolve_conflict', value=False, type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
@@ -545,11 +539,8 @@ class NmrUtils(UtilsBase):
                     conf = json.loads(file.read())
 
                 dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
-
-            else:
-                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-                dp.addInput(name='resolve_conflict', value=False, type='param')
 
             # Set UNNAMED by default
             dp.addInput(name='entry_id', value='UNNAMED', type='param')
@@ -610,11 +601,8 @@ class NmrUtils(UtilsBase):
                     conf = json.loads(file.read())
 
                 dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
+                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
-
-            else:
-                dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-                dp.addInput(name='resolve_conflict', value=False, type='param')
 
             # Set UNNAMED by default
             dp.addInput(name='entry_id', value='UNNAMED', type='param')
