@@ -542,12 +542,11 @@ class NmrUtils(UtilsBase):
                 dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
 
-            # Set UNNAMED by default
-            dp.addInput(name='entry_id', value='UNNAMED', type='param')
-            dp.addInput(name='insert_entry_id_to_loops', value=True, type='param')
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
+            dp.addOutput(name='entry_id', value='UNNAMED', type='param')
+            dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-nef2str-deposit")
             #
@@ -605,10 +604,9 @@ class NmrUtils(UtilsBase):
                 dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
                 dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
 
-            # Set UNNAMED by default
-            dp.addInput(name='entry_id', value='UNNAMED', type='param')
-            dp.addInput(name='insert_entry_id_to_loops', value=True, type='param')
             dp.setDestination(strOutPath)
+            dp.addOutput(name='entry_id', value='UNNAMED', type='param')
+            dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
             #
