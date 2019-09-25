@@ -31,7 +31,9 @@ import json
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
+sys.stdout = sys.stderr
+# CCPN project removed as not Python3 compatible
+# from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 try:
@@ -74,6 +76,12 @@ class NmrUtils(UtilsBase):
     def ccpnExtractOp(self, **kwArgs):
         """Extract PDB and NMRSTAR files from CCPn project
         """
+
+        # Disabled as not python3 compatible
+        if self._verbose:
+            self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
+        return False
+
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             ccpnPath = inpObjD["src"].getFilePathReference()
