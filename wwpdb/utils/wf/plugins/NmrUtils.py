@@ -100,69 +100,6 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def formatCheckCsOp(self, **kwArgs):
-        """Performs format check on Cs file and returns a text check report.
-
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            csPath = inpObjD["src"].getFilePathReference()
-            reportPath = outObjD["dst1"].getFilePathReference()
-            convertedStarPath = outObjD["dst2"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
-            logPath = os.path.join(dirPath, "format-check-cs.log")
-            #
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-
-            dp.imp(csPath)
-            dp.op("annot-chem-shift-check")
-            dp.expLog(logPath)
-            dp.expList([reportPath, convertedStarPath])
-            if (self.__cleanUp):
-                dp.cleanup()
-            if (self._verbose):
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Cs input  file path:    %s\n" % csPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Cs output file path:    %s\n" % convertedStarPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Report file path:       %s\n" % reportPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
-    def formatCheckCsXyzOp(self, **kwArgs):
-        """Performs format check on Cs and XYZ file and returns a text check report.
-
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            csPath = inpObjD["src1"].getFilePathReference()
-            xyzPath = inpObjD["src2"].getFilePathReference()
-
-            reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            logPath = os.path.join(dirPath, "format-check-cs-xyz.log")
-            #
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-
-            dp.imp(csPath)
-            dp.addInput(name="coordinate_file_path", value=xyzPath)
-            dp.op("annot-chem-shift-coord-check")
-            dp.expLog(logPath)
-            dp.exp(reportPath)
-            if (self.__cleanUp):
-                dp.cleanup()
-            if (self._verbose):
-                self._lfh.write("+AnnotationUtils.formatCheckCsXyzOp() - Cs input  file path:    %s\n" % csPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsXyzOp() - Report file path:       %s\n" % reportPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
