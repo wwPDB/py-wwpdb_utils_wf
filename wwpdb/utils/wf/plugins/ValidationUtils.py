@@ -200,7 +200,12 @@ class ValidationUtils(UtilsBase):
                 authorFSCPath = inpObjD["src5"].getFilePathReference()
             else:
                 authorFSCPath = None
-            
+
+            if "src6" in inpObjD:
+                emdbXMLPath = inpObjD["scr6"].getFilePathReference()
+            else:
+                emdbXMLPath = None
+
             validationReportPath = outObjD["dst1"].getFilePathReference()
             xmlReportPath = outObjD["dst2"].getFilePathReference()
 
@@ -248,10 +253,14 @@ class ValidationUtils(UtilsBase):
                 volPath = None
 
             if authorFSCPath is not None and os.access(authorFSCPath, os.R_OK):
-                vw.addInput(name="author_fsc", value=authorFSCPath)
+                vw.addInput(name="fsc_file_path", value=authorFSCPath)
             else:
                 authorFSCPath = None
-                
+
+            if emdbXMLPath is not None and os.access(emdbXMLPath, os.R_OK):
+                vw.addInput(name="emdb_xml_path", value=emdbXMLPath)
+            else:
+                emdbXMLPath = None
 
 
             vw.op("annot-wwpdb-validate-all-sf")
@@ -266,6 +275,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - CS     file path:        %s\n" % csPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Volume file path:        %s\n" % volPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - FSC    file path:        %s\n" % authorFSCPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - EMDB XML   file path:  %s\n" % emdbXMLPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
