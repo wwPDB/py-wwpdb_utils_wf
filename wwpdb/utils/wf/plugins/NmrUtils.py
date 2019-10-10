@@ -441,8 +441,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                for name, value in conf.item():
-                    dp.addInput(name, value, type='param')
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
@@ -488,8 +488,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                for name, value in conf.item():
-                    dp.addInput(name, value, type='param')
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
@@ -544,8 +544,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                for name, value in conf.item():
-                    dp.addInput(name, value, type='param')
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type='param')
 
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
@@ -605,8 +605,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                for name, value in conf.item():
-                    dp.addInput(name, value, type='param')
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type='param')
 
             dp.setDestination(strOutPath)
             dp.addOutput(name='entry_id', value='UNNAMED', type='param')
