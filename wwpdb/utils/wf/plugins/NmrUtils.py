@@ -441,9 +441,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
-                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
-                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+                for name, value in conf.item():
+                    dp.addInput(name, value, type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
@@ -489,9 +488,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
-                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
-                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+                for name, value in conf.item():
+                    dp.addInput(name, value, type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
@@ -546,9 +544,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
-                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
-                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+                for name, value in conf.item():
+                    dp.addInput(name, value, type='param')
 
             dp.setDestination(nefOutPath)
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
@@ -608,9 +605,8 @@ class NmrUtils(UtilsBase):
                 with open(cnfInpPath, 'r') as file:
                     conf = json.loads(file.read())
 
-                dp.addInput(name='nonblk_anomalous_cs', value=conf['nonblk_anomalous_cs'], type='param')
-                dp.addInput(name='nonblk_bad_nterm', value=conf['nonblk_bad_nterm'], type='param')
-                dp.addInput(name='resolve_conflict', value=conf['resolve_conflict'], type='param')
+                for name, value in conf.item():
+                    dp.addInput(name, value, type='param')
 
             dp.setDestination(strOutPath)
             dp.addOutput(name='entry_id', value='UNNAMED', type='param')
