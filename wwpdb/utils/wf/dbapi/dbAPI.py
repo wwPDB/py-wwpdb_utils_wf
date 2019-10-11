@@ -35,7 +35,7 @@ class dbAPI(object):
     def runSelectNQ(self, table=None, join=None, select=None, where=None, order=None, reverse=False, ordinal=0, run=True, limit=0):
 
         if where:
-            for k, v in where.iteritems():
+            for k, v in where.items():
                 where[k] = "'" + v + "'"
         return self.runSelect(table=table, join=join, select=select, where=where, order=order, reverse=reverse, ordinal=ordinal, run=run, limit=limit)
 
@@ -71,7 +71,7 @@ class dbAPI(object):
                 #       if True:
                 sql = "select " + ','.join(select) + ' from ' + str(table) + ' '
                 if where:
-                    sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.iteritems()])
+                    sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.items()])
                 if join:
                     sql += ' and ' + join
                 if ordinal > 0:
@@ -118,7 +118,7 @@ class dbAPI(object):
             return False
 
         try:
-            sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.iteritems()])
+            sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.items()])
             sql = sql + " where ordinal = " + str(ordinal)
             if self.verbose:
                 logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
@@ -140,20 +140,20 @@ class dbAPI(object):
         '''
 
         if where:
-            for k, v in where.iteritems():
+            for k, v in where.items():
                 where[k] = "'" + v + "'"
         if data:
-            for k, v in data.iteritems():
+            for k, v in data.items():
                 data[k] = "'" + v + "'"
         return self.runInsertUpdate(table, depID, where, data, run)
 
     def runInsertNQ(self, table=None, depID=None, where=None, data=None, run=True):
 
         if where:
-            for k, v in where.iteritems():
+            for k, v in where.items():
                 where[k] = "'" + v + "'"
         if data:
-            for k, v in data.iteritems():
+            for k, v in data.items():
                 data[k] = "'" + v + "'"
         return self.runInsert(table, depID, where, data, run)
 
@@ -161,16 +161,16 @@ class dbAPI(object):
 
         try:
             if depID:
-                sql = "insert into " + str(table) + " (dep_set_id," + ','.join(['%s' % (k) for k, v in data.iteritems()])
-                sql += ") values ('" + str(depID) + "'," + ','.join(['%s' % (v) for k, v in data.iteritems()]) + ")"
+                sql = "insert into " + str(table) + " (dep_set_id," + ','.join(['%s' % (k) for k, v in data.items()])
+                sql += ") values ('" + str(depID) + "'," + ','.join(['%s' % (v) for k, v in data.items()]) + ")"
 
             if where:
-                sql = "insert into " + str(table) + " (" + ','.join(['%s' % (k) for k, v in where.iteritems()])
+                sql = "insert into " + str(table) + " (" + ','.join(['%s' % (k) for k, v in where.items()])
                 if data:
-                    sql += "," + ','.join(['%s' % (k) for k, v in data.iteritems()])
-                sql += ") values (" + ','.join(['%s' % (v) for k, v in where.iteritems()])
+                    sql += "," + ','.join(['%s' % (k) for k, v in data.items()])
+                sql += ") values (" + ','.join(['%s' % (v) for k, v in where.items()])
                 if data:
-                    sql += "," + ','.join(['%s' % (v) for k, v in data.iteritems()])
+                    sql += "," + ','.join(['%s' % (v) for k, v in data.items()])
                 sql += ")"
 
             if self.verbose:
@@ -187,11 +187,11 @@ class dbAPI(object):
     def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
         logger.debug("Beginning run update")
         try:
-            sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.iteritems()])
+            sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.items()])
             if depID:
                 sql += " where dep_set_id = '" + str(depID) + "'"
             if where:
-                sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.iteritems()])
+                sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.items()])
 
             if self.verbose:
                 logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
@@ -241,7 +241,7 @@ class dbAPI(object):
 
         else:
             if where:
-                sql = "select ordinal from " + str(table) + " where " + ' and '.join(['%s = %s' % (k, v) for k, v in where.iteritems()])
+                sql = "select ordinal from " + str(table) + " where " + ' and '.join(['%s = %s' % (k, v) for k, v in where.items()])
                 rows = self.con.runSelectSQL(sql)
                 if rows and len(rows) > 0:
                     rowExists = True

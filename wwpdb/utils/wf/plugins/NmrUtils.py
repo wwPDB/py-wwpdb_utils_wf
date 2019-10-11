@@ -31,7 +31,8 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 sys.stdout = sys.stderr
-from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
+# CCPN project removed as not Python3 compatible
+# from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 try:
@@ -70,6 +71,12 @@ class NmrUtils(UtilsBase):
     def ccpnExtractOp(self, **kwArgs):
         """Extract PDB and NMRSTAR files from CCPn project
         """
+
+        # Disabled as not python3 compatible
+        if self._verbose:
+            self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
+        return False
+
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             ccpnPath = inpObjD["src"].getFilePathReference()
@@ -88,69 +95,6 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.ccpnExtractOp() - CCPn input  file path:     %s\n" % ccpnPath)
                 self._lfh.write("+NmrUtils.ccpnExtractOp() - PDB  output file path:     %s\n" % pdbPath)
                 self._lfh.write("+NmrUtils.ccpnExtractOp() - NMRSTAR  output file path: %s\n" % strPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
-    def formatCheckCsOp(self, **kwArgs):
-        """Performs format check on Cs file and returns a text check report.
-
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            csPath = inpObjD["src"].getFilePathReference()
-            reportPath = outObjD["dst1"].getFilePathReference()
-            convertedStarPath = outObjD["dst2"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
-            logPath = os.path.join(dirPath, "format-check-cs.log")
-            #
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-
-            dp.imp(csPath)
-            dp.op("annot-chem-shift-check")
-            dp.expLog(logPath)
-            dp.expList([reportPath, convertedStarPath])
-            if (self.__cleanUp):
-                dp.cleanup()
-            if (self._verbose):
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Cs input  file path:    %s\n" % csPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Cs output file path:    %s\n" % convertedStarPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsOp() - Report file path:       %s\n" % reportPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
-    def formatCheckCsXyzOp(self, **kwArgs):
-        """Performs format check on Cs and XYZ file and returns a text check report.
-
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            csPath = inpObjD["src1"].getFilePathReference()
-            xyzPath = inpObjD["src2"].getFilePathReference()
-
-            reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            logPath = os.path.join(dirPath, "format-check-cs-xyz.log")
-            #
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-
-            dp.imp(csPath)
-            dp.addInput(name="coordinate_file_path", value=xyzPath)
-            dp.op("annot-chem-shift-coord-check")
-            dp.expLog(logPath)
-            dp.exp(reportPath)
-            if (self.__cleanUp):
-                dp.cleanup()
-            if (self._verbose):
-                self._lfh.write("+AnnotationUtils.formatCheckCsXyzOp() - Cs input  file path:    %s\n" % csPath)
-                self._lfh.write("+AnnotationUtils.formatCheckCsXyzOp() - Report file path:       %s\n" % reportPath)
             return True
         except:
             traceback.print_exc(file=self._lfh)

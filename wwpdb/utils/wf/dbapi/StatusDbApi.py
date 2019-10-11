@@ -76,7 +76,7 @@ class StatusDbApi(object):
         #
         retList = self.__dbApi.selectData(key="GET_DEP_ID", parameter=(groupId))
         for retDir in retList:
-            if retDir.has_key('dep_set_id') and retDir['dep_set_id']:
+            if 'dep_set_id' in retDir and retDir['dep_set_id']:
                 entryList.append(str(retDir['dep_set_id']))
             #
         #

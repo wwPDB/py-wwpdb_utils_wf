@@ -273,34 +273,6 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def pdbx2nmrstarOp(self, **kwArgs):
-        """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using BRMB stack)
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            pdbxPath = outObjD["src"].getFilePathReference()
-            strPath = inpObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            #
-            dId = uD['data_set_id']
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-            dp.imp(pdbxPath)
-            dp.addInput(name="data_set_id", value=dId)
-            dp.op("annot-pdbx2nmrstar-bmrb")
-            dp.exp(strPath)
-            if (self.__cleanUp):
-                dp.cleanup()
-            if (self._verbose):
-                self._lfh.write("+FormatUtils.pdbx2nmrstarOp() - NMRSTAR  file path: %s\n" % strPath)
-                self._lfh.write("+FormatUtils.pdbx2nmrstarOp() - PDBx file path:     %s\n" % pdbxPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
     def pdbx2nmrstarAnnotOp(self, **kwArgs):
         """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)
         """
