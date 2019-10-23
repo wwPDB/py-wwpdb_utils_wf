@@ -40,6 +40,7 @@ try:
     # XXX We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
+    from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
 except ImportError:
     pass
 from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
@@ -1165,6 +1166,35 @@ class AnnotationUtils(UtilsBase):
 
             eaf = EmAutoFix(sessionPath=sessdir, siteId = siteId)
             ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)
+            # Always return true - even if no work done
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
+
+    def em3dAutoEmMapFixVersOp(self, **kwArgs):
+        """Updates version numbers of files in em_map category in model file.  Typically run on model and map files in archive as they need to be in sync.
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            sessdir = inpObjD["sessdir"].getDirPathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            pdbxOutPath = outObjD["dst"].getFilePathReference()
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+            if 'location' in uD:
+                location = str(uD['location'])
+            else:
+                location = 'archive'
+
+            eaf = EmMapAutoFixVers(sessionPath=sessdir, siteId = siteId)
+            ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath, location=location)
+            self._lfh.write("+em3dAutoEmMapFixVersOp fixvers returns %s\n" % ret)
+
             # Always return true - even if no work done
             return True
         except:
