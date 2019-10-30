@@ -41,7 +41,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     #
-    install_requires=['mysqlclient', 'wwpdb.utils.config', 'wwpdb.io', 'mmcif', 'wwpdb.utils.dp ~= 0.18'],
+    install_requires=['mysqlclient', 'wwpdb.utils.config', 'wwpdb.io', 'mmcif', 'wwpdb.utils.dp ~= 0.21'],
     packages=find_packages(exclude=['wwpdb.utils.tests_wf', 'mock-data', 'tests.*']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
