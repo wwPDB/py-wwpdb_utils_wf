@@ -618,6 +618,9 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 1:           %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 2:           %s\n" % logOutPath2)
             return stat
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
 
     def autoNmrNefProcessOp(self, **kwArgs):
         """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
