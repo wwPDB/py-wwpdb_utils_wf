@@ -44,8 +44,6 @@ except ImportError:
 
 from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
 
-sys.stdout = sys.stderr
-
 class NmrUtils(UtilsBase):
 
     """ Utility class to perform NMR file format conversions.
@@ -620,6 +618,31 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 1:           %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 2:           %s\n" % logOutPath2)
             return stat
+
+    def autoNmrNefProcessOp(self, **kwArgs):
+        """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
+
+            * workflow version * returns chemical shift file and check report output --
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            xyzPath = inpObjD["src1"].getFilePathReference()
+            nefPath = inpObjD["src2"].getFilePathReference()
+            #
+            xyzOutPath = outObjD["dst1"].getFilePathReference()
+            nefOutPath = outObjD["dst2"].getFilePathReference()
+            dirPath = outObjD["dst2"].getDirPathReference()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            util = NmrChemShiftProcessUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
+            util.setWorkingDirPath(dirPath=dirPath)
+            util.setInputModelFileName(fileName=xyzPath)
+            util.setInputNefFileName(fileName=nefPath)
+            util.setOutputModelFileName(fileName=xyzOutPath)
+            util.setOutputNefFileName(fileName=nefOutPath)
+            util.runNefProcess()
+            return True
         except:
             traceback.print_exc(file=self._lfh)
             return False
