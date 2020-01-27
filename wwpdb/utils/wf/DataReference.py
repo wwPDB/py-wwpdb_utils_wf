@@ -30,6 +30,7 @@
 #  30-Aug-2015   jw  Fix typo in method name in class ReferenceFileComponents
 #   2-Sep-2015   jdw add accessor for supported storageTypes
 #  23-Oct-2017   jdw add logging
+#   8-May-2019   my  add support for nmr-unified-data
 ##
 """
 Classes defining references and naming conventions for data resources.
@@ -273,6 +274,7 @@ class DataFileReference(DataReferenceBase):
         """A supported content type:
            - model
            - structure-factors
+           - nmr-unified-data
            - nmr-restraints
            - em-volume
            - others to be enumerated
@@ -282,6 +284,7 @@ class DataFileReference(DataReferenceBase):
            - pdbx/mmcif
            - pdb
            - pdbml
+           - nmr-nef
            - nmr-star
            - others to be enumerated
            """
@@ -436,6 +439,7 @@ class DataFileReference(DataReferenceBase):
            Examples of supported content types include:
            - model
            - structure-factors
+           - nmr-unified-data
            - nmr-restraints
            - nmr-chemical-shifts
            - component-image
