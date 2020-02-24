@@ -33,6 +33,7 @@ import shutil
 import datetime
 import time
 import difflib
+import logging
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
@@ -41,10 +42,14 @@ try:
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
     from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
+    from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
 except ImportError:
     pass
 from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
 from mmcif.io.IoAdapterCore import IoAdapterCore
+
+logger = logging.getLogger(__name__)
+
 
 class AnnotationUtils(UtilsBase):
 
@@ -60,6 +65,7 @@ class AnnotationUtils(UtilsBase):
         - Nucleic acid geometrical features
         - Chemical linkages and cis-peptide linkages
         - Automatic running of mapfix on archive files
+        - Automatic lookup of pdbx_database_related
 
         -Various format, dictionary and geometry checks
 
@@ -1118,7 +1124,7 @@ class AnnotationUtils(UtilsBase):
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             tmpdir = os.path.abspath(os.path.dirname(srcPath))
-            dIn = ioObj.readFile(inputFilePath = srcPath, outDirPath = tmpdir)
+            dIn = ioObj.readFile(inputFilePath=srcPath, outDirPath=tmpdir)
             if not dIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() -failed to load src1\n")
                 return False
@@ -1194,6 +1200,31 @@ class AnnotationUtils(UtilsBase):
             eaf = EmMapAutoFixVers(sessionPath=sessdir, siteId = siteId)
             ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath, location=location)
             self._lfh.write("+em3dAutoEmMapFixVersOp fixvers returns %s\n" % ret)
+
+            # Always return true - even if no work done
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def updatePdbxDatabaseRelatedOp(self, **kwArgs):
+        """Updates pdbx_database_related by performing lookups on deposition ids D_XXX in the db_id field for PDB, BMRB and EMDB
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            pdbxOutPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "update_pdbx_database_related.log")
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+
+            ur = UpdateRelated(siteId=siteId)
+            ret = ur.updateRelatedEntries(pdbxPath, pdbxOutPath, logPath)
+
+            self._lfh.write("+updatePdbxDatabaseRelatedOp returns %s\n" % ret)
 
             # Always return true - even if no work done
             return True
