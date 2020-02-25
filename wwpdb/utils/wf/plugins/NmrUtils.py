@@ -346,11 +346,11 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF consistency check with model
     #   action: nmr-nef-consistency-check
-    #   src0.content: nmr-unified-data-config,      src0.format: json
-    #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
-    #   src2.content: model,                        src2.format: pdbx
-    #   prc2.content: model (deposit),              prc2.format: pdbx
-    #   dst.content:  nmr-unified-data-nef-report,  dst.format:  json
+    #   src0.content: nmr-data-config,      src0.format: json
+    #   src1.content: nmr-data-nef,         src1.format: nmr-star
+    #   src2.content: model,                src2.format: pdbx
+    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   dst.content:  nmr-data-nef-report,  dst.format:  json
     def nefConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -393,11 +393,11 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 consistency check with model
     #   action: nmr-str-consistency-check
-    #   src0.content: nmr-unified-data-config,      src0.format: json
-    #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
-    #   src2.content: model,                        src2.format: pdbx
-    #   prc2.content: model (deposit),              prc2.format: pdbx
-    #   dst.content:  nmr-unified-data-str-report,  dst.format:  json
+    #   src0.content: nmr-data-config,      src0.format: json
+    #   src1.content: nmr-data-str,         src1.format: nmr-star
+    #   src2.content: model,                src2.format: pdbx
+    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   dst.content:  nmr-data-str-report,  dst.format:  json
     def strConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -440,15 +440,15 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2str-deposit
-    #   src0.content: nmr-unified-data-config,      src0.format: json
-    #   src1.content: nmr-unified-data-nef,         src1.format: nmr-star
-    #   src2.content: model,                        src2.format: pdbx
-    #   prc2.content: model (deposit),              prc2.format: pdbx
-    #   src3.content: nmr-unified-data-nef-report,  src3.format: json
-    #   dst1.content: nmr-unified-data-nef,         dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-str,         dst2.format: nmr-star
-    #   dst3.content: nmr-unified-data-nef-report,  dst3.format: json
-    #   dst4.content: nmr-unified-data-str-report,  dst4.format: json
+    #   src0.content: nmr-data-config,      src0.format: json
+    #   src1.content: nmr-data-nef,         src1.format: nmr-star
+    #   src2.content: model,                src2.format: pdbx
+    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   src3.content: nmr-data-nef-report,  src3.format: json
+    #   dst1.content: nmr-data-nef,         dst1.format: nmr-star
+    #   dst2.content: nmr-data-str,         dst2.format: nmr-star
+    #   dst3.content: nmr-data-nef-report,  dst3.format: json
+    #   dst4.content: nmr-data-str-report,  dst4.format: json
     def nef2strDepositOp(self, **kwArgs):
         """Perform NEF to NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -504,13 +504,13 @@ class NmrUtils(UtilsBase):
 
     # DepUI for NMR unified data: NMR-STAR V3.2 conversion and deposition
     #   action: nmr-str2str-deposit
-    #   src0.content: nmr-unified-data-config,      src0.format: json
-    #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
-    #   src2.content: model,                        src2.format: pdbx
-    #   prc2.content: model (deposit),              prc2.format: pdbx
-    #   src3.content: nmr-unified-data-str-report,  src3.format: json
-    #   dst1.content: nmr-unified-data-str,         dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-str-report,  dst2.format: json
+    #   src0.content: nmr-data-config,      src0.format: json
+    #   src1.content: nmr-data-str,         src1.format: nmr-star
+    #   src2.content: model,                src2.format: pdbx
+    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   src3.content: nmr-data-str-report,  src3.format: json
+    #   dst1.content: nmr-data-str,         dst1.format: nmr-star
+    #   dst2.content: nmr-data-str-report,  dst2.format: json
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
@@ -558,30 +558,26 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    # DepUI for NMR unified data: NMR-STAR V3.2 -> NEF conversion and deposition
+    # NMR-STAR V3.2 -> NEF conversion and release
     #   action: nmr-str2nef-deposit
-    #   src0.content: nmr-unified-data-config,      src0.format: json
-    #   src1.content: nmr-unified-data-str,         src1.format: nmr-star
-    #   src2.content: model,                        src2.format: pdbx
-    #   prc2.content: model (deposit),              prc2.format: pdbx
-    #   src3.content: nmr-unified-data-str-report,  src3.format: json
-    #   dst1.content: nmr-unified-data-str,         dst1.format: nmr-star
-    #   dst2.content: nmr-unified-data-nef,         dst2.format: nmr-star
-    #   dst3.content: nmr-unified-data-str-report,  dst3.format: json
-    #   dst4.content: nmr-unified-data-nef-report,  dst4.format: json
-    def str2nefDepositOp(self, **kwArgs):
-        """Perform NMR-STAR V3.2 to NEF format conversion operation (special processing for deposition sessions)
+    #   src1.content: nmr-data-str,         src1.format: nmr-star
+    #   src2.content: model,                src2.format: pdbx
+    #   dst0.content: nmr-data-str-report,  dst0.format: json
+    #   dst1.content: nmr-data-str,         dst1.format: nmr-star
+    #   dst2.content: nmr-data-nef,         dst2.format: nmr-star
+    #   dst3.content: nmr-data-str-report,  dst3.format: json
+    #   dst4.content: nmr-data-nef-report,  dst4.format: json
+    def str2nefReleaseOp(self, **kwArgs):
+        """Perform NMR-STAR V3.2 to NEF format conversion operation for public release
 
            Returns True for success or False for warnings/errors.
 
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
-            prcInpPath = inpObjD["prc2"].getFilePathReference()
-            logInpPath = inpObjD["src3"].getFilePathReference()
+            logOutPath = outObjD["dst0"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             nefOutPath = outObjD["dst2"].getFilePathReference()
             logOutPath1 = outObjD["dst3"].getFilePathReference()
@@ -591,32 +587,31 @@ class NmrUtils(UtilsBase):
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
-            dp.addInput(name='report_file_path', value=logInpPath, type='file')
-
-            if os.path.exists(cnfInpPath):
-
-                with open(cnfInpPath, 'r') as file:
-                    conf = json.loads(file.read())
-
-                for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
-
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            dp.addInput(name='nonblk_bad_nterm', value=True, type='param')
+            dp.addInput(name='resolve_conflict', value=True, type='param')
+            dp.addInput(name='check_mandatory_tag', value=True, type='param')
+            dp.setLog(logOutPath)
+            stat = dp.op("nmr-str-consistency-check")
+            #
+            dp.setSource(strInpPath)
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='report_file_path', value=logOutPath, type='file')
             dp.setDestination(strOutPath)
             dp.addOutput(name='nef_file_path', value=nefOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
             dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
             dp.setLog(logOutPath1)
-            stat = dp.op("nmr-str2nef-deposit")
+            stat = dp.op("nmr-str2nef-release")
             #
             if (self._verbose):
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - mmCIF input file path:             %s\n" % cifInpPath)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON input file path:              %s\n" % logInpPath)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % strOutPath)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - NEF file path:                     %s\n" % nefOutPath)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 1:           %s\n" % logOutPath1)
-                self._lfh.write("+NmrUtils.str2nefDepositOp() - JSON output file path 2:           %s\n" % logOutPath2)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - mmCIF input file path:             %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON input file path:              %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - NMR-STAR V3.2 output file path:    %s\n" % strOutPath)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - NEF file path:                     %s\n" % nefOutPath)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 1:           %s\n" % logOutPath1)
+                self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 2:           %s\n" % logOutPath2)
             return stat
         except:
             traceback.print_exc(file=self._lfh)
