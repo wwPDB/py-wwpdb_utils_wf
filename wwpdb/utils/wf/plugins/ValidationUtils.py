@@ -402,7 +402,6 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - NMRdata file path:       %s\n" % nmrDataPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Volume  file path:       %s\n" % volPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - FSC     file path:       %s\n" % authorFSCPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - EMDB XML   file path:  %s\n" % emdbXMLPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
