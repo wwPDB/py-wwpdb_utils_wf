@@ -438,6 +438,53 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
+    # DepUI for NMR legacy data: Chemical shifts file check with model
+    #   action: nmr-cs-str-check
+    #   src0.content: nmr-data-config,      src0.format: json
+    #   src1.content: nmr-cs-path-list,     src1.format: string
+    #   src2.content: model,                src2.format: pdbx
+    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   dst.content:  nmr-data-str-report,  dst.format:  json
+    def csStrConsistencyCheckOp(self, **kwArgs):
+        """Performs consistency check on input chemical shift list with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
+
+           Returns True for success or False for warnings/errors.
+
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            csPathList = inpObjD["src1"].getValue()
+            cifInpPath = inpObjD["src2"].getFilePathReference()
+            prcInpPath = inpObjD["prc2"].getFilePathReference()
+            logOutPath = outObjD["dst"].getFilePathReference()
+            #
+            dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
+            dp.setVerbose(flag=True)
+            dp.addInput(name='chem_shift_file_path_list', value=csPathList, type='file_list')
+            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, 'r') as file:
+                    conf = json.loads(file.read())
+
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type='param')
+
+            dp.setLog(logOutPath)
+            stat = dp.op("nmr-cs-str-consistency-check")
+            #
+            if (self._verbose):
+                self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - CS file path list:        %s\n" % csPathList)
+                self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
+            return stat
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
     # DepUI for NMR unified data: NEF -> NMR-STAR V3.2 conversion and deposition
     #   action: nmr-nef2str-deposit
     #   src0.content: nmr-data-config,      src0.format: json
