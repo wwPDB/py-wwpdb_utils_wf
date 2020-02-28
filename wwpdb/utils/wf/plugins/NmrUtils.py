@@ -454,7 +454,16 @@ class NmrUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
-            csPathList = inpObjD["src1"].getValue()
+            #
+            csPathList = []
+            csPathListFilePath = inpObjD["src1"].getFilePathReference()
+            #
+            ifh = open(csPathListFilePath, 'r')
+            for tline in ifh:
+                txt = str(tline[:-1]).strip()
+                csPathList.append(txt)
+            ifh.close()
+            #
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
             logOutPath = outObjD["dst"].getFilePathReference()
