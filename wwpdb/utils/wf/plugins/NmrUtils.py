@@ -472,8 +472,9 @@ class NmrUtils(UtilsBase):
                 for mr in mr_list:
                     mr_file = mr['file_name']
                     mr_orig_file = mr['original_file_name']
+                    mr_file_type = mr['file_type']
                     mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
-                    if mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef':
+                    if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
                         mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
