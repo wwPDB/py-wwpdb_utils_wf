@@ -443,6 +443,7 @@ class NmrUtils(UtilsBase):
     #   src1.content: nmr-cs-path-list,     src1.format: string
     #   src2.content: nmr-mr-path-list,     src2.format: string
     #   src3.content: model,                src3.format: pdbx
+    #   prc3.content: model (deposit),      prc3.format: pdbx
     #   dst.content:  nmr-data-str-report,  dst.format:  json
     def csStrConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input chemical shift/restraint list with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
@@ -478,6 +479,7 @@ class NmrUtils(UtilsBase):
                         mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
+            prcInpPath = inpObjD["prc3"].getFilePathReference()
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
@@ -486,6 +488,7 @@ class NmrUtils(UtilsBase):
             if len(mrPathList) > 0:
                 dp.addInput(name='restraint_file_path_list', value=mrPathList, type='file_list')
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
+            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
 
             dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
             dp.addInput(name='nonblk_bad_nterm', value=True, type='param')
