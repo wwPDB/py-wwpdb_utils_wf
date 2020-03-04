@@ -438,46 +438,70 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    # DepUI for NMR legacy data: Chemical shifts file check with model
+    # DepUI for NMR legacy data: Chemical shifts/restraints file check with model
     #   action: nmr-cs-str-check
-    #   src0.content: nmr-data-config,      src0.format: json
     #   src1.content: nmr-cs-path-list,     src1.format: string
-    #   src2.content: model,                src2.format: pdbx
-    #   prc2.content: model (deposit),      prc2.format: pdbx
+    #   src2.content: nmr-mr-path-list,     src2.format: string
+    #   src3.content: model,                src3.format: pdbx
+    #   prc3.content: model (deposit),      prc3.format: pdbx
     #   dst.content:  nmr-data-str-report,  dst.format:  json
     def csStrConsistencyCheckOp(self, **kwArgs):
-        """Performs consistency check on input chemical shift list with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
+        """Performs consistency check on input chemical shift/restraint list with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
            Returns True for success or False for warnings/errors.
 
         """
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
-            csPathList = inpObjD["src1"].getValue()
-            cifInpPath = inpObjD["src2"].getFilePathReference()
-            prcInpPath = inpObjD["prc2"].getFilePathReference()
+            csPathList = []
+            csPathListFilePath = inpObjD["src1"].getFilePathReference()
+            #
+            ifh = open(csPathListFilePath, 'r')
+            for tline in ifh:
+                txt = str(tline[:-1]).strip()
+                csPathList.append(txt)
+            ifh.close()
+            #
+            mrPathList = []
+            mrInpPath = inpObjD["src2"].getFilePathReference()
+            #
+            if os.path.exists(mrInpPath):
+
+                with open(mrInpPath, 'r') as file:
+                    mr_list = json.loads(file.read())
+
+                for mr in mr_list:
+                    mr_file = mr['file_name']
+                    mr_orig_file = mr['original_file_name']
+                    mr_file_type = mr['file_type']
+                    mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
+                    if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
+                        mrPathList.append(mr_file)
+            #
+            cifInpPath = inpObjD["src3"].getFilePathReference()
+            prcInpPath = inpObjD["prc3"].getFilePathReference()
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.addInput(name='chem_shift_file_path_list', value=csPathList, type='file_list')
+            if len(mrPathList) > 0:
+                dp.addInput(name='restraint_file_path_list', value=mrPathList, type='file_list')
             dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
             dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
 
-            if os.path.exists(cnfInpPath):
-
-                with open(cnfInpPath, 'r') as file:
-                    conf = json.loads(file.read())
-
-                for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
+            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
+            dp.addInput(name='nonblk_bad_nterm', value=True, type='param')
+            dp.addInput(name='resolve_conflict', value=True, type='param')
+            dp.addInput(name='check_mandatory_tag', value=False, type='param')
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-cs-str-consistency-check")
             #
             if (self._verbose):
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - CS file path list:        %s\n" % csPathList)
+                if len(mrPathList) > 0:
+                    self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - MR file path list:        %s\n" % mrPathList)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
