@@ -78,8 +78,7 @@ class FormatUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbxPath)
             dp.op("annot-cif2pdb")
             dp.exp(pdbPath)
@@ -104,8 +103,7 @@ class FormatUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif")
             dp.exp(pdbxPath)
@@ -130,8 +128,7 @@ class FormatUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif-dep")
             dp.exp(pdbxPath)
@@ -156,8 +153,7 @@ class FormatUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif")
             dp.exp(pdbxPath)
@@ -182,8 +178,7 @@ class FormatUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif-dep")
             dp.exp(pdbxPath)
@@ -257,8 +252,7 @@ class FormatUtils(UtilsBase):
             dId = uD['data_set_id']
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(strPath)
             dp.addInput(name="data_set_id", value=dId)
             dp.op("annot-nmrstar2pdbx")
@@ -285,8 +279,7 @@ class FormatUtils(UtilsBase):
             dId = uD['data_set_id']
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            tmpPath = cI.get("SITE_TMP_DIR")
-            dp = RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbxPath)
             dp.addInput(name="pdb_id", value=dId)
             dp.op("annot-pdbx2nmrstar")

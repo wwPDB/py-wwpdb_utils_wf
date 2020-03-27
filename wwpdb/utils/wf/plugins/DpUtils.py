@@ -57,8 +57,7 @@ class DpUtils(UtilsBase):
             #
             cI=ConfigInfo()
             siteId=cI.get("SITE_PREFIX")
-            tmpPath=cI.get("SITE_TMP_DIR")
-            dp=RcsbDpUtility(tmpPath=tmpPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp=RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbxPath)
             dp.op("annot-poly-link-dist")
             dp.exp(distPath)
