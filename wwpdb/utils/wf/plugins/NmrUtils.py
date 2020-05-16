@@ -27,6 +27,7 @@ import difflib
 import string
 import random
 import json
+import re
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
@@ -470,13 +471,44 @@ class NmrUtils(UtilsBase):
                 with open(mrInpPath, 'r') as file:
                     mr_list = json.loads(file.read())
 
+                datablock_pattern = re.compile(r'\s*data_\S+\s*')
+                sf_anonymous_pattern = re.compile(r'\s*save_\S+\s*')
+                save_pattern = re.compile(r'\s*save_\s*')
+                loop_pattern = re.compile(r'\s*loop_\s*')
+                stop_pattern = re.compile(r'\s*stop_\s*')
+
                 for mr in mr_list:
                     mr_file = mr['file_name']
-                    mr_orig_file = mr['original_file_name']
+                    #mr_orig_file = mr['original_file_name']
                     mr_file_type = mr['file_type']
-                    mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
-                    if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
-                        mrPathList.append(mr_file)
+
+                    #mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
+                    #if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
+
+                    if mr_file_type.startswith('nm-res'):
+                        has_datablock = False
+                        has_anonymous_saveframe = False
+                        has_save = False
+                        has_loop = False
+                        has_stop = False
+
+                        with open(mr_file, 'r') as ifp:
+                            for line in ifp:
+                                if datablock_pattern.match(line):
+                                    has_datablock = True
+                                elif sf_anonymous_pattern.match(line):
+                                    has_anonymous_saveframe = True
+                                elif save_pattern.match(line):
+                                    has_save = True
+                                elif loop_pattern.match(line):
+                                    has_loop = True
+                                elif stop_pattern.match(line):
+                                    has_stop = True
+
+                            ifp.close()
+
+                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop: # NMR-STAR or NEF
+                            mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
             prcInpPath = inpObjD["prc3"].getFilePathReference()
