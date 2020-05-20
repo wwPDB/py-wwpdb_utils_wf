@@ -43,8 +43,11 @@ try:
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
     from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
     from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
+    from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpUpdate import PdbxExpUpdate
+    from wwpdb.utils.session.WebRequest import InputRequest
 except ImportError:
     pass
+
 from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
 from mmcif.io.IoAdapterCore import IoAdapterCore
 
@@ -1225,6 +1228,40 @@ class AnnotationUtils(UtilsBase):
             ret = ur.updateRelatedEntries(pdbxPath, pdbxOutPath, logPath)
 
             self._lfh.write("+updatePdbxDatabaseRelatedOp returns %s\n" % ret)
+
+            # Always return true - even if no work done
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def updateSFWavelengthOp(self, **kwArgs):
+        """Updates wavelnegth in SF fie
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            sfPath = inpObjD["src2"].getFilePathReference()
+            sfOutPath = outObjD["dst"].getFilePathReference()
+            # For session directory
+            dirPath = inpObjD["src1"].getDirPathReference()
+            entryId = inpObjD["src1"].getDepositionDataSetId()
+
+            if not os.path.exists(sfPath):
+                # NMR, EM, etc
+                return True
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            myReqObj = InputRequest({}, verbose=True, log=sys.stderr)
+            myReqObj.setValue("TopSessionPath", dirPath)
+            myReqObj.setValue("WWPDB_SITE_ID",  siteId)
+            myReqObj.newSessionObj()
+
+            peu = PdbxExpUpdate(myReqObj, verbose=self._verbose, log=self._lfh)
+            ret = peu.doUpdate(entryId, modelInputFile=pdbxPath, expInputFile=sfPath, expOutputFile=sfOutPath, skipNotChanged=True)
+
+            self._lfh.write("+updateSFWavelengthOp returns %s\n" % ret)
 
             # Always return true - even if no work done
             return True
