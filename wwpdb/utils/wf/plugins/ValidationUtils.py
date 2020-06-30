@@ -16,6 +16,7 @@
 #  14-Jul-2016 jdw add 'validation_mode' input parameter -
 #  18-Dec-2016 ep  remove unused validationReportAltOp and validationReportV2Op
 #  10-May-2019 ep  add validationReportAllOpV2 for export of edmap coefficients
+#  30-Jun-2020 zf  modify to be compatible with the changes of image tar file output in RcsbDpUtility & ValidationWrapper
 ##
 """
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -102,6 +103,7 @@ class ValidationUtils(UtilsBase):
             svgReportPath = outObjD["dst5"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
+            imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
             cI = ConfigInfo()
@@ -145,7 +147,7 @@ class ValidationUtils(UtilsBase):
             
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath])
+            dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Entry Id:                %s\n" % depDataSetId)
@@ -216,6 +218,7 @@ class ValidationUtils(UtilsBase):
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
+            imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
             cI = ConfigInfo()
@@ -266,7 +269,7 @@ class ValidationUtils(UtilsBase):
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
             vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
-                                    coeffoReportPath, coef2foReportPath])
+                                    imageTarPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
@@ -342,6 +345,7 @@ class ValidationUtils(UtilsBase):
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
+            imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
             cI = ConfigInfo()
@@ -392,7 +396,7 @@ class ValidationUtils(UtilsBase):
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
             vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
-                                    coeffoReportPath, coef2foReportPath])
+                                    imageTarPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
