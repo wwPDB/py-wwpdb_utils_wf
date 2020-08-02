@@ -32,8 +32,11 @@ import traceback
 import shutil
 import datetime
 import time
+import tempfile
 import difflib
 import logging
+import socket
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
@@ -42,6 +45,7 @@ try:
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
     from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
+    from wwpdb.apps.ann_tasks_v2.em3d.EmHeaderUtils import EmHeaderUtils
     from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpUpdate import PdbxExpUpdate
     from wwpdb.utils.session.WebRequest import InputRequest
@@ -1269,4 +1273,61 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
+
+    def emdXmlHeaderCheckOp(self, **kwArgs):
+        """Checks EMD -> XML header conversion
+        """
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+
+            reportPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            #logPath = os.path.join(dirPath, "dict-check.log")
+
+
+            ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
+            dIn = ioObj.readFile(inputFilePath=pdbxPath, selectList=['em_admin'])
+            if not dIn or len(dIn) == 0:
+                return True
+
+            cObj = dIn[0].getObj("em_admin")
+            if not cObj:
+                # No em_admin
+                return True
+
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+            hostName = str(socket.gethostname()).split('.')[0]
+            if ((hostName is not None) and (len(hostName) > 0)):
+                suffix = '-' + hostName
+            else:
+                suffix = '-dir'
+            wrkPath = tempfile.mkdtemp(suffix, "rcsb-", dirPath)
+            os.chmod(wrkPath, 0o750)
+
+            emdModelPath = os.path.join(wrkPath, depDataSetId + "_model-emd.cif")
+            emdXmlPath = os.path.join(wrkPath, depDataSetId + "-emd.xml")
+
+            emh = EmHeaderUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
+            status = emh.transEmd(pdbxPath, emdModelPath, mode="src-dst", tags=[])
+            if not status:
+                self._lfh.write("Translation of model failed\n")
+                return True
+
+
+            status = emh.transHeader(emdModelPath, emdXmlPath, reportPath, validateXml = True)
+            self._lfh.write("Status of xml translation %s\n" % status)
+
+            # Cleanup directory
+            shutil.rmtree(wrkPath, ignore_errors=True)
+
+            # Always return true - even if no work done
+            return True
+        except:
+            traceback.print_exc(file=self._lfh)
+            return False
 
