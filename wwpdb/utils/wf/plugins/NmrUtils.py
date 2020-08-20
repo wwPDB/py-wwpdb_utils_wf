@@ -589,6 +589,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
             dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
+            dp.addOutput(name='leave_intl_note', value=False, type='param')
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-nef2str-deposit")
             #
@@ -647,6 +648,7 @@ class NmrUtils(UtilsBase):
 
             dp.setDestination(strOutPath)
             dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
+            dp.addOutput(name='leave_intl_note', value=False, type='param')
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
             #
@@ -704,6 +706,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name='nef_file_path', value=nefOutPath, type='file')
             dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
             dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
+            dp.addOutput(name='leave_intl_note', value=False, type='param')
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-str2nef-release")
             #
