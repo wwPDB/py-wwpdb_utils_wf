@@ -375,6 +375,7 @@ class ValidationUtils(UtilsBase):
             # If nmr-data and cs data - use nmr-data -- this happens in DepUI
             if nmrDataPath is not None and os.access(nmrDataPath, os.R_OK):
                 vw.addInput(name="cs_file_path", value=nmrDataPath)
+                vw.addInput(name="nmr_restraint_file_path", value=nmrDataPath)
             else:
                 nmrDataPath = None
 
