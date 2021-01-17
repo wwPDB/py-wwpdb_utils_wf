@@ -235,6 +235,12 @@ class ValidationUtils(UtilsBase):
             if inAnnotation in ["yes", "no"]:
                 vw.addInput(name="request_annotation_context", value=inAnnotation)
             #
+            # Add file cleanup - if desired
+            #
+            alwaysCleanup = cI.get("WF_VALIDATION_REMOVE", None)
+            if alwaysCleanup:
+                vw.addInput(name="always_clear_calcs", value="Y")
+            #
             # add parameters only if these exist --
             #
             if depDataSetId is not None and len(depDataSetId) > 3:
@@ -361,6 +367,14 @@ class ValidationUtils(UtilsBase):
             inAnnotation = str(uD['in_annotation'])
             if inAnnotation in ["yes", "no"]:
                 vw.addInput(name="request_annotation_context", value=inAnnotation)
+
+            #
+            # Add file cleanup - if desired
+            #
+            alwaysCleanup = cI.get("WF_VALIDATION_REMOVE", None)
+            if alwaysCleanup:
+                vw.addInput(name="always_clear_calcs", value="Y")
+
             #
             # add parameters only if these exist --
             #
@@ -400,21 +414,21 @@ class ValidationUtils(UtilsBase):
                                     imageTarPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDBx    file path:       %s\n" % pdbxPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SF      file path:       %s\n" % sfPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - CS      file path:       %s\n" % csPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - NMRdata file path:       %s\n" % nmrDataPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Volume  file path:       %s\n" % volPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - FSC     file path:       %s\n" % authorFSCPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SVG slider file path:  %s\n" % svgReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - full PDF   file path:  %s\n" % validationFullReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - fo coef file path:     %s\n" % coeffoReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - 2fo coef file path     %s\n" % coef2foReportPath)
-                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - validation mode:       %s\n" % validationMode)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - Entry Id:                %s\n" % depDataSetId)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PDBx    file path:       %s\n" % pdbxPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - SF      file path:       %s\n" % sfPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - CS      file path:       %s\n" % csPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - NMRdata file path:       %s\n" % nmrDataPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - Volume  file path:       %s\n" % volPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - FSC     file path:       %s\n" % authorFSCPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PDF report file path:  %s\n" % validationReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PNG slider file path:  %s\n" % pngReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - SVG slider file path:  %s\n" % svgReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - full PDF   file path:  %s\n" % validationFullReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - fo coef file path:     %s\n" % coeffoReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - 2fo coef file path     %s\n" % coef2foReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - validation mode:       %s\n" % validationMode)
 
             if (self.__cleanUp):
                 vw.cleanup()
