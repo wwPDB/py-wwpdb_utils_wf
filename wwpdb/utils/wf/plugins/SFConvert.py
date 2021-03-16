@@ -29,7 +29,8 @@ class SFConvert(object):
         try:
             io = IoAdapterCore()
             # Categories that will trigger special handling.  AUTOProc uses software
-            catList = ['software', 'pdbx_dataset_provider_software']
+            # Used to key off software
+            catList = ['pdbx_audit_conform']
 
             containerList = io.readFile(pathIn, selectList=catList)
 
@@ -125,11 +126,11 @@ class SFConvert(object):
             errs.append("Error: empty file")
       
         else:
-            # In datablock 1, reflns category should have at least one of: F/I/F+/F-/I+/I-
+            # In first datablock, refln category should have at least one of: F/I/F+/F-/I+/I-
             b0 = cList[0]
 
             if "refln" not in b0.getObjNameList():
-                errs.append("Error: missing _reflns category in first block")
+                errs.append("Error: missing _refln category in first block")
             else:
                 cObj = b0.getObj("refln")
                 needAtt = ["F_meas_au", "F_meas", "intensity_meas", "intensity_meas_au",
@@ -141,6 +142,12 @@ class SFConvert(object):
                         found = True
                 if not found:
                     errs.append("Error: SF file missing mandatory items 'F/I/F+/F-/I+/I-'")
+
+            # Check all datablocks to ensure none have both merged and unmerged data
+            for bl in cList:
+                names = bl.getObjNameList()
+                if "refln" in names and "diffrn_refln" in names:
+                    errs.append("Error: cannot have _refln and _diffrn_refln categories in same data block")
 
         if len(errs) > 0:
             #sfDiagFilePath, logFilePath):
