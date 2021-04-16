@@ -101,6 +101,7 @@ class ValidationUtils(UtilsBase):
             validationFullReportPath = outObjD["dst3"].getFilePathReference()
             pngReportPath = outObjD["dst4"].getFilePathReference()
             svgReportPath = outObjD["dst5"].getFilePathReference()
+            cifReportPath = outObjD["dst6"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
@@ -147,7 +148,7 @@ class ValidationUtils(UtilsBase):
             
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath])
+            dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath, cifReportPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Entry Id:                %s\n" % depDataSetId)
@@ -158,6 +159,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Fsc    file path:        %s\n" % fscPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOp() - CIF report file path:  %s\n" % cifReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PNG slider file path:  %s\n" % pngReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - SVG slider file path:  %s\n" % svgReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - full PDF   file path:  %s\n" % validationFullReportPath)
@@ -216,6 +218,7 @@ class ValidationUtils(UtilsBase):
             svgReportPath = outObjD["dst5"].getFilePathReference()
             coeffoReportPath = outObjD["dst6"].getFilePathReference()
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
+            cifReportPath = outObjD["dst8"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
@@ -274,8 +277,8 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
-                                    imageTarPath, coeffoReportPath, coef2foReportPath])
+            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, \
+                                    imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
@@ -287,6 +290,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - EMDB XML   file path:  %s\n" % emdbXMLPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV2() - CIF report file path:  %s\n" % cifReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PNG slider file path:  %s\n" % pngReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SVG slider file path:  %s\n" % svgReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - full PDF   file path:  %s\n" % validationFullReportPath)
@@ -349,6 +353,7 @@ class ValidationUtils(UtilsBase):
             svgReportPath = outObjD["dst5"].getFilePathReference()
             coeffoReportPath = outObjD["dst6"].getFilePathReference()
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
+            cifReportPath = outObjD["dst8"].getFilePathReference()
 
             dirPath = outObjD["dst1"].getDirPathReference()
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
@@ -410,8 +415,8 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, 
-                                    imageTarPath, coeffoReportPath, coef2foReportPath])
+            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, \
+                                    imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - Entry Id:                %s\n" % depDataSetId)
@@ -423,6 +428,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - FSC     file path:       %s\n" % authorFSCPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PDF report file path:  %s\n" % validationReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationReportAllOpV3() - CIF report file path:  %s\n" % cifReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PNG slider file path:  %s\n" % pngReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - SVG slider file path:  %s\n" % svgReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - full PDF   file path:  %s\n" % validationFullReportPath)
