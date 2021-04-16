@@ -898,7 +898,7 @@ class DataFileReference(DataReferenceBase):
         The file path convention is:
         - archive files     = <SITE_ARCHIVE_STORAGE_PATH>/archive/<deposition data set id>/
         - deposit files     = <SITE_DEPOSIT_STORAGE_PATH>/archive/<deposition data set id>/
-        - temp deposit files     = <SITE_TEMPDEP_STORAGE_PATH>/tempdep/<deposition data set id>/
+        - temp deposit files     = <SITE_ARCHIVE_STORAGE_PATH>/tempdep/<deposition data set id>/
         - workflow shared   = <SITE_WORKFLOW_STORAGE_PATH>/workflow/<deposition data set id>/shared/<self.__workflowNameSpace>
         - workflow instance = <SITE_WORKFLOW_STORAGE_PATH>/workflow/<deposition data set id>/instance/<self.__workflowInstanceId>
         - session files     = session path/
@@ -918,7 +918,7 @@ class DataFileReference(DataReferenceBase):
             elif (self.__storageType == 'deposit'):
                 tpth = os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', self.__depositionDataSetId)
             elif (self.__storageType == 'tempdep'):
-                tpth = os.path.join(self.__cI.get('SITE_TEMPDEP_STORAGE_PATH'), 'tempdep', self.__depositionDataSetId)
+                tpth = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'tempdep', self.__depositionDataSetId)
             elif (self.__storageType == 'wf-shared'):
                 tpth = os.path.join(self.__cI.get('SITE_WORKFLOW_STORAGE_PATH'), 'workflow', self.__depositionDataSetId, 'shared', self.__workflowNameSpace)
             elif (self.__storageType == 'wf-instance'):
