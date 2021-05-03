@@ -19,7 +19,7 @@ import sys
 import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppEm
 from mmcif_utils.trans.InstanceMapper import InstanceMapper
 
 
@@ -56,8 +56,8 @@ class DictUtils(UtilsBase):
             #
             dstPath = outObjD["dst"].getFilePathReference()
             #
-            cI = ConfigInfo()
-            mappingInfoPath = cI.get("SITE_EXT_DICT_MAP_EMD_FILE_PATH")
+            cIA = ConfigInfoAppEm()
+            mappingInfoPath = cIA.get_emd_mapping_file_path()
 
             #
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
@@ -83,8 +83,8 @@ class DictUtils(UtilsBase):
             #
             dstPath = outObjD["dst"].getFilePathReference()
             #
-            cI = ConfigInfo()
-            mappingInfoPath = cI.get("SITE_EXT_DICT_MAP_EMD_FILE_PATH")
+            cIA = ConfigInfoAppEm()
+            mappingInfoPath = cIA.get_emd_mapping_file_path()
 
             #
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
