@@ -27,36 +27,36 @@ class ActionRegistry(object):
 
     """Container and manager class for the registry of supported process actions.
 
-        The action registry has the following internal data orgaization:
+    The action registry has the following internal data orgaization:
 
-        - A dictionary with unique action identifier referencing a dictionary with the following content:
+    - A dictionary with unique action identifier referencing a dictionary with the following content:
 
-          + INPUT_INFO_LIST & OUTPUT_INFO_LIST,  list of required features of the input and out
-            data objects stored as tuples of (reference_type, (data_type,container_type), selector_type)
-          + USER_PARAMETER_DICTIONARY,  container for user settable parameters passed to
-            the action method.
-          + INTERNAL_PARAMETER_DICTIONARY,  container for internal parameters passed to
-            the action method.
-          + MODULE_NAME,   Python module(class) name containing the target method
-          + METHOD_NAME,   Python method name
+      + INPUT_INFO_LIST & OUTPUT_INFO_LIST,  list of required features of the input and out
+        data objects stored as tuples of (reference_type, (data_type,container_type), selector_type)
+      + USER_PARAMETER_DICTIONARY,  container for user settable parameters passed to
+        the action method.
+      + INTERNAL_PARAMETER_DICTIONARY,  container for internal parameters passed to
+        the action method.
+      + MODULE_NAME,   Python module(class) name containing the target method
+      + METHOD_NAME,   Python method name
 
-        Method prototype:
+    Method prototype:
 
-        method(inputObjList=[],outputObjList=[],parameterDictionary={})
+    method(inputObjList=[],outputObjList=[],parameterDictionary={})
 
-       """
+    """
 
     def __init__(self):
         self.__cI = ConfigInfo()
-        regPath = self.__cI.get('SITE_REGISTRY_FILE_PATH')
+        regPath = self.__cI.get("SITE_REGISTRY_FILE_PATH")
         aR = ActionRegistryIo(filePath=regPath)
         self.__D = aR.getRegistry()
 
     def getActions(self):
         """Returns:
 
-           List of action identifiers defined in the action registry. An empty list is
-           returned if the an exception is encountered.
+        List of action identifiers defined in the action registry. An empty list is
+        returned if the an exception is encountered.
 
         """
         try:
@@ -65,9 +65,9 @@ class ActionRegistry(object):
             return []
 
     def isDefinedAction(self, actionId):
-        """ Returns:
+        """Returns:
 
-            True if the input action identifier is defined in the registry or False otherwise.
+        True if the input action identifier is defined in the registry or False otherwise.
         """
         if actionId in self.__D:
             return True
@@ -75,113 +75,113 @@ class ActionRegistry(object):
             return False
 
     def getMethodName(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The Python method name associated with the input action identifier
-            or None if the action is not defined.
+        The Python method name associated with the input action identifier
+        or None if the action is not defined.
         """
         try:
-            return self.__D[actionId]['METHOD_NAME']
+            return self.__D[actionId]["METHOD_NAME"]
         except Exception as _e:  # noqa: F841
             return None
 
     def getModuleName(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The Python module name containing the method associated with the input action identifier
-            or None if the action is not defined.
+        The Python module name containing the method associated with the input action identifier
+        or None if the action is not defined.
         """
 
         try:
-            return self.__D[actionId]['MODULE_NAME']
+            return self.__D[actionId]["MODULE_NAME"]
         except Exception as _e:  # noqa: F841
             return None
 
     def getUserParameterDict(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The user parameter dictionary for the input action identifier
-            or {} if the action is not defined.
+        The user parameter dictionary for the input action identifier
+        or {} if the action is not defined.
         """
 
         try:
-            return self.__D[actionId]['USER_PARAMETER_DICT']
+            return self.__D[actionId]["USER_PARAMETER_DICT"]
         except Exception as _e:  # noqa: F841
             return {}
 
     def getInternalParameterDict(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The internal parameter dictionary for the input action identifier
-            or {} if the action is not defined.
+        The internal parameter dictionary for the input action identifier
+        or {} if the action is not defined.
         """
 
         try:
-            return self.__D[actionId]['INTERNAL_PARAMETER_DICT']
+            return self.__D[actionId]["INTERNAL_PARAMETER_DICT"]
         except Exception as _e:  # noqa: F841
             return {}
 
     def getInputObjectCount(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The number of input data objects required for input action identifier
-            or 0 if the action is not defined.
+        The number of input data objects required for input action identifier
+        or 0 if the action is not defined.
         """
 
         try:
-            return len(self.__D[actionId]['INPUT_INFO_LIST'].keys())
+            return len(self.__D[actionId]["INPUT_INFO_LIST"].keys())
         except Exception as _e:  # noqa: F841:
             traceback.print_exc(file=sys.stderr)
             return 0
 
     def getInputObjectNames(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The list of names of input data objects required for input action identifier
-            or [] if the action is not defined.
+        The list of names of input data objects required for input action identifier
+        or [] if the action is not defined.
         """
 
         try:
-            return self.__D[actionId]['INPUT_NAME_LIST']
+            return self.__D[actionId]["INPUT_NAME_LIST"]
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=sys.stderr)
             return []
 
     def getOutputObjectCount(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The number of output data objects required for the input action identifier
-            or 0 if the action is not defined.
+        The number of output data objects required for the input action identifier
+        or 0 if the action is not defined.
         """
 
         try:
-            return len(self.__D[actionId]['OUTPUT_INFO_LIST'].keys())
+            return len(self.__D[actionId]["OUTPUT_INFO_LIST"].keys())
         except Exception as _e:  # noqa: F841
             return 0
 
     def getOutputObjectNames(self, actionId):
-        """ Returns:
+        """Returns:
 
-            The list of names of output data objects required for the input action identifier
-            or [] if the action is not defined.
+        The list of names of output data objects required for the input action identifier
+        or [] if the action is not defined.
         """
 
         try:
-            return self.__D[actionId]['OUTPUT_NAME_LIST']
+            return self.__D[actionId]["OUTPUT_NAME_LIST"]
         except Exception as _e:  # noqa: F841
             return []
 
     def setUserParameter(self, actionId, paramKey, paramValue):
         """Set a user adjustable parameter for the input action.  The parameter is
-           identifiers by *paramKey* and the value is specified as *paramValue*.
+        identifiers by *paramKey* and the value is specified as *paramValue*.
 
-           Returns:
+        Returns:
 
-           True is the parameter setting was succesful or False otherwise.
+        True is the parameter setting was succesful or False otherwise.
 
         """
         try:
-            self.__D[actionId]['USER_PARAMETER_DICT'][paramKey] = paramValue
+            self.__D[actionId]["USER_PARAMETER_DICT"][paramKey] = paramValue
             return True
         except Exception as _e:  # noqa: F841
             return False
@@ -189,325 +189,325 @@ class ActionRegistry(object):
     def getUserParameter(self, actionId, paramKey):
         """Returns:
 
-           The value of a user adjustable parameter for the input action.  The
-           user parameteris identified by the *paramKey*.
+        The value of a user adjustable parameter for the input action.  The
+        user parameteris identified by the *paramKey*.
 
         """
         try:
-            return self.__D[actionId]['USER_PARAMETER_DICT'][paramKey]
+            return self.__D[actionId]["USER_PARAMETER_DICT"][paramKey]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputReferenceType(self, actionId, inpName="1"):
-        """ Is the reference type for the specified action and input object assigned?
+        """Is the reference type for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the reference type is assigned or False otherwise.
+        True if the reference type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['dataReferenceType'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["dataReferenceType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputReferenceType(self, actionId, inpName="1"):
         """Get the reference type for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The reference type if this is defined or None otherwise.
+        The reference type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['dataReferenceType']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["dataReferenceType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputContainerType(self, actionId, inpName="1"):
-        """ Is the container type for the specified action and input object assigned?
+        """Is the container type for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the container type is assigned or False otherwise.
+        True if the container type is assigned or False otherwise.
 
         """
 
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['containerType'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputContainerType(self, actionId, inpName="1"):
         """Get the container type for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The container type if this is defined or None otherwise.
+        The container type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['containerType']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputValueType(self, actionId, inpName="1"):
-        """ Is the value type for the specified action and input object assigned?
+        """Is the value type for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the value type is assigned or False otherwise.
+        True if the value type is assigned or False otherwise.
 
         """
 
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['containerType'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputValueType(self, actionId, inpName="1"):
         """Get the value type for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The value type if this is defined or None otherwise.
+        The value type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['valueType']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["valueType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputSelectorType(self, actionId, inpName="1"):
-        """ Is the selector type for the specified action and input object assigned?
+        """Is the selector type for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the selector type is assigned or False otherwise.
+        True if the selector type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['selectorType'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["selectorType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputSelectorType(self, actionId, inpName="1"):
         """Get the selector type for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The selector type if this is defined or None otherwise.
+        The selector type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['selectorType']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["selectorType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputContentType(self, actionId, inpName="1"):
-        """ Is the content type for the specified action and input object assigned?
+        """Is the content type for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the content type is assigned or False otherwise.
+        True if the content type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['contentType'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["contentType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputContentType(self, actionId, inpName="1"):
         """Get the content type for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The content type if this is defined or None otherwise.
+        The content type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['contentType']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["contentType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetInputFileFormat(self, actionId, inpName="1"):
-        """ Is the file format for the specified action and input object assigned?
+        """Is the file format for the specified action and input object assigned?
 
-            Returns:
+        Returns:
 
-            True if the file format is assigned or False otherwise.
+        True if the file format is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['INPUT_INFO_LIST'][inpName]['fileFormat'] is not None)
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["fileFormat"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getInputFileFormat(self, actionId, inpName="1"):
         """Get the file format for the specified action and input object.
 
-           Returns:
+        Returns:
 
-           The file format if this is defined or None otherwise.
+        The file format if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['INPUT_INFO_LIST'][inpName]['fileFormat']
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["fileFormat"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputReferenceType(self, actionId, inpName="1"):
-        """ Is the reference type for the specified action and output object assigned?
+        """Is the reference type for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the reference type is assigned or False otherwise.
+        True if the reference type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['dataReferenceType'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["dataReferenceType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputReferenceType(self, actionId, inpName="1"):
         """Get the reference type for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The reference type if this is defined or None otherwise.
+        The reference type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['dataReferenceType']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["dataReferenceType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputContainerType(self, actionId, inpName="1"):
-        """ Is the container type for the specified action and output object assigned?
+        """Is the container type for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the container type is assigned or False otherwise.
+        True if the container type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['containerType'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["containerType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputContainerType(self, actionId, inpName="1"):
         """Get the container type for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The container type if this is defined or None otherwise.
+        The container type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['containerType']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["containerType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputValueType(self, actionId, inpName="1"):
-        """ Is the value type for the specified action and output object assigned?
+        """Is the value type for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the value type is assigned or False otherwise.
+        True if the value type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['valueType'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["valueType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputValueType(self, actionId, inpName="1"):
         """Get the value type for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The value type if this is defined or None otherwise.
+        The value type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['valueType']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["valueType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputSelectorType(self, actionId, inpName="1"):
-        """ Is the selector type for the specified action and output object assigned?
+        """Is the selector type for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the selector type is assigned or False otherwise.
+        True if the selector type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['selectorType'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["selectorType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputSelectorType(self, actionId, inpName="1"):
         """Get the selector type for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The selector type if this is defined or None otherwise.
+        The selector type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['selectorType']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["selectorType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputContentType(self, actionId, inpName="1"):
-        """ Is the content type for the specified action and output object assigned?
+        """Is the content type for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the content type is assigned or False otherwise.
+        True if the content type is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['contentType'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["contentType"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputContentType(self, actionId, inpName="1"):
         """Get the content type for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The content type if this is defined or None otherwise.
+        The content type if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['contentType']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["contentType"]
         except Exception as _e:  # noqa: F841
             return None
 
     def isSetOutputFileFormat(self, actionId, inpName="1"):
-        """ Is the file format for the specified action and output object assigned?
+        """Is the file format for the specified action and output object assigned?
 
-            Returns:
+        Returns:
 
-            True if the file format is assigned or False otherwise.
+        True if the file format is assigned or False otherwise.
 
         """
         try:
-            return (self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['fileFormat'] is not None)
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["fileFormat"] is not None
         except Exception as _e:  # noqa: F841
             return False
 
     def getOutputFileFormat(self, actionId, inpName="1"):
         """Get the file format for the specified action and output object.
 
-           Returns:
+        Returns:
 
-           The file format if this is defined or None otherwise.
+        The file format if this is defined or None otherwise.
 
         """
         try:
-            return self.__D[actionId]['OUTPUT_INFO_LIST'][inpName]['fileFormat']
+            return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["fileFormat"]
         except Exception as _e:  # noqa: F841
             return None

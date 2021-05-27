@@ -28,26 +28,27 @@ from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 
 class ChemCompUtils(UtilsBase):
-    """ Utility class to perform file format conversions.
+    """Utility class to perform file format conversions.
 
-        Current supported operations include:
+    Current supported operations include:
 
-        - Chemical component linkage calculation
-        - Chemical component assignment
-        - Chemical component instance assignment uppdate
+    - Chemical component linkage calculation
+    - Chemical component assignment
+    - Chemical component instance assignment uppdate
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
+
     def __init__(self, verbose=False, log=sys.stderr):
         super(ChemCompUtils, self).__init__(verbose, log)
         self.__cleanUp = False
@@ -56,8 +57,7 @@ class ChemCompUtils(UtilsBase):
         #
 
     def chemCompLinkOp(self, **kwArgs):
-        """Performs chemical component linkage calculation on PDBx format files.
-        """
+        """Performs chemical component linkage calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -70,9 +70,9 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-link")
             dp.exp(ccLinkPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - CC link file path: %s\n" % ccLinkPath)
             return True
@@ -81,8 +81,7 @@ class ChemCompUtils(UtilsBase):
             return False
 
     def chemCompAssignOp(self, **kwArgs):
-        """Performs chemical component assignment calculation on PDBx format files.
-        """
+        """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
@@ -93,21 +92,21 @@ class ChemCompUtils(UtilsBase):
             ccAssignFilePath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            ccAssignWrkngDirPath = os.path.join(dirPath, 'assign')
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.setWorkingDir(ccAssignWrkngDirPath)
             dp.addInput(name="id", value=depDataSetId)
-            if ((ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath)):
-                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type='file')
+            if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
+                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign")
             dp.exp(ccAssignFilePath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
@@ -117,8 +116,7 @@ class ChemCompUtils(UtilsBase):
             return False
 
     def chemCompAssignNLOp(self, **kwArgs):
-        """Performs chemical component assignment calculation on PDBx format files.
-        """
+        """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -129,21 +127,21 @@ class ChemCompUtils(UtilsBase):
             ccAssignPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            ccAssignWrkngDirPath = os.path.join(dirPath, 'assign')
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.setWorkingDir(ccAssignWrkngDirPath)
             dp.addInput(name="id", value=depDataSetId)
-            if ((ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath)):
-                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type='file')
+            if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
+                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign")
             dp.exp(ccAssignPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
             return True
@@ -152,8 +150,7 @@ class ChemCompUtils(UtilsBase):
             return False
 
     def chemCompAssignExactOp(self, **kwArgs):
-        """Performs chemical component assignment calculation with exact match option on PDBx format files.
-        """
+        """Performs chemical component assignment calculation with exact match option on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
@@ -164,21 +161,21 @@ class ChemCompUtils(UtilsBase):
             ccAssignFilePath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            ccAssignWrkngDirPath = os.path.join(dirPath, 'assign')
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.setWorkingDir(ccAssignWrkngDirPath)
             dp.addInput(name="id", value=depDataSetId)
-            if ((ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath)):
-                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type='file')
+            if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
+                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign-exact")
             dp.exp(ccAssignFilePath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactOp() - CC assign file path: %s\n" % ccAssignFilePath)
@@ -189,7 +186,7 @@ class ChemCompUtils(UtilsBase):
 
     def chemCompAssignExactNLOp(self, **kwArgs):
         """Performs chemical component assignment calculation with exact match option on PDBx format files.
-            This method assumes no link file being provided.
+        This method assumes no link file being provided.
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -199,7 +196,7 @@ class ChemCompUtils(UtilsBase):
             ccAssignPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            ccAssignWrkngDirPath = os.path.join(dirPath, 'assign')
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -210,9 +207,9 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign-exact")
             dp.exp(ccAssignPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactNLOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactNLOp() - CC assign file path: %s\n" % ccAssignPath)
             return True
@@ -223,7 +220,7 @@ class ChemCompUtils(UtilsBase):
     def chemCompInstanceUpdateOp(self, **kwArgs):
         """Performs chemical component assignment update operations on PDBx format model files.
 
-           Requires: extra input files for assignment and user selection.
+        Requires: extra input files for assignment and user selection.
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -238,17 +235,17 @@ class ChemCompUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             #
-            if ((ccAssignFilePath is not None) and os.path.exists(ccAssignFilePath)):
-                dp.addInput(name="cc_assign_file_path", value=ccAssignFilePath, type='file')
+            if (ccAssignFilePath is not None) and os.path.exists(ccAssignFilePath):
+                dp.addInput(name="cc_assign_file_path", value=ccAssignFilePath, type="file")
             #
             # if ((ccSelectFilePath is not None)  and  os.path.exists(ccSelectFilePath)):
             #     dp.addInput(name="cc_select_file_path",value=ccSelectFilePath,type='file')
             dp.imp(pdbxPath)
             dp.op("chem-comp-instance-update")
             dp.exp(outputModelPdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompInstanceUpdateOp() - PDBx file path:          %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompInstanceUpdateOp() - CC assign file path:     %s\n" % ccAssignFilePath)
                 # self._lfh.write("+ChemCompUtils.chemCompInstanceUpdateOp() - CC select file path:     %s\n" % ccSelectFilePath)

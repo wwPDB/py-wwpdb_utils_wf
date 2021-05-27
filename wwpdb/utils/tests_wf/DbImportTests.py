@@ -17,7 +17,7 @@ __version__ = "V0.01"
 import unittest
 import datetime
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     import sys
     from os import path
 
@@ -46,5 +46,5 @@ class ImportTests(unittest.TestCase):
         self.assertEqual(getTimeZero(), datetime.datetime(2000, 1, 1, 0, 0, 0))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

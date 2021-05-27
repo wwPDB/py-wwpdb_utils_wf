@@ -31,10 +31,10 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
 
     """Top-level container for workflow data object.
 
-       This container includes some combination of the following:
-       - A data file reference (`DataFileReference`)
-       - A data value container (`DataValueContainer`)
-       - A data selector (`DataSelector`)
+    This container includes some combination of the following:
+    - A data file reference (`DataFileReference`)
+    - A data value container (`DataValueContainer`)
+    - A data selector (`DataSelector`)
 
     """
 
@@ -44,7 +44,7 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
         # sys.stderr.write("WfDataObject.__init_()\n")
 
     def printMe(self, ofh):
-        if self.getReferenceType() in ['file']:
+        if self.getReferenceType() in ["file"]:
             ofh.write("+WfDataObject.printMe() reference type    %s\n" % self.getReferenceType())
             ofh.write("+WfDataObject.printMe() version ID        %s\n" % self.getVersionId())
             ofh.write("+WfDataObject.printMe() data set ID       %s\n" % self.getDepositionDataSetId())
@@ -59,7 +59,7 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
                 ofh.write("+WfDataObject.printMe() select category   %s\n" % self.getSelectCategoryName())
                 ofh.write("+WfDataObject.printMe() select attributes %r\n" % self.getSelectAttributeList())
                 ofh.write("+WfDataObject.printMe() select conditions %r\n" % self.getSelectConditionList())
-        elif self.getContainerTypeName() in ['value', 'list', 'dict']:
+        elif self.getContainerTypeName() in ["value", "list", "dict"]:
             ofh.write("+WfDataObject.printMe() container type %s\n" % self.getContainerTypeName())
             ofh.write("+WfDataObject.printMe() value type     %s\n" % self.getValueTypeName())
             ofh.write("+WfDataObject.printMe() is value set   %r\n" % self.isValueSet())
@@ -83,5 +83,5 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
         return contents
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     wfd = WfDataObject()

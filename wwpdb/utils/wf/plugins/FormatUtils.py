@@ -33,25 +33,25 @@ from wwpdb.utils.wf.plugins.SFConvert import SFConvert
 
 class FormatUtils(UtilsBase):
 
-    """ Utility class to perform file format conversions.
+    """Utility class to perform file format conversions.
 
-        Current supported operations include:
-        - annot-pdbx2pdb (cif2pdb)
-        - annot-pdb2pdbx (pdb2cif)
-        - annot-rcsb2pdbx (cif2pdbx)
-        - annot-cif2cif-dep   (pdbx2pdbx)
-        - annot-pdb2cif-dep   (pdb2cif)
+    Current supported operations include:
+    - annot-pdbx2pdb (cif2pdb)
+    - annot-pdb2pdbx (pdb2cif)
+    - annot-rcsb2pdbx (cif2pdbx)
+    - annot-cif2cif-dep   (pdbx2pdbx)
+    - annot-pdb2cif-dep   (pdb2cif)
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -63,8 +63,7 @@ class FormatUtils(UtilsBase):
         #
 
     def pdbx2pdbOp(self, **kwArgs):
-        """Performs PDBx(cif) to PDB format conversion operation.
-        """
+        """Performs PDBx(cif) to PDB format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -77,9 +76,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-cif2pdb")
             dp.exp(pdbPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDBx file path: %s\n" % pdbxPath)
             return True
@@ -88,8 +87,7 @@ class FormatUtils(UtilsBase):
             return False
 
     def pdb2pdbxOp(self, **kwArgs):
-        """Perform PDB to PDBx(cif) format conversion operation.
-        """
+        """Perform PDB to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
@@ -102,9 +100,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif")
             dp.exp(pdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDBx file path: %s\n" % pdbxPath)
             return True
@@ -113,8 +111,7 @@ class FormatUtils(UtilsBase):
             return False
 
     def pdb2pdbxDepositOp(self, **kwArgs):
-        """Perform PDB to PDBx(cif) format conversion operation (special processing for deposition sessions)
-        """
+        """Perform PDB to PDBx(cif) format conversion operation (special processing for deposition sessions)"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
@@ -127,9 +124,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif-dep")
             dp.exp(pdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDBx file path: %s\n" % pdbxPath)
             return True
@@ -138,8 +135,7 @@ class FormatUtils(UtilsBase):
             return False
 
     def rcsb2pdbxOp(self, **kwArgs):
-        """Perform RCSB(cif) to PDBx(cif) format conversion operation.
-        """
+        """Perform RCSB(cif) to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             rcsbPath = inpObjD["src"].getFilePathReference()
@@ -152,9 +148,9 @@ class FormatUtils(UtilsBase):
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif")
             dp.exp(pdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.cif2cifOp() - RCSB cif file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.cif2cifOp() - PDBx file path: %s\n" % pdbxPath)
             return True
@@ -163,8 +159,7 @@ class FormatUtils(UtilsBase):
             return False
 
     def pdbx2pdbxDepositOp(self, **kwArgs):
-        """Perform  PDBx(cif) to PDBx(cif) format conversion operation (special processing deposition sessions)
-        """
+        """Perform  PDBx(cif) to PDBx(cif) format conversion operation (special processing deposition sessions)"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             rcsbPath = inpObjD["src"].getFilePathReference()
@@ -177,9 +172,9 @@ class FormatUtils(UtilsBase):
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif-dep")
             dp.exp(pdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx input  file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx output file path: %s\n" % pdbxPath)
             return True
@@ -188,8 +183,7 @@ class FormatUtils(UtilsBase):
             return False
 
     def mtz2pdbxOp(self, **kwArgs):
-        """Perform  MTZ or other SF file  to  PDBx(cif) format conversion operation.
-        """
+        """Perform  MTZ or other SF file  to  PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             sfPath = inpObjD["src1"].getFilePathReference()
@@ -206,7 +200,7 @@ class FormatUtils(UtilsBase):
             # logPath=os.path.join(dirPath,"mtz2pdbx.log")
             dmpPath = os.path.join(dirPath, "mtzdmp.log")
             #
-            timeout = int(uD['timeout'])
+            timeout = int(uD["timeout"])
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
@@ -222,8 +216,8 @@ class FormatUtils(UtilsBase):
 
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(sfPath)
-            if ((xyzPath is not None) and os.path.exists(xyzPath)):
-                dp.addInput(name="xyz_file_path", value=xyzPath, type='file')
+            if (xyzPath is not None) and os.path.exists(xyzPath):
+                dp.addInput(name="xyz_file_path", value=xyzPath, type="file")
             if timeout > 0:
                 dp.setTimeout(timeout)
             dp.op("annot-sf-convert")
@@ -232,11 +226,11 @@ class FormatUtils(UtilsBase):
 
             #
             myStatus = self.__checkMergeStatus(logFilePath)
-            outObjD['dst4'].setValue(myStatus)
+            outObjD["dst4"].setValue(myStatus)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - timeout :      %d\n" % timeout)
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - SF  input  file path:      %s\n" % sfPath)
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - XYZ input  file path:      %s\n" % xyzPath)
@@ -248,15 +242,14 @@ class FormatUtils(UtilsBase):
             return False
 
     def nmrstar2pdbxOp(self, **kwArgs):
-        """Perform NMRSTAR to PDBx(cif) format conversion operation.
-        """
+        """Perform NMRSTAR to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             strPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            dId = uD['data_set_id']
+            dId = uD["data_set_id"]
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
@@ -264,9 +257,9 @@ class FormatUtils(UtilsBase):
             dp.addInput(name="data_set_id", value=dId)
             dp.op("annot-nmrstar2pdbx")
             dp.exp(pdbxPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
@@ -275,15 +268,14 @@ class FormatUtils(UtilsBase):
             return False
 
     def pdbx2nmrstarAnnotOp(self, **kwArgs):
-        """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)
-        """
+        """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = outObjD["src"].getFilePathReference()
             strPath = inpObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
-            dId = uD['data_set_id']
+            dId = uD["data_set_id"]
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
@@ -291,9 +283,9 @@ class FormatUtils(UtilsBase):
             dp.addInput(name="pdb_id", value=dId)
             dp.op("annot-pdbx2nmrstar")
             dp.exp(strPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
@@ -302,15 +294,15 @@ class FormatUtils(UtilsBase):
             return False
 
     def __checkMergeStatus(self, logFilePath):
-        status = 'ok'
+        status = "ok"
         if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath, 'r')
+            ifh = open(logFilePath, "r")
             for line in ifh:
                 if str(line).upper().startswith("++ERROR") or str(line).upper().startswith("ERROR:"):
-                    return 'error'
+                    return "error"
                 if str(line).upper().startswith("++WARN") or str(line).upper().startswith("WARN:"):
-                    return 'warn'
+                    return "warn"
             ifh.close()
         else:
-            return 'error'
+            return "error"
         return status

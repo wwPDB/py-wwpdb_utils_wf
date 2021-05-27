@@ -15,7 +15,7 @@ import unittest
 import traceback
 import logging
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -30,7 +30,7 @@ from wwpdb.utils.config.ConfigInfo import getSiteId
 # Create logger
 logger = logging.getLogger()
 ch = logging.StreamHandler()
-formatter = logging.Formatter('[%(levelname)s]-%(module)s.%(funcName)s: %(message)s')
+formatter = logging.Formatter("[%(levelname)s]-%(module)s.%(funcName)s: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 logger.setLevel(logging.DEBUG)
@@ -40,28 +40,27 @@ class ProcessRunnerTests(unittest.TestCase):
     def setUp(self):
         self.__verbose = True
         self.__lfh = sys.stderr
-        self.assertNotEqual(getSiteId(), 'None', "Site ID is not set")
+        self.assertNotEqual(getSiteId(), "None", "Site ID is not set")
         #
         # Load up some test data -
         #
-        self.__depDataSetId = 'D_000001'
-        self.__wfInstanceId = 'W_000002'
+        self.__depDataSetId = "D_000001"
+        self.__wfInstanceId = "W_000002"
 
     def tearDown(self):
         pass
 
     def testCopyOp(self):
-        """Test file copy from archival to workflow instance storage.
-        """
+        """Test file copy from archival to workflow instance storage."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testCopyOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
             wfoInp.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp.setStorageType('archive')
-            wfoInp.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp.setVersionId('latest')
+            wfoInp.setStorageType("archive")
+            wfoInp.setContentTypeAndFormat("model", "pdbx")
+            wfoInp.setVersionId("latest")
             dP = wfoInp.getDirPathReference()
             fP = wfoInp.getFilePathReference()
             vN = wfoInp.getFileVersionNumber()
@@ -72,8 +71,8 @@ class ProcessRunnerTests(unittest.TestCase):
             wfoOut = WfDataObject()
             wfoOut.setDepositionDataSetId(self.__depDataSetId)
             wfoOut.setWorkflowInstanceId(self.__wfInstanceId)
-            wfoOut.setStorageType('wf-instance')
-            wfoOut.setContentTypeAndFormat('model', 'pdbx')
+            wfoOut.setStorageType("wf-instance")
+            wfoOut.setContentTypeAndFormat("model", "pdbx")
             wfoOut.setVersionId(vN)
             # wfoOut.setVersionId('latest')
 
@@ -86,7 +85,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
             pR = ProcessRunner(verbose=self.__verbose, log=self.__lfh)
             pR.setInput("src", wfoOut)
-            op = 'mkdir'
+            op = "mkdir"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -98,7 +97,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR = ProcessRunner(verbose=self.__verbose, log=self.__lfh)
             pR.setInput("src", wfoInp)
             pR.setOutput("dst", wfoOut)
-            op = 'copy'
+            op = "copy"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -112,17 +111,16 @@ class ProcessRunnerTests(unittest.TestCase):
             self.fail()
 
     def testSizeOfOp(self):
-        """Test obtaining the size of an archival data file.
-        """
+        """Test obtaining the size of an archival data file."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testSizeOfOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
             wfoInp.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp.setStorageType('archive')
-            wfoInp.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp.setVersionId('original')
+            wfoInp.setStorageType("archive")
+            wfoInp.setContentTypeAndFormat("model", "pdbx")
+            wfoInp.setVersionId("original")
             dP = wfoInp.getDirPathReference()
             fP = wfoInp.getFilePathReference()
             vN = wfoInp.getFileVersionNumber()
@@ -131,8 +129,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.__lfh.write("Input file   version: %d\n" % vN)
 
             wfoOut = WfDataObject()
-            wfoOut.setContainerTypeName('value')
-            wfoOut.setValueTypeName('integer')
+            wfoOut.setContainerTypeName("value")
+            wfoOut.setValueTypeName("integer")
 
             self.__lfh.write("Container type setting : %s\n" % wfoOut.getContainerTypeName())
             self.__lfh.write("Value type name setting : %s\n" % wfoOut.getValueTypeName())
@@ -140,7 +138,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR = ProcessRunner(verbose=self.__verbose, log=self.__lfh)
             pR.setInput("src", wfoInp)
             pR.setOutput("dst", wfoOut)
-            op = 'sizeof'
+            op = "sizeof"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -157,17 +155,16 @@ class ProcessRunnerTests(unittest.TestCase):
             self.fail()
 
     def testMtimeOfOp(self):
-        """Test of obtaining the modification time of an archival data file.
-        """
+        """Test of obtaining the modification time of an archival data file."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testMtimeOfOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
             wfoInp.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp.setStorageType('archive')
-            wfoInp.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp.setVersionId('latest')
+            wfoInp.setStorageType("archive")
+            wfoInp.setContentTypeAndFormat("model", "pdbx")
+            wfoInp.setVersionId("latest")
             dP = wfoInp.getDirPathReference()
             fP = wfoInp.getFilePathReference()
             vN = wfoInp.getFileVersionNumber()
@@ -176,8 +173,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.__lfh.write("Input file   version: %d\n" % vN)
 
             wfoOut = WfDataObject()
-            wfoOut.setContainerTypeName('value')
-            wfoOut.setValueTypeName('datetime')
+            wfoOut.setContainerTypeName("value")
+            wfoOut.setValueTypeName("datetime")
 
             self.__lfh.write("Container type setting : %s\n" % wfoOut.getContainerTypeName())
             self.__lfh.write("Value type name setting : %s\n" % wfoOut.getValueTypeName())
@@ -185,7 +182,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR = ProcessRunner(verbose=self.__verbose, log=self.__lfh)
             pR.setInput("src", wfoInp)
             pR.setOutput("dst", wfoOut)
-            op = 'mtime'
+            op = "mtime"
 
             #
             ok = pR.setAction(op)
@@ -203,7 +200,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
     def testDiffOp(self):
         """Test of computing the contextual difference between the latest two versions of
-           an archival file.
+        an archival file.
         """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testDiffOp")
@@ -211,9 +208,9 @@ class ProcessRunnerTests(unittest.TestCase):
         try:
             wfoInp1 = WfDataObject()
             wfoInp1.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp1.setStorageType('archive')
-            wfoInp1.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp1.setVersionId('latest')
+            wfoInp1.setStorageType("archive")
+            wfoInp1.setContentTypeAndFormat("model", "pdbx")
+            wfoInp1.setVersionId("latest")
 
             dP = wfoInp1.getDirPathReference()
             fP = wfoInp1.getFilePathReference()
@@ -225,9 +222,9 @@ class ProcessRunnerTests(unittest.TestCase):
 
             wfoInp2 = WfDataObject()
             wfoInp2.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp2.setStorageType('archive')
-            wfoInp2.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp2.setVersionId('previous')
+            wfoInp2.setStorageType("archive")
+            wfoInp2.setContentTypeAndFormat("model", "pdbx")
+            wfoInp2.setVersionId("previous")
 
             dP = wfoInp2.getDirPathReference()
             fP = wfoInp2.getFilePathReference()
@@ -238,8 +235,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.__lfh.write("<File   version: %d\n" % vN)
 
             wfoOut = WfDataObject()
-            wfoOut.setContainerTypeName('list')
-            wfoOut.setValueTypeName('string')
+            wfoOut.setContainerTypeName("list")
+            wfoOut.setValueTypeName("string")
 
             self.__lfh.write("Container type setting : %s\n" % wfoOut.getContainerTypeName())
             self.__lfh.write("Value type name setting : %s\n" % wfoOut.getValueTypeName())
@@ -248,7 +245,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR.setInput("src1", wfoInp1)
             pR.setInput("src2", wfoInp2)
             pR.setOutput("dst", wfoOut)
-            op = 'diff'
+            op = "diff"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -259,7 +256,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
             #
             oL = wfoOut.getValue()
-            self.__lfh.write("Difference %s\n" % ''.join(oL))
+            self.__lfh.write("Difference %s\n" % "".join(oL))
 
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
@@ -267,7 +264,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
     def testDiffIntOp(self):
         """Test of computing the contextual difference between the latest two versions of
-           an archival file.  Files identified by integer versions.
+        an archival file.  Files identified by integer versions.
         """
 
         self.__lfh.write("\n------------------------ ")
@@ -276,8 +273,8 @@ class ProcessRunnerTests(unittest.TestCase):
         try:
             wfoInp1 = WfDataObject()
             wfoInp1.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp1.setStorageType('archive')
-            wfoInp1.setContentTypeAndFormat('model', 'pdbx')
+            wfoInp1.setStorageType("archive")
+            wfoInp1.setContentTypeAndFormat("model", "pdbx")
             wfoInp1.setVersionId(2)
 
             dP = wfoInp1.getDirPathReference()
@@ -290,8 +287,8 @@ class ProcessRunnerTests(unittest.TestCase):
 
             wfoInp2 = WfDataObject()
             wfoInp2.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp2.setStorageType('archive')
-            wfoInp2.setContentTypeAndFormat('model', 'pdbx')
+            wfoInp2.setStorageType("archive")
+            wfoInp2.setContentTypeAndFormat("model", "pdbx")
             wfoInp2.setVersionId(3)
 
             dP = wfoInp2.getDirPathReference()
@@ -303,8 +300,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.__lfh.write("<File   version: %d\n" % vN)
 
             wfoOut = WfDataObject()
-            wfoOut.setContainerTypeName('list')
-            wfoOut.setValueTypeName('string')
+            wfoOut.setContainerTypeName("list")
+            wfoOut.setValueTypeName("string")
 
             self.__lfh.write("Container type setting : %s\n" % wfoOut.getContainerTypeName())
             self.__lfh.write("Value type name setting : %s\n" % wfoOut.getValueTypeName())
@@ -313,7 +310,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR.setInput("src1", wfoInp1)
             pR.setInput("src2", wfoInp2)
             pR.setOutput("dst", wfoOut)
-            op = 'diff'
+            op = "diff"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -324,7 +321,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
             #
             oL = wfoOut.getValue()
-            self.__lfh.write("Difference %s\n" % ''.join(oL))
+            self.__lfh.write("Difference %s\n" % "".join(oL))
 
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
@@ -332,7 +329,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
     def testDiffStringOp(self):
         """Test of computing the contextual difference between the latest two versions of
-           an archival file.  Files identified by stringified versions.
+        an archival file.  Files identified by stringified versions.
         """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testDiffStringOp")
@@ -340,9 +337,9 @@ class ProcessRunnerTests(unittest.TestCase):
         try:
             wfoInp1 = WfDataObject()
             wfoInp1.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp1.setStorageType('archive')
-            wfoInp1.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp1.setVersionId('2')
+            wfoInp1.setStorageType("archive")
+            wfoInp1.setContentTypeAndFormat("model", "pdbx")
+            wfoInp1.setVersionId("2")
 
             dP = wfoInp1.getDirPathReference()
             fP = wfoInp1.getFilePathReference()
@@ -354,9 +351,9 @@ class ProcessRunnerTests(unittest.TestCase):
 
             wfoInp2 = WfDataObject()
             wfoInp2.setDepositionDataSetId(self.__depDataSetId)
-            wfoInp2.setStorageType('archive')
-            wfoInp2.setContentTypeAndFormat('model', 'pdbx')
-            wfoInp2.setVersionId('3')
+            wfoInp2.setStorageType("archive")
+            wfoInp2.setContentTypeAndFormat("model", "pdbx")
+            wfoInp2.setVersionId("3")
 
             dP = wfoInp2.getDirPathReference()
             fP = wfoInp2.getFilePathReference()
@@ -367,8 +364,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.__lfh.write("<File   version: %d\n" % vN)
 
             wfoOut = WfDataObject()
-            wfoOut.setContainerTypeName('list')
-            wfoOut.setValueTypeName('string')
+            wfoOut.setContainerTypeName("list")
+            wfoOut.setValueTypeName("string")
 
             self.__lfh.write("Container type setting : %s\n" % wfoOut.getContainerTypeName())
             self.__lfh.write("Value type name setting : %s\n" % wfoOut.getValueTypeName())
@@ -377,7 +374,7 @@ class ProcessRunnerTests(unittest.TestCase):
             pR.setInput("src1", wfoInp1)
             pR.setInput("src2", wfoInp2)
             pR.setOutput("dst", wfoOut)
-            op = 'diff'
+            op = "diff"
             #
             ok = pR.setAction(op)
             self.__lfh.write("setAction() for %s returns status %r\n" % (op, ok))
@@ -388,7 +385,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
             #
             oL = wfoOut.getValue()
-            self.__lfh.write("Difference %s\n" % ''.join(oL))
+            self.__lfh.write("Difference %s\n" % "".join(oL))
 
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
@@ -396,8 +393,8 @@ class ProcessRunnerTests(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSuite(ProcessRunnerTests, 'test')
+    return unittest.makeSuite(ProcessRunnerTests, "test")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

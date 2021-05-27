@@ -14,16 +14,17 @@
 
 import sys
 import MySQLdb
+
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
 class LocalDbApi(object):
-    """
-    """
+    """ """
+
     def __init__(self, log=sys.stderr, verbose=False):
         """
-           connect to local database
+        connect to local database
         """
         self.__lfh = log
         self.__verbose = verbose
@@ -34,18 +35,16 @@ class LocalDbApi(object):
         self.__dbPw = "rcsb0000"
         self.__dbPort = 3306
 
-        self.__myDb = DbConnection(dbServer=self.__dbServer, dbHost=self.__dbHost,
-                                   dbName=self.__dbName, dbUser=self.__dbUser,
-                                   dbPw=self.__dbPw, dbPort=self.__dbPort)
+        self.__myDb = DbConnection(dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort)
 
         self.__dbcon = self.__myDb.connect()
 
     def getNewDepositedIds(self, interval):
         """
-           Get newly deposited ids for RCSB site
+        Get newly deposited ids for RCSB site
 
-           "interval" is a number of days from current time when the python
-           code is run.
+        "interval" is a number of days from current time when the python
+        code is run.
 
         """
         query = "select lcase(structure_id) from rcsb_status where initial_deposition_date>=DATE_SUB(curdate(), interval %s" % interval + " day) order by structure_id"
@@ -56,7 +55,7 @@ class LocalDbApi(object):
             curs.execute(query)
             while True:
                 result = curs.fetchone()
-                if (result is not None):
+                if result is not None:
                     returnList.append(result[0])
                 else:
                     break

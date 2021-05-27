@@ -24,23 +24,24 @@ from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 
 class DpUtils(UtilsBase):
-    """ Utility class to perform data processing operations.
+    """Utility class to perform data processing operations.
 
-        Current supported operations include:
-        - polymer linkage distances
+    Current supported operations include:
+    - polymer linkage distances
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
+
     def __init__(self, verbose=False, log=sys.stderr):
         super(DpUtils, self).__init__(verbose, log)
         self.__cleanUp = False
@@ -49,8 +50,7 @@ class DpUtils(UtilsBase):
         #
 
     def polymerLinkageDistanceOp(self, **kwArgs):
-        """Calculate polymer linkage distances -
-        """
+        """Calculate polymer linkage distances -"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -63,9 +63,9 @@ class DpUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-poly-link-dist")
             dp.exp(distPath)
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+DpUtils.polymerLinkageDistanceOp() - PDBx     file path: %s\n" % pdbxPath)
                 self._lfh.write("+DpUtils.polymerLinkageDistanceOp() - Distance file path: %s\n" % distPath)
             return True

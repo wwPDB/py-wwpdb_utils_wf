@@ -34,7 +34,7 @@ def getTimeString(timestamp):
 
     zero = time.mktime(zeroDate.timetuple())
 
-    fmt = '%Y-%m-%d %H:%M:%S %Z'
+    fmt = "%Y-%m-%d %H:%M:%S %Z"
 
     d = float(zero) + float(timestamp)
     return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)
@@ -42,7 +42,7 @@ def getTimeString(timestamp):
 
 def getTimeFromEpoc(timestamp):
 
-    fmt = '%Y-%m-%d %H:%M:%S %Z'
+    fmt = "%Y-%m-%d %H:%M:%S %Z"
 
     d = float(timestamp)
     return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)

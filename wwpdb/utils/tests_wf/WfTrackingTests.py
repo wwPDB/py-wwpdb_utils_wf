@@ -19,7 +19,7 @@ import sys
 import unittest
 import traceback
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -41,42 +41,34 @@ class WfTrackingTests(unittest.TestCase):
         #
         # Load up some test data -
         #
-        self.__depDataSetId = 'D_000001'
-        self.__wfInstanceId = 'W_000001'
-        self.__wfClassId = 'seqedTST'
+        self.__depDataSetId = "D_000001"
+        self.__wfInstanceId = "W_000001"
+        self.__wfClassId = "seqedTST"
 
     def tearDown(self):
         pass
 
     def testInstanceUpdateStart(self):
-        """
-        """
+        """ """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function testInstanceUpdateStart")
         self.__lfh.write(" -------------------------\n")
         try:
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
-            wft.setInstanceStatus(depId=self.__depDataSetId,
-                                  instId=self.__wfInstanceId,
-                                  classId=self.__wfClassId,
-                                  status="open")
+            wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="open")
 
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
     def testInstanceUpdateFinish(self):
-        """
-        """
+        """ """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function testInstanceUpdateFinish")
         self.__lfh.write(" -------------------------\n")
         try:
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
-            wft.setInstanceStatus(depId=self.__depDataSetId,
-                                  instId=self.__wfInstanceId,
-                                  classId=self.__wfClassId,
-                                  status="closed(0)")
+            wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="closed(0)")
 
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
@@ -84,8 +76,8 @@ class WfTrackingTests(unittest.TestCase):
 
 
 def suite():
-    return unittest.makeSuite(WfTrackingTests, 'test')
+    return unittest.makeSuite(WfTrackingTests, "test")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -14,7 +14,7 @@ __version__ = "V0.01"
 
 import unittest
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     import sys
     from os import path
 
@@ -37,5 +37,5 @@ class ImportTests(unittest.TestCase):
         print(dO)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

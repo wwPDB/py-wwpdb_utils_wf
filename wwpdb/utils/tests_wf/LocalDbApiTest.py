@@ -6,8 +6,9 @@ File:    LocalDbApiTest.py
 
 """
 import sys
+
 #
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
@@ -19,7 +20,7 @@ else:
 from wwpdb.utils.wf.dbapi.LocalDbApi import LocalDbApi
 
 
-if __name__ == '__mainold__':
+if __name__ == "__mainold__":
     __lfh = sys.stderr
     # fileName="test.log"
     c = LocalDbApi(__lfh, True)

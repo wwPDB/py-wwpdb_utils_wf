@@ -18,17 +18,17 @@ __version__ = "V0.01"
 
 class DataSelector(object):
 
-    """ A container for data selection criteria.
+    """A container for data selection criteria.
 
-        A selector defines the following parameters:
+    A selector defines the following parameters:
 
-        - targetCategoryName  name of category to which selection is applied
-        - targetAttributeNameList [attributeName, attributeName,...] the values of the
-          attributes in this list will be returned subject to the selection condition.
+    - targetCategoryName  name of category to which selection is applied
+    - targetAttributeNameList [attributeName, attributeName,...] the values of the
+      attributes in this list will be returned subject to the selection condition.
 
-        Selection conditions are stored as a list of tuples of name, value and operator:
+    Selection conditions are stored as a list of tuples of name, value and operator:
 
-        - conditionList  [(attributeName,attributeValue,comparisonOp),,...]
+    - conditionList  [(attributeName,attributeValue,comparisonOp),,...]
 
     """
 
@@ -43,16 +43,15 @@ class DataSelector(object):
         self.__selectConditionList = []
 
     def getSelectorType(self):
-        """Get the type of selector type.  Currently only attribute value selections are supported.
-        """
+        """Get the type of selector type.  Currently only attribute value selections are supported."""
         return self.__selectorType
 
     def setSelectCategoryName(self, categoryName):
         """Set the target category for this selection.
 
-           Returns:
+        Returns:
 
-           True for success or False otherwise
+        True for success or False otherwise
         """
         try:
             self.__targetCategoryName = categoryName
@@ -61,41 +60,39 @@ class DataSelector(object):
             return False
 
     def getSelectCategoryName(self):
-        """Get the taget category for this selection.
-        """
+        """Get the taget category for this selection."""
         return self.__targetCategoryName
 
     def addSelectAttributeName(self, attributeName):
         """Add an attribute to the list of attributes for this selection.
 
-           Returns:
+        Returns:
 
-           True for success or False otherwise
+        True for success or False otherwise
         """
         try:
             if attributeName not in self.__targetAttributeList:
                 self.__targetAttributeList.append(attributeName)
-                self.__selectorType = 'attribute'
+                self.__selectorType = "attribute"
             return True
         except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def getSelectAttributeList(self):
-        """Get the list attributes for the current selection
-        """
+        """Get the list attributes for the current selection"""
         return self.__targetAttributeList
 
-    def addSelectCondition(self, attributeName, attributeValue, comparisonOp='equal'):
+    def addSelectCondition(self, attributeName, attributeValue, comparisonOp="equal"):
         """Add a selection contition to the current selection.
 
-           A selction condition contains the following:
-           - attributeName in the target category.
-           - attributeValue
-           - one of the comparison operators (equals, ...)
+        A selction condition contains the following:
+        - attributeName in the target category.
+        - attributeValue
+        - one of the comparison operators (equals, ...)
 
-           Returns:
+        Returns:
 
-           True for success or False otherwise.
+        True for success or False otherwise.
 
         """
         try:
@@ -105,6 +102,5 @@ class DataSelector(object):
             return False
 
     def getSelectConditionList(self):
-        """Get the list selection conditions.
-        """
+        """Get the list selection conditions."""
         return self.__selectConditionList

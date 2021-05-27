@@ -28,14 +28,15 @@ from wwpdb.utils.wf.dbapi.DbApiUtil import DbApiUtil
 
 
 class StatusDbApi(object):
-    __schemaMap = {"GET_GROUP_ID" : "select group_id from group_deposition_information where dep_set_id = '%s'",
-                   "GET_DEP_ID": "select dep_set_id from group_deposition_information where group_id = '%s'",
-                   }
+    __schemaMap = {
+        "GET_GROUP_ID": "select group_id from group_deposition_information where dep_set_id = '%s'",
+        "GET_DEP_ID": "select dep_set_id from group_deposition_information where group_id = '%s'",
+    }
     """
     """
+
     def __init__(self, siteId=None, verbose=False, log=sys.stderr):
-        """
-        """
+        """ """
         self.__lfh = log
         self.__verbose = verbose
         self.__siteId = siteId
@@ -48,8 +49,17 @@ class StatusDbApi(object):
         self.__dbSocket = self.__cI.get("SITE_DB_SOCKET")
         self.__dbPort = int(self.__cI.get("SITE_DB_PORT_NUMBER"))
         #
-        self.__dbApi = DbApiUtil(dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw,
-                                 dbSocket=self.__dbSocket, dbPort=self.__dbPort, verbose=self.__verbose, log=self.__lfh)
+        self.__dbApi = DbApiUtil(
+            dbServer=self.__dbServer,
+            dbHost=self.__dbHost,
+            dbName=self.__dbName,
+            dbUser=self.__dbUser,
+            dbPw=self.__dbPw,
+            dbSocket=self.__dbSocket,
+            dbPort=self.__dbPort,
+            verbose=self.__verbose,
+            log=self.__lfh,
+        )
         self.__dbApi.setSchemaMap(self.__schemaMap)
 
     def __getDataDir(self, key, parameter, idx):
@@ -65,7 +75,7 @@ class StatusDbApi(object):
         #
         rtnDir = self.__getDataDir("GET_GROUP_ID", (depId), 0)
         if rtnDir:
-            return rtnDir['group_id']
+            return rtnDir["group_id"]
         #
         return None
 
@@ -76,8 +86,8 @@ class StatusDbApi(object):
         #
         retList = self.__dbApi.selectData(key="GET_DEP_ID", parameter=(groupId))
         for retDir in retList:
-            if 'dep_set_id' in retDir and retDir['dep_set_id']:
-                entryList.append(str(retDir['dep_set_id']))
+            if "dep_set_id" in retDir and retDir["dep_set_id"]:
+                entryList.append(str(retDir["dep_set_id"]))
             #
         #
         return entryList

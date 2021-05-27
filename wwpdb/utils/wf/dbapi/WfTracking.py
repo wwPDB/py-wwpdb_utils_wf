@@ -25,39 +25,48 @@ from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 
 
 class WfTracking(object):
-    """Provides methods to update progress and tracking information in the WF status database.
+    """Provides methods to update progress and tracking information in the WF status database."""
 
-    """
     def __init__(self, verbose=False, log=sys.stderr):
         self.__verbose = verbose
         self.__lfh = log
 
     def setInstanceStatus(self, depId=None, instId=None, classId=None, status=None):
-        """ Update the tracking status record for the input instance step.
-        """
+        """Update the tracking status record for the input instance step."""
 
         now = getTimeNow()
         DBstatusAPI = WfDbApi(verbose=self.__verbose)
         instD = {}
-        instD['WF_INST_ID'] = instId
-        instD['WF_CLASS_ID'] = classId
-        instD['DEP_SET_ID'] = depId
-        instD['INST_STATUS'] = status
-        instD['STATUS_TIMESTAMP'] = now
+        instD["WF_INST_ID"] = instId
+        instD["WF_CLASS_ID"] = classId
+        instD["DEP_SET_ID"] = depId
+        instD["INST_STATUS"] = status
+        instD["STATUS_TIMESTAMP"] = now
 
         rd = DBstatusAPI.getObject(depId, classId, instId)
-        if ((rd is None) or (len(rd) == 0)):
+        if (rd is None) or (len(rd) == 0):
             self.__lfh.write("+WfTracking.setInstanceStatus() no status records for depId %s classId %s instId %s\n" % (depId, classId, instId))
             # new insert ---
-            DBstatusAPI.saveObject(instD, 'insert')
+            DBstatusAPI.saveObject(instD, "insert")
         #
         # This SQL is designed to avoid contention between modules.   No result (0 length) will be returned if
         #  module is currently running under the current workflow instance id.   If the workflow is running under
         # a different wf instance then we fail here --
         #
         #
-        sql = "update wf_instance_last set status_timestamp=" + str(now) + ", inst_status='" + str(status) + "' where dep_set_id = '" + \
-              depId + "' and wf_class_id = '" + classId + "' and wf_inst_id = '" + instId + "'"
+        sql = (
+            "update wf_instance_last set status_timestamp="
+            + str(now)
+            + ", inst_status='"
+            + str(status)
+            + "' where dep_set_id = '"
+            + depId
+            + "' and wf_class_id = '"
+            + classId
+            + "' and wf_inst_id = '"
+            + instId
+            + "'"
+        )
 
         ok = DBstatusAPI.runUpdateSQL(sql)
         if ok < 1:
@@ -67,7 +76,7 @@ class WfTracking(object):
             # Can update existing record using  ---
             DBstatusAPI.updateStatus(instD, status)
             # Verify the status
-            if (self.__verbose):
+            if self.__verbose:
                 rd = DBstatusAPI.getObject(depId, classId, instId)
                 self.__lfh.write("+WfTracking.setInstanceStatus() verified new status is: %r\n" % DBstatusAPI.getStatus(rd))
 

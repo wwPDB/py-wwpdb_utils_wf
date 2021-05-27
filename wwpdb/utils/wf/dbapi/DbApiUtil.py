@@ -26,14 +26,14 @@ import sys
 import time
 import datetime
 import MySQLdb
+
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
 class DbApiUtil(object):
     def __init__(self, dbServer=None, dbHost=None, dbName=None, dbUser=None, dbPw=None, dbSocket=None, dbPort=None, verbose=False, log=sys.stderr):
-        """
-        """
+        """ """
         self.__debug = False
         self.__Nretry = 5
         self.__dbServer = dbServer
@@ -48,18 +48,18 @@ class DbApiUtil(object):
         self.__schemaMap = {}
         self.__dbState = 0
 
-        if (self.__debug):
+        if self.__debug:
             self.__lfh.write("\n+DbApiUtil.__init__() using socket %r\n" % self.__dbSocket)
             self.__lfh.write("+DbApiUtil.__init__() using socket environment reference %r\n" % os.getenv("SITE_DB_SOCKET", None))
 
-        self.__myDb = DbConnection(dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser,
-                                   dbPw=self.__dbPw, dbPort=self.__dbPort, dbSocket=self.__dbSocket)
+        self.__myDb = DbConnection(
+            dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort, dbSocket=self.__dbSocket
+        )
 
         self.__dbcon = self.__myDb.connect()
 
     def __reConnect(self):
-        """
-        """
+        """ """
         try:
             self.__myDb.close(self.__dbcon)
         except MySQLdb.Error:
@@ -79,8 +79,7 @@ class DbApiUtil(object):
         return False
 
     def __runSelectSQL(self, query):
-        """
-        """
+        """ """
         rows = ()
         try:
             self.__dbcon.commit()
@@ -94,8 +93,7 @@ class DbApiUtil(object):
         return rows
 
     def __runUpdateSQL(self, query):
-        """
-        """
+        """ """
         try:
             curs = self.__dbcon.cursor()
             curs.execute("set autocommit=0")
@@ -103,7 +101,7 @@ class DbApiUtil(object):
             self.__dbcon.commit()
             curs.execute("set autocommit=1")
             curs.close()
-            return 'OK'
+            return "OK"
         except MySQLdb.Error as e:
             self.__dbcon.rollback()
             self.__dbState = e.args[0]
@@ -112,13 +110,11 @@ class DbApiUtil(object):
         return None
 
     def setSchemaMap(self, schemaMap):
-        """
-        """
+        """ """
         self.__schemaMap = schemaMap
 
     def runSelectSQL(self, sql):
-        """ method to run a query
-        """
+        """method to run a query"""
         for retry in range(1, self.__Nretry):
             ret = self.__runSelectSQL(sql)
             if ret is None:
@@ -136,8 +132,7 @@ class DbApiUtil(object):
         return None
 
     def runUpdateSQL(self, sql):
-        """ method to run a query
-        """
+        """method to run a query"""
         for retry in range(1, self.__Nretry):
             ret = self.__runUpdateSQL(sql)
             if ret is None:
@@ -163,36 +158,35 @@ class DbApiUtil(object):
         #
         rowExists = False
         if where:
-            sql = "select * from " + str(table) + " where " + ' and '.join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
+            sql = "select * from " + str(table) + " where " + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
             rows = self.runSelectSQL(sql)
             if rows and len(rows) > 0:
                 rowExists = True
             #
         #
         if rowExists and (not data):
-            return 'OK'
+            return "OK"
         #
         if rowExists:
-            sql = "update " + str(table) + " set " + ','.join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in data.items()])
+            sql = "update " + str(table) + " set " + ",".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in data.items()])
             if where:
-                sql += ' where ' + ' and '.join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
+                sql += " where " + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
             #
         else:
-            sql = "insert into " + str(table) + " (" + ','.join(['%s' % (k) for k, v in where.items()])
+            sql = "insert into " + str(table) + " (" + ",".join(["%s" % (k) for k, v in where.items()])
             if data:
-                sql += "," + ','.join(['%s' % (k) for k, v in data.items()])
+                sql += "," + ",".join(["%s" % (k) for k, v in data.items()])
             #
-            sql += ") values (" + ','.join(["'%s'" % (v.replace("'", "\\'")) for k, v in where.items()])
+            sql += ") values (" + ",".join(["'%s'" % (v.replace("'", "\\'")) for k, v in where.items()])
             if data:
-                sql += "," + ','.join(["'%s'" % (v.replace("'", "\\'")) for k, v in data.items()])
+                sql += "," + ",".join(["'%s'" % (v.replace("'", "\\'")) for k, v in data.items()])
             #
             sql += ")"
         #
         return self.runUpdateSQL(sql)
 
     def runUpdateSQLwithKey(self, key=None, parameter=()):
-        """
-        """
+        """ """
         if not key or not self.__schemaMap or (key not in self.__schemaMap):
             return None
         #
@@ -203,8 +197,7 @@ class DbApiUtil(object):
         return self.runUpdateSQL(sql)
 
     def selectData(self, key=None, parameter=()):
-        """
-        """
+        """ """
         if key is None or not self.__schemaMap or (key not in self.__schemaMap):
             return None
         #

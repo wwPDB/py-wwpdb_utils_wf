@@ -23,7 +23,7 @@ import MySQLdb
 
 class DbCommand:
     """
-       Parameterized SQL queries using Python DBI protocol...
+    Parameterized SQL queries using Python DBI protocol...
     """
 
     def __init__(self, dbcon, log=sys.stderr, verbose=False):
@@ -32,45 +32,39 @@ class DbCommand:
         self.__dbcon = dbcon
         self.__lfh = log
         self.__verbose = verbose
-        self.__ops = ['EQ', 'GE', 'GT', 'LT', 'LE', 'LIKE', 'NOT LIKE']
-        self.__opDict = {'EQ': '=',
-                         'GE': '>=',
-                         'GT': '>',
-                         'LT': '<',
-                         'LE': '<=',
-                         'LIKE': 'LIKE',
-                         'NOT LIKE': 'NOT LIKE'
-                         }
-        self.__logOps = ['AND', 'OR', 'NOT']
-        self.__grpOps = ['BEGIN', 'END']
+        self.__ops = ["EQ", "GE", "GT", "LT", "LE", "LIKE", "NOT LIKE"]
+        self.__opDict = {"EQ": "=", "GE": ">=", "GT": ">", "LT": "<", "LE": "<=", "LIKE": "LIKE", "NOT LIKE": "NOT LIKE"}
+        self.__logOps = ["AND", "OR", "NOT"]
+        self.__grpOps = ["BEGIN", "END"]
         self.__debug = True
-#
+
+    #
 
     def makeSqlSet(self, attribDict, constraintDef):
         """
-           construct syntext in use of SQL commands like 'update' and 'insert'.
-           e.g. SET key1 = value1 and key2 = value2 and ...
+        construct syntext in use of SQL commands like 'update' and 'insert'.
+        e.g. SET key1 = value1 and key2 = value2 and ...
 
-           Input: attribDict{} defined in WfSchemaMap and constraintDef{}
-           Return: a string
+        Input: attribDict{} defined in WfSchemaMap and constraintDef{}
+        Return: a string
         """
 
         changingVal = ""
         cType = str(type(constraintDef))
 
-        if (cType.find('dict') > 0):
+        if cType.find("dict") > 0:
             ld = []
             for k, v in constraintDef.items():
-                if(k in attribDict.keys()):
-                    if(v is None or v == 'None'):
+                if k in attribDict.keys():
+                    if v is None or v == "None":
                         c = " %s = NULL " % (attribDict[k])
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
                     ld.append(c)
                 else:
-                    if(self.__verbose):
+                    if self.__verbose:
                         self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
-                if (len(ld) > 0):
+                if len(ld) > 0:
                     changingVal = " SET " + ld[0]
                     for c in ld[1:]:
                         changingVal += ", " + c
@@ -79,28 +73,28 @@ class DbCommand:
 
     def makeConstraintCross(self, constraintList, constraintDef):
         """
-           construct constraint syntext in use of SQL commands for
-           querying multiple tables
-           e.g. WHERE key1 = value1 and key2 > value2 and ...
+        construct constraint syntext in use of SQL commands for
+        querying multiple tables
+        e.g. WHERE key1 = value1 and key2 > value2 and ...
 
-           Input: constraintList[] defined in WfSchemaMap and constraintDef{}
-           Return: a string
+        Input: constraintList[] defined in WfSchemaMap and constraintDef{}
+        Return: a string
 
         """
         constraint = ""
         ld = []
         for k, v in constraintDef.items():
-            if(k in constraintList.keys()):
-                if(v is None or v == 'None'):
+            if k in constraintList.keys():
+                if v is None or v == "None":
                     c = " %s is NULL " % (constraintList[k])
                 else:
                     c = " %s = '%s' " % (constraintList[k], v)
                 ld.append(c)
             else:
-                if(self.__verbose):
+                if self.__verbose:
                     self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
 
-            if (len(ld) > 0):
+            if len(ld) > 0:
                 constraint = " WHERE " + ld[0]
                 for c in ld[1:]:
                     constraint += " AND " + c
@@ -109,40 +103,40 @@ class DbCommand:
 
     def makeSqlConstraint(self, attribDict, constraintDef):
         """
-           construct constraint syntext in use for SQL commands.
-           e.g. WHERE key1 = value1 and key2 > value2 and ...
+        construct constraint syntext in use for SQL commands.
+        e.g. WHERE key1 = value1 and key2 > value2 and ...
 
-           Input: attribDict{} columns defined in WfSchemaMap and
-                  constraintDef is {} or []
-           Return: a string
+        Input: attribDict{} columns defined in WfSchemaMap and
+               constraintDef is {} or []
+        Return: a string
         """
 
         constraint = ""
         cType = str(type(constraintDef))
 
-        if (cType.find('dict') > 0):
+        if cType.find("dict") > 0:
             ld = []
             for k, v in constraintDef.items():
-                if(k in attribDict.keys()):
-                    if(v == 'None' or v is None):
+                if k in attribDict.keys():
+                    if v == "None" or v is None:
                         c = " %s is NULL " % (attribDict[k])
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
                     ld.append(c)
 
-                elif (k == "EXTERNAL_TABLE"):
+                elif k == "EXTERNAL_TABLE":
                     # "EXTERNAL_TABLE" is special designed for SQL syntex
                     # like " column in (select column from another table)"
                     c = "  %s " % (v)
                     ld.append(c)
                 else:
-                    if(self.__verbose):
+                    if self.__verbose:
                         self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
-                if (len(ld) > 0):
+                if len(ld) > 0:
                     constraint = " WHERE " + ld[0]
                     for c in ld[1:]:
                         constraint += " AND " + c
-        elif (cType.find('list') > 0):
+        elif cType.find("list") > 0:
             #
             # List of tuples with the following syntax:
             #
@@ -150,38 +144,27 @@ class DbCommand:
             # ('AND'|'OR')
             # ('GROUP', 'BEGIN|END')
 
-            if (len(constraintDef) > 0):
-                constraint += ' WHERE '
+            if len(constraintDef) > 0:
+                constraint += " WHERE "
                 for c in constraintDef:
-                    if (len(c) == 4 and str(c[0]).upper() in self.__ops):
+                    if len(c) == 4 and str(c[0]).upper() in self.__ops:
 
-                        if (str(c[3]).upper() == 'CHAR'):
-                            constraint += " %s %s '%s' " % \
-                                          (attribDict[str(c[1]).upper()],
-                                           self.__opDict[str(c[0]).upper()],
-                                           str(c[2]))
+                        if str(c[3]).upper() == "CHAR":
+                            constraint += " %s %s '%s' " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
                         else:
-                            constraint += " %s %s %s " % \
-                                          (attribDict[str(c[1]).upper()],
-                                           self.__opDict[str(c[0]).upper()],
-                                           str(c[2]))
+                            constraint += " %s %s %s " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
 
-                    elif (len(c) == 3 and str(c[0]).upper() in self.__ops):
-                        constraint += " %s %s '%s' " % \
-                                      (attribDict[str(c[1]).upper()],
-                                       self.__opDict[str(c[0]).upper()],
-                                       str(c[2]))
-                    elif (len(c) == 2 and str(c[0]).upper() == 'GROUP' and  # noqa: W504
-                          str(c[1]).upper() in self.__grpOps):
-                        if (str(c[1]).upper() == 'BEGIN'):
+                    elif len(c) == 3 and str(c[0]).upper() in self.__ops:
+                        constraint += " %s %s '%s' " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
+                    elif len(c) == 2 and str(c[0]).upper() == "GROUP" and str(c[1]).upper() in self.__grpOps:  # noqa: W504
+                        if str(c[1]).upper() == "BEGIN":
                             constraint += "("
                         else:
                             constraint += ")"
-                    elif (len(c) == 2 and str(c[0]).upper() == 'LOGOP' and  # noqa: W504
-                          str(c[1]).upper() in self.__logOps):
+                    elif len(c) == 2 and str(c[0]).upper() == "LOGOP" and str(c[1]).upper() in self.__logOps:  # noqa: W504
                         constraint += " %s " % str(c[1]).upper()
                     else:
-                        if (self.__lfh):
+                        if self.__lfh:
                             self.__lfh.write("Constraint error: %s\n" % str(c))
 
         else:
@@ -193,11 +176,11 @@ class DbCommand:
 
     def makeOrderStr(self, orderList):
         """
-           construct a string "ORDER BY ..." in SQL command for cross tables search
+        construct a string "ORDER BY ..." in SQL command for cross tables search
 
         """
         orderBy = ""
-        if (len(orderList) > 0):
+        if len(orderList) > 0:
             orderBy = " ORDER BY " + orderList[0]
             for c in orderList[1:]:
                 orderBy += ", " + c
@@ -221,9 +204,9 @@ class DbCommand:
             return nrows
         except MySQLdb.Error as e:
             self.__dbcon.rollback()
-# TOm : no curs defined
-#            curs.execute("set autocommit=1")
-#            curs.close()
+            # TOm : no curs defined
+            #            curs.execute("set autocommit=1")
+            #            curs.close()
             self.dbState = e.args[0]
             return None
 
@@ -232,7 +215,7 @@ class DbCommand:
         method to run a SQL query : no checking - just a convience method to
         get things working
         note that this does not use attrib list = but returns a list of lists.
-          """
+        """
         returnList = []
 
         if self.__debug:
@@ -245,7 +228,7 @@ class DbCommand:
                 curs.execute(query)
                 while True:
                     result = curs.fetchone()
-                    if (result is not None):
+                    if result is not None:
                         row = []
                         ir = 0
                         for _k in result:
@@ -257,13 +240,13 @@ class DbCommand:
             except MySQLdb.Error as e:
                 self.__lfh.write("DbCommand::runSelectSQL(): Database error %s: %s\n" % (e.args[0], e.args[1]))
                 self.__lfh.write("DbCommand::runSelectSQL(): Failing on query %s\n" % query)
-# no curs defined here
-#                curs.close()
+                # no curs defined here
+                #                curs.close()
                 self.__dbcon.close()
                 self.dbState = e.args[0]
                 return None
-    #            sys.exit (1)
-    #
+        #            sys.exit (1)
+        #
         if self.__debug:
             self.__lfh.write("+DbCommand.runSelectSQL - result length is %s\n" % len(returnList))
 
@@ -271,27 +254,27 @@ class DbCommand:
 
     def selectRows(self, tableDef, constraintDef, orderList=None, selectList=None):
         """
-            Execute query on the table described by "tableDef"
-            subject to the conditions in constraintDef and
-            sorted by the list of attributes in orderList [(attrib,type),..].
-            An optional selectList=[attrib,attrib] can be provided to limit
-            the query selection.
+        Execute query on the table described by "tableDef"
+        subject to the conditions in constraintDef and
+        sorted by the list of attributes in orderList [(attrib,type),..].
+        An optional selectList=[attrib,attrib] can be provided to limit
+        the query selection.
 
-            ConstraintDef can be a simple of dictionary of key == value pairs
-            which are logically AND'd together, or a more general constraint
-            can be contructed using the compact contraint specification list
-            decoded in method makeSqlConstraint() above.
+        ConstraintDef can be a simple of dictionary of key == value pairs
+        which are logically AND'd together, or a more general constraint
+        can be contructed using the compact contraint specification list
+        decoded in method makeSqlConstraint() above.
 
-            Return a <row list or row dictionary>.
+        Return a <row list or row dictionary>.
         """
         if orderList is None:
             orderList = []
         if selectList is None:
             selectList = []
-        
-        tableName = tableDef['TABLE_NAME']
-        attribDict = tableDef['ATTRIBUTES']
-        if (len(selectList) > 0):
+
+        tableName = tableDef["TABLE_NAME"]
+        attribDict = tableDef["ATTRIBUTES"]
+        if len(selectList) > 0:
             attribsCsv = ",".join(["%s" % attribDict[k] for k in selectList])
             attribs = selectList
         else:
@@ -304,7 +287,7 @@ class DbCommand:
         constraint = self.makeSqlConstraint(attribDict, constraintDef)
 
         order = ""
-        if (len(orderList) > 0):
+        if len(orderList) > 0:
             order = " ORDER BY " + orderList[0]
             for a in orderList[1:]:
                 order += ", " + a
@@ -312,8 +295,8 @@ class DbCommand:
 
         #
         query = "SELECT " + attribsCsv + " FROM " + tableName + constraint + order
-# Tom added verbose check
-        if (self.__verbose):
+        # Tom added verbose check
+        if self.__verbose:
             self.__lfh.write("DB command --\n%s\n" % query)
 
         ##
@@ -325,7 +308,7 @@ class DbCommand:
             curs.execute(query)
             while True:
                 result = curs.fetchone()
-                if (result is not None):
+                if result is not None:
                     row = {}
                     ir = 0
                     for k in attribs:
@@ -337,28 +320,28 @@ class DbCommand:
         except MySQLdb.Error as e:
             self.__lfh.write("DbCommand::selectRows(): Database error %s: %s\n" % (e.args[0], e.args[1]))
             self.__lfh.write("DbCommand::selectRows(): Failing on query %s\n" % query)
-# Tom : no curs defined here
-#            curs.close()
+            # Tom : no curs defined here
+            #            curs.close()
             self.__dbcon.close()
             self.dbState = e.args[0]
             return None
-#            sys.exit (1)
+        #            sys.exit (1)
 
-        if(len(returnList) > 1):
+        if len(returnList) > 1:
             return returnList
         else:
             return row
 
     def update(self, type, tableDef, updateVal, constraintDef=None):  # pylint: disable=redefined-builtin
         """
-           Update value for any column(s) in a giving table.
-           type may be 'insert' or 'update', default is 'insert'.
-           tableDef in WfSchemaMap, updateVal{} and constraintDef{}
-           for "update"
+        Update value for any column(s) in a giving table.
+        type may be 'insert' or 'update', default is 'insert'.
+        tableDef in WfSchemaMap, updateVal{} and constraintDef{}
+        for "update"
         """
 
-        tableName = tableDef['TABLE_NAME']
-        attribDict = tableDef['ATTRIBUTES']
+        tableName = tableDef["TABLE_NAME"]
+        attribDict = tableDef["ATTRIBUTES"]
         # modify the specicial characters like "'",""" in the updateVal
         updateValMod = {}
         v2 = ""
@@ -374,18 +357,18 @@ class DbCommand:
             updateValMod[k] = v2
 
         updateSet = self.makeSqlSet(attribDict, updateValMod)
-        constraint = ''
-        if(constraintDef is not None):
+        constraint = ""
+        if constraintDef is not None:
             constraint = self.makeSqlConstraint(attribDict, constraintDef)
-        if(type.lower() == 'update'):
+        if type.lower() == "update":
             command = "UPDATE "
         else:
             command = "INSERT INTO "
         command += tableName + updateSet
-        if(constraint != ''):
+        if constraint != "":
             command += constraint
-# Tom - added verbose check
-        if (self.__verbose):
+        # Tom - added verbose check
+        if self.__verbose:
             self.__lfh.write("DB command --\n%s\n" % command)
 
         try:
@@ -398,16 +381,16 @@ class DbCommand:
             self.__lfh.write("DbCommand::update(): Database error %s: %s\n" % (e.args[0], e.args[1]))
 
             self.__dbcon.rollback()
-# no curs defined here
-#            curs.execute("set autocommit=1")
-#            curs.close()
+            # no curs defined here
+            #            curs.execute("set autocommit=1")
+            #            curs.close()
             self.__dbcon.close()
             self.dbState = e.args[0]
             return None
 
         self.__dbcon.commit()
         curs.execute("set autocommit=1")
-        if (self.__verbose):
+        if self.__verbose:
             self.__lfh.write("DbCommand::update(): SQL command successfully executed.\n")
         curs.close()
 
@@ -415,13 +398,13 @@ class DbCommand:
 
     def selectCrossTables(self, selectList, sqlJoinStr, orderBy, constraintList, constraintDef=None):
         """
-            This function is specically for some complicate queries. The
-            "sql join" is used.
+        This function is specically for some complicate queries. The
+        "sql join" is used.
 
-            Input selectList, sqlJoinStr, orderBy will be
-            specially definded in WfSchemaMap. constraintDict is {}
+        Input selectList, sqlJoinStr, orderBy will be
+        specially definded in WfSchemaMap. constraintDict is {}
 
-            Return a list of rows {dictionaries)
+        Return a list of rows {dictionaries)
 
         """
 
@@ -429,8 +412,8 @@ class DbCommand:
 
         constraint = self.makeConstraintCross(constraintList, constraintDef)
         query = "SELECT DISTINCT " + attribsCsv + sqlJoinStr + constraint + orderBy
-# Tom - added verbose check
-        if (self.__verbose):
+        # Tom - added verbose check
+        if self.__verbose:
             self.__lfh.write("DB command --\n%s\n" % query)
 
         returnList = []
@@ -442,7 +425,7 @@ class DbCommand:
             curs.execute(query)
             while True:
                 result = curs.fetchone()
-                if (result is not None):
+                if result is not None:
                     row = {}
                     ir = 0
                     for k in selectList:
@@ -453,8 +436,8 @@ class DbCommand:
                     break
         except MySQLdb.Error as e:
             self.__lfh.write("DbCommand::selectRows(): Database error %s: %s\n" % (e.args[0], e.args[1]))
-# Tom : no curs defined here
-#          curs.close()
+            # Tom : no curs defined here
+            #          curs.close()
             self.dbState = e.args[0]
             return None
 

@@ -22,16 +22,16 @@ import sys
 
 class UtilsBase(object):
 
-    """ Base class implementing the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    """Base class implementing the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParmeterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParmeterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -40,9 +40,8 @@ class UtilsBase(object):
         self._lfh = log
 
     def _getArgs(self, kwD):
-        """ Extract the keyword arguments used by methods in this class.
-        """
-        return (kwD['inputObjectD'], kwD['outputObjectD'], kwD['userParameterD'], kwD['internalParameterD'])
+        """Extract the keyword arguments used by methods in this class."""
+        return (kwD["inputObjectD"], kwD["outputObjectD"], kwD["userParameterD"], kwD["internalParameterD"])
 
     def noOp(self, **kwArgs):
         self._getArgs(kwArgs)

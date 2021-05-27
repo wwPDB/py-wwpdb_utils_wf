@@ -32,22 +32,22 @@ from wwpdb.io.locator.PathInfo import PathInfo
 
 class EmUtils(UtilsBase):
 
-    """ Utility class to run validation operations.
+    """Utility class to run validation operations.
 
-        Current supported operations include:
+    Current supported operations include:
 
-        - create PDF report and supporting XML data file
+    - create PDF report and supporting XML data file
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -74,20 +74,20 @@ class EmUtils(UtilsBase):
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(inputPath)
             #  add any extra command line options
-            options = str(uD['options'])
-            if ((options is not None) and (len(options) > 0)):
+            options = str(uD["options"])
+            if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
             ret = dp.op("fsc_check")
             dp.expLog(logPath)
             dp.exp(outPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.fsc_check_options() - input FSC file path:  %s\n" % inputPath)
                 self._lfh.write("+EmUtils.fsc_check_options() - output FSC file path:  %s\n" % outPath)
                 self._lfh.write("+EmUtils.fsc_check_options() - log file path:         %s\n" % logPath)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
 
             return ret
@@ -96,9 +96,7 @@ class EmUtils(UtilsBase):
             return -100
 
     def mapFixOp(self, **kwArgs):
-        """Run mapfix (Prior BIG VERSION) to correct header values in input map.
-
-        """
+        """Run mapfix (Prior BIG VERSION) to correct header values in input map."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
@@ -111,20 +109,20 @@ class EmUtils(UtilsBase):
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(inpMapPath)
             #  add any extra command line options
-            options = str(uD['options'])
-            if ((options is not None) and (len(options) > 0)):
+            options = str(uD["options"])
+            if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
             dp.op("mapfix-big")
             dp.expLog(logPath)
             dp.exp(outMapPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.mapFixOp() - input map  file path:  %s\n" % inpMapPath)
                 self._lfh.write("+EmUtils.mapFixOp() - output map file path:  %s\n" % outMapPath)
                 self._lfh.write("+EmUtils.mapFixOp() - log file path:         %s\n" % logPath)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -132,9 +130,7 @@ class EmUtils(UtilsBase):
             return False
 
     def mapFixInPlaceOp(self, **kwArgs):
-        """Run mapfix (BIG VERSION) to correct header values in input map (in place).
-
-        """
+        """Run mapfix (BIG VERSION) to correct header values in input map (in place)."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
@@ -149,8 +145,8 @@ class EmUtils(UtilsBase):
             dp.setDebugMode(flag=True)
             # dp.imp(inpMapPath)
             #  add any extra command line options
-            options = str(uD['options'])
-            if ((options is not None) and (len(options) > 0)):
+            options = str(uD["options"])
+            if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
             dp.addInput(name="input_map_file_path", value=inpMapPath)
@@ -160,14 +156,14 @@ class EmUtils(UtilsBase):
             dp.exp(rptPath)
             dp.expLog(logPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.mapFixInPlaceOp() - input map  file path:  %s\n" % inpMapPath)
                 self._lfh.write("+EmUtils.mapFixInPlaceOp() - output map file path:  %s\n" % outMapPath)
                 self._lfh.write("+EmUtils.mapFixInPlaceOp() - report file path:      %s\n" % rptPath)
                 self._lfh.write("+EmUtils.mapFixInPlaceOp() - log file path:         %s\n" % logPath)
                 self._lfh.write("+EmUtils.mapFixInPlaceOp() - command option:        %s\n" % options)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -175,9 +171,7 @@ class EmUtils(UtilsBase):
             return False
 
     def em2emSpiderOp(self, **kwArgs):
-        """Run em2em to convert Spider map to CCP4 format
-
-        """
+        """Run em2em to convert Spider map to CCP4 format"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
@@ -193,9 +187,9 @@ class EmUtils(UtilsBase):
             pixelSpacingX = 1.0
             pixelSpacingY = 1.0
             pixelSpacingZ = 1.0
-            pixelSpacingX = str(uD['pixel-spacing-x'])
-            pixelSpacingY = str(uD['pixel-spacing-y'])
-            pixelSpacingZ = str(uD['pixel-spacing-z'])
+            pixelSpacingX = str(uD["pixel-spacing-x"])
+            pixelSpacingY = str(uD["pixel-spacing-y"])
+            pixelSpacingZ = str(uD["pixel-spacing-z"])
             dp.addInput(name="pixel-spacing-x", value=pixelSpacingX)
             dp.addInput(name="pixel-spacing-y", value=pixelSpacingY)
             dp.addInput(name="pixel-spacing-z", value=pixelSpacingZ)
@@ -204,12 +198,12 @@ class EmUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(outMapPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.em2emSpiderOp() - input map  file path:  %s\n" % inpMapPath)
                 self._lfh.write("+EmUtils.em2emSpiderOp() - output map file path:  %s\n" % outMapPath)
                 self._lfh.write("+EmUtils.em2emSpiderOp() - log file path:         %s\n" % logPath)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -217,9 +211,9 @@ class EmUtils(UtilsBase):
             return False
 
     def mapFixInPlaceAltOp(self, **kwArgs):
-        """ MapFix operation on input map (in place).
+        """MapFix operation on input map (in place).
 
-             - with automatic input and output map file selection -
+        - with automatic input and output map file selection -
 
         """
         try:
@@ -239,7 +233,7 @@ class EmUtils(UtilsBase):
             #  add any extra command line options
             options = None
             try:
-                ifh = open(inpArgsPath, 'r')
+                ifh = open(inpArgsPath, "r")
                 options = ifh.read()
                 ifh.close()
                 dp.addInput(name="options", value=options)
@@ -251,7 +245,7 @@ class EmUtils(UtilsBase):
             dp.exp(rptPath)
             dp.expLog(logPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.mapFixOp() - input map  file path:         %s\n" % inpMapPath)
                 self._lfh.write("+EmUtils.mapFixOp() - command line args file path:  %s\n" % inpArgsPath)
                 self._lfh.write("+EmUtils.mapFixOp() - output map file path:         %s\n" % outMapPath)
@@ -259,7 +253,7 @@ class EmUtils(UtilsBase):
                 self._lfh.write("+EmUtils.mapFixOp() - log file path:                %s\n" % logPath)
                 self._lfh.write("+EmUtils.mapFixOp() - command option:               %s\n" % options)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -267,13 +261,13 @@ class EmUtils(UtilsBase):
             return False
 
     def mapFixInPlaceCfgOp(self, **kwArgs):
-        """ execution wrapper for mapfix operations for all maps of a particular type.
+        """execution wrapper for mapfix operations for all maps of a particular type.
 
-            --- using explicit data file selection via configuraton file selection.
+        --- using explicit data file selection via configuraton file selection.
 
-                map-content-type = one of em-volume, em-mask-volume, em-half-volume, em-additional-volume
-                partlist = [1,2,3]
-                cmdline-arg-list = ['-voxel ...   ','-voxel .... ','-voxel .... ']
+            map-content-type = one of em-volume, em-mask-volume, em-half-volume, em-additional-volume
+            partlist = [1,2,3]
+            cmdline-arg-list = ['-voxel ...   ','-voxel .... ','-voxel .... ']
 
 
 
@@ -289,11 +283,11 @@ class EmUtils(UtilsBase):
             arg = None
             cTupL = []
             try:
-                cD = json.load(open(inpCfgPath, 'r'))
-                pL = cD['part-list']
-                inpMileStone = cD['map-content-milestone'] if 'map-content-milestone' in cD else None
-                mapContentType = cD['map-content-type']
-                cmdLineArgList = cD['cmd-line-arg-list']
+                cD = json.load(open(inpCfgPath, "r"))
+                pL = cD["part-list"]
+                inpMileStone = cD["map-content-milestone"] if "map-content-milestone" in cD else None
+                mapContentType = cD["map-content-type"]
+                cmdLineArgList = cD["cmd-line-arg-list"]
                 for p, arg in zip(pL, cmdLineArgList):
                     cTupL.append((p, mapContentType, arg))
             except Exception as _e:  # noqa: F841
@@ -305,10 +299,10 @@ class EmUtils(UtilsBase):
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
 
             for p, mT, arg in cTupL:
-                inpMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType='map', fileSource=storageType, versionId="latest", partNumber=p, mileStone=inpMileStone)
-                outMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType='map', fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
-                rptPath = pI.getFilePath(dataSetId, contentType="mapfix-header-report", formatType='json', fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
-                logPath = pI.getFilePath(dataSetId, contentType="mapfix-report", formatType='txt', fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
+                inpMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType="map", fileSource=storageType, versionId="latest", partNumber=p, mileStone=inpMileStone)
+                outMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType="map", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
+                rptPath = pI.getFilePath(dataSetId, contentType="mapfix-header-report", formatType="json", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
+                logPath = pI.getFilePath(dataSetId, contentType="mapfix-report", formatType="txt", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
 
                 dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
                 dp.setDebugMode(flag=True)
@@ -319,7 +313,7 @@ class EmUtils(UtilsBase):
                 dp.exp(rptPath)
                 dp.expLog(logPath)
 
-                if (self._verbose):
+                if self._verbose:
                     self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - config file path:             %s\n" % inpCfgPath)
                     self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - input map  file path:         %s\n" % inpMapPath)
                     self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - output map file path:         %s\n" % outMapPath)
@@ -327,7 +321,7 @@ class EmUtils(UtilsBase):
                     self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - log file path:                %s\n" % logPath)
                     self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - command option:               %s\n" % arg)
 
-                if (self.__cleanUp):
+                if self.__cleanUp:
                     dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -352,20 +346,20 @@ class EmUtils(UtilsBase):
             dp.imp(inpImgPath)
 
             #  add any extra command line options
-            options = str(uD['options'])
-            if ((options is not None) and (len(options) > 0)):
+            options = str(uD["options"])
+            if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
             ret = dp.op("img-convert")
             dp.expLog(logPath)
             dp.exp(outImgPath)
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+EmUtils.imageMagickOp() - input image  file path:  %s\n" % inpImgPath)
                 self._lfh.write("+EmUtils.imageMagickOp() - output image file path:  %s\n" % outImgPath)
                 self._lfh.write("+EmUtils.imageMagickOp() - log file path:         %s\n" % logPath)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
 
             return ret

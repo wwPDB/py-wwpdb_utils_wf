@@ -40,22 +40,22 @@ from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 
 class ValidationUtils(UtilsBase):
 
-    """ Utility class to run validation operations.
+    """Utility class to run validation operations.
 
-        Current supported operations include:
+    Current supported operations include:
 
-        - create PDF report and supporting XML data file
+    - create PDF report and supporting XML data file
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -64,10 +64,11 @@ class ValidationUtils(UtilsBase):
         self.__cleanUp = False
         """Flag to remove any temporary directories created by this class.
         """
+
     def validationReportAllOp(self, **kwArgs):
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
-           the current implementation of all experimental methods  with optional input
-           of experimental data files --
+        the current implementation of all experimental methods  with optional input
+        of experimental data files --
 
         """
         try:
@@ -112,12 +113,12 @@ class ValidationUtils(UtilsBase):
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(pdbxPath)
             #
-            validationMode = str(uD['validation_mode'])
+            validationMode = str(uD["validation_mode"])
             if validationMode in ["annotate", "deposit", "server", "release", "legacy"]:
                 dp.addInput(name="request_validation_mode", value=validationMode)
 
             #  add an control over the report context
-            inAnnotation = str(uD['in_annotation'])
+            inAnnotation = str(uD["in_annotation"])
             if inAnnotation in ["yes", "no"]:
                 dp.addInput(name="request_annotation_context", value=inAnnotation)
             #
@@ -150,7 +151,7 @@ class ValidationUtils(UtilsBase):
             dp.expLog(logPath)
             dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath, cifReportPath])
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Entry Id:                %s\n" % depDataSetId)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PDBx   file path:        %s\n" % pdbxPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - SF     file path:        %s\n" % sfPath)
@@ -165,7 +166,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - full PDF   file path:  %s\n" % validationFullReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - validation mode:       %s\n" % validationMode)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -175,10 +176,10 @@ class ValidationUtils(UtilsBase):
 
     def validationReportAllOpV2(self, **kwArgs):
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
-           the current implementation of all experimental methods  with optional input
-           of experimental data files --
+        the current implementation of all experimental methods  with optional input
+        of experimental data files --
 
-           Supports output of 2fo and fo edmap coefficients
+        Supports output of 2fo and fo edmap coefficients
         """
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -229,12 +230,12 @@ class ValidationUtils(UtilsBase):
             vw = ValidationWrapper(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             vw.imp(pdbxPath)
             #
-            validationMode = str(uD['validation_mode'])
+            validationMode = str(uD["validation_mode"])
             if validationMode in ["annotate", "deposit", "server", "release", "legacy"]:
                 vw.addInput(name="request_validation_mode", value=validationMode)
 
             #  add an control over the report context
-            inAnnotation = str(uD['in_annotation'])
+            inAnnotation = str(uD["in_annotation"])
             if inAnnotation in ["yes", "no"]:
                 vw.addInput(name="request_annotation_context", value=inAnnotation)
             #
@@ -276,10 +277,21 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath,
-                                    imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
+            vw.expList(
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                    coeffoReportPath,
+                    coef2foReportPath,
+                ]
+            )
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - PDBx   file path:        %s\n" % pdbxPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - SF     file path:        %s\n" % sfPath)
@@ -297,7 +309,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - 2fo coef file path     %s\n" % coef2foReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - validation mode:       %s\n" % validationMode)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 vw.cleanup()
             return True
         except Exception as _e:  # noqa: F841
@@ -307,12 +319,12 @@ class ValidationUtils(UtilsBase):
 
     def validationReportAllOpV3(self, **kwArgs):
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
-           the current implementation of all experimental methods  with optional input
-           of experimental data files --
+        the current implementation of all experimental methods  with optional input
+        of experimental data files --
 
-           Supports output of 2fo and fo edmap coefficients
+        Supports output of 2fo and fo edmap coefficients
 
-           Supports src6 - nmr-data-str file - which will override a CS file
+        Supports src6 - nmr-data-str file - which will override a CS file
         """
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -363,12 +375,12 @@ class ValidationUtils(UtilsBase):
             vw = ValidationWrapper(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             vw.imp(pdbxPath)
             #
-            validationMode = str(uD['validation_mode'])
+            validationMode = str(uD["validation_mode"])
             if validationMode in ["annotate", "deposit", "server", "release", "legacy"]:
                 vw.addInput(name="request_validation_mode", value=validationMode)
 
             #  add an control over the report context
-            inAnnotation = str(uD['in_annotation'])
+            inAnnotation = str(uD["in_annotation"])
             if inAnnotation in ["yes", "no"]:
                 vw.addInput(name="request_annotation_context", value=inAnnotation)
 
@@ -414,10 +426,21 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath,
-                                    imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
+            vw.expList(
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                    coeffoReportPath,
+                    coef2foReportPath,
+                ]
+            )
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - Entry Id:                %s\n" % depDataSetId)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PDBx    file path:       %s\n" % pdbxPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - SF      file path:       %s\n" % sfPath)
@@ -435,7 +458,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - 2fo coef file path     %s\n" % coef2foReportPath)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - validation mode:       %s\n" % validationMode)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 vw.cleanup()
             return True
         except Exception as _e:  # noqa: F841

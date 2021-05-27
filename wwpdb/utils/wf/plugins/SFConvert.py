@@ -9,6 +9,7 @@ Module to handle dictionary compliant SF files from autoPROC in mmCIF format
 
 import os
 import sys
+
 try:
     # We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpIoUtils import PdbxExpFileIo, PdbxExpIoUtils
@@ -31,7 +32,7 @@ class SFConvert(object):
             io = IoAdapterCore()
             # Categories that will trigger special handling.  AUTOProc uses software
             # Used to key off software
-            catList = ['pdbx_audit_conform']
+            catList = ["pdbx_audit_conform"]
 
             containerList = io.readFile(pathIn, selectList=catList)
 
@@ -89,7 +90,7 @@ class SFConvert(object):
                     return None
 
                 mE = PdbxExpIoUtils(dataContainer=modelContainerList[0], verbose=self._verbose, log=self._lfh)
-                pdbId = str(mE.getDbCode(dbId='PDB')).lower()
+                pdbId = str(mE.getDbCode(dbId="PDB")).lower()
 
                 return pdbId
         except Exception as _e:  # noqa: F841
@@ -99,7 +100,7 @@ class SFConvert(object):
 
     def __stripAudit(self, cList):
         """Strip out Audit records from uploaded files"""
-        for cat in ['audit', 'audit_conform']:
+        for cat in ["audit", "audit_conform"]:
             for container in cList:
                 if cat in container.getObjNameList():
                     container.remove(cat)
@@ -107,9 +108,7 @@ class SFConvert(object):
     def __correctGphlAlias(self, cList):
         """Strip out Audit records from uploaded files"""
 
-        rmappings = {"gphl_signal_type": "pdbx_signal_type",
-                     "gphl_observed_signal_threshold": "pdbx_observed_signal_threshold"
-                     }
+        rmappings = {"gphl_signal_type": "pdbx_signal_type", "gphl_observed_signal_threshold": "pdbx_observed_signal_threshold"}
 
         for container in cList:
             if "reflns" in container.getObjNameList():
@@ -132,9 +131,7 @@ class SFConvert(object):
                 errs.append("Error: missing _refln category in first block")
             else:
                 cObj = b0.getObj("refln")
-                needAtt = ["F_meas_au", "F_meas", "intensity_meas", "intensity_meas_au",
-                           "F_squared_meas", "pdbx_I_plus", "pdbx_I_minus",
-                           "pdbx_F_plus", "pdbx_F_minus"]
+                needAtt = ["F_meas_au", "F_meas", "intensity_meas", "intensity_meas_au", "F_squared_meas", "pdbx_I_plus", "pdbx_I_minus", "pdbx_F_plus", "pdbx_F_minus"]
                 found = False
                 for att in needAtt:
                     if att in cObj.getAttributeList():
