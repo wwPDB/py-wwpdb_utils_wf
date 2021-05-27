@@ -29,12 +29,17 @@ from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 
 try:
-    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    # We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
 except ImportError:
     pass
 
-from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
+try:
+    # We will have present on annotation system - but allow testing of DepUI merge without
+    from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
+except ImportError:
+    pass
+
 
 sys.stdout = sys.stderr
 
@@ -66,7 +71,7 @@ class NmrUtils(UtilsBase):
         """
         #
 
-    def ccpnExtractOp(self, **kwArgs):
+    def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
         """Extract PDB and NMRSTAR files from CCPn project
         """
 
@@ -85,7 +90,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = inpObjD["src1"].getValue()
             nameList = inpObjD["src2"].getValue()
             #
@@ -142,7 +147,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             nameList = []
@@ -197,7 +202,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPath = inpObjD["src1"].getFilePathReference()
             xyzPath = inpObjD["src2"].getFilePathReference()
 
@@ -248,7 +253,7 @@ class NmrUtils(UtilsBase):
             * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPath = inpObjD["src1"].getFilePathReference()
             xyzPath = inpObjD["src2"].getFilePathReference()
 
@@ -286,7 +291,7 @@ class NmrUtils(UtilsBase):
             * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             xyzPath = inpObjD["src1"].getFilePathReference()
             csPath = inpObjD["src2"].getFilePathReference()
             #
@@ -330,7 +335,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -377,7 +382,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -424,7 +429,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             #
@@ -530,7 +535,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -593,7 +598,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -650,7 +655,7 @@ class NmrUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             logOutPath = outObjD["dst0"].getFilePathReference()
@@ -700,7 +705,7 @@ class NmrUtils(UtilsBase):
             * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             xyzPath = inpObjD["src1"].getFilePathReference()
             nefPath = inpObjD["src2"].getFilePathReference()
             #

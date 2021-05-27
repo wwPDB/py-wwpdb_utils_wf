@@ -10,7 +10,7 @@
 """
 
 
-class WfSchemaMap:
+class WfSchemaMap(object):
     _schemaMap = {
         "DEPOSITION" : {
             "ATTRIBUTES"  : {

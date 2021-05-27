@@ -54,7 +54,7 @@ class SeqStatsUtils(UtilsBase):
            Latest versions of these files will be used.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (_inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwArgs)
 
             # ------
             #  This provide all information to define source data --
@@ -75,7 +75,7 @@ class SeqStatsUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (_inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
 
             # ------
             #  This provide all information to define source data --
@@ -101,7 +101,7 @@ class SeqStatsUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (_inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
 
             # ------
             #  This provide all information to define source data --
@@ -136,7 +136,7 @@ class SeqStatsUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (_inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
 
             # ------
             #  This provide all information to define source data --

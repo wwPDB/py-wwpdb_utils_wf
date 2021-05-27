@@ -57,7 +57,7 @@ class DataSelector(object):
         try:
             self.__targetCategoryName = categoryName
             return True
-        except:  # noqa: E722
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def getSelectCategoryName(self):
@@ -77,7 +77,7 @@ class DataSelector(object):
                 self.__targetAttributeList.append(attributeName)
                 self.__selectorType = 'attribute'
             return True
-        except:  # noqa: E722
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def getSelectAttributeList(self):
@@ -101,7 +101,7 @@ class DataSelector(object):
         try:
             self.__selectConditionList.append((attributeName, attributeValue, comparisonOp))
             return True
-        except:  # noqa: E722
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def getSelectConditionList(self):

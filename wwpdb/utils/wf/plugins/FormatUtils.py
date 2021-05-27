@@ -66,7 +66,7 @@ class FormatUtils(UtilsBase):
         """Performs PDBx(cif) to PDB format conversion operation.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -91,7 +91,7 @@ class FormatUtils(UtilsBase):
         """Perform PDB to PDBx(cif) format conversion operation.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -116,7 +116,7 @@ class FormatUtils(UtilsBase):
         """Perform PDB to PDBx(cif) format conversion operation (special processing for deposition sessions)
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -141,7 +141,7 @@ class FormatUtils(UtilsBase):
         """Perform RCSB(cif) to PDBx(cif) format conversion operation.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             rcsbPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -166,7 +166,7 @@ class FormatUtils(UtilsBase):
         """Perform  PDBx(cif) to PDBx(cif) format conversion operation (special processing deposition sessions)
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             rcsbPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -191,7 +191,7 @@ class FormatUtils(UtilsBase):
         """Perform  MTZ or other SF file  to  PDBx(cif) format conversion operation.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             sfPath = inpObjD["src1"].getFilePathReference()
             sfFmt = inpObjD["src1"].getFileFormat()
             xyzPath = inpObjD["src2"].getFilePathReference()
@@ -251,7 +251,7 @@ class FormatUtils(UtilsBase):
         """Perform NMRSTAR to PDBx(cif) format conversion operation.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             strPath = inpObjD["src"].getFilePathReference()
             pdbxPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -278,7 +278,7 @@ class FormatUtils(UtilsBase):
         """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = outObjD["src"].getFilePathReference()
             strPath = inpObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()

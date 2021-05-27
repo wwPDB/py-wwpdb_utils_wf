@@ -21,7 +21,7 @@ import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from mmcif.core.mmciflib import ParseCifSimple
+from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 
 
 class CifFile(object):
@@ -123,7 +123,7 @@ class PdbxUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
             if (not self.__getBlock(pdbxPath)):
                 return False
@@ -174,7 +174,7 @@ class PdbxUtils(UtilsBase):
         Only container types *list* and *value* are support.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
             if (not self.__getBlock(pdbxPath)):
                 return False
@@ -215,7 +215,7 @@ class PdbxUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
             if (not self.__getBlock(pdbxPath)):
                 outObjD['dst'].setValue(0)
@@ -276,7 +276,7 @@ class PdbxUtils(UtilsBase):
         """
         d = {}
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = inpObjD["src"].getFilePathReference()
             if (not self.__getBlock(pdbxPath)):
                 return False
@@ -383,5 +383,3 @@ class PdbxUtils(UtilsBase):
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
-
-        pass

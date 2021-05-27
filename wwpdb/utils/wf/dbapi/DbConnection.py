@@ -103,7 +103,7 @@ class DbConnection:
                                         local_infile=1)
 
         except MySQLdb.Error as e:
-            self.__lfh.write("+DbConnection.connect(): Connection error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("+DbConnection.connect(): Connection error %s: %s\n" % (e.args[0], e.args[1]))
             self.__lfh.write("+DbConnection.connect(): Connection failed using server %s host %s dsn %s user %s pw %s port %d socket %s\n" %
                              (self.__dbServer, self.__dbHost, self.__dbName, self.__dbUser, self.__dbPw, self.__dbPort, self.__dbSocket))
             sys.exit(1)

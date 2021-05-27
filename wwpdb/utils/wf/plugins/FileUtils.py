@@ -58,7 +58,7 @@ class FileUtils(UtilsBase):
            file reference in the output object ('dst')
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             iPth = inpObjD["src"].getFilePathReference()
             oPth = outObjD["dst"].getFilePathReference()
             if (self._verbose):
@@ -78,7 +78,7 @@ class FileUtils(UtilsBase):
            Test for 'src' file existence  -- always return true -
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             iPth = inpObjD["src"].getFilePathReference()
             oPth = outObjD["dst"].getFilePathReference()
             if (self._verbose):
@@ -101,7 +101,7 @@ class FileUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
             newPth = inpObjD["src"].getDirPathReference()
             if (not os.path.exists(newPth)):
                 modeS = uD['mode']
@@ -122,7 +122,7 @@ class FileUtils(UtilsBase):
             True on success or False otherwise
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             newPth = inpObjD["src"].getFilePathReference()
             if (os.path.exists(newPth)):
                 nBytes = os.path.getsize(newPth)
@@ -140,7 +140,7 @@ class FileUtils(UtilsBase):
         """ Determine the input file ('src') modification time and store this value in the output object ('dst').
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             newPth = inpObjD["src"].getFilePathReference()
             if (os.path.exists(newPth)):
                 tSec = os.path.getmtime(newPth)
@@ -159,7 +159,7 @@ class FileUtils(UtilsBase):
            and store the line based difference in the output object ('dst')
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             iPth1 = inpObjD["src1"].getFilePathReference()
             iPth2 = inpObjD["src2"].getFilePathReference()
             if (self._verbose):

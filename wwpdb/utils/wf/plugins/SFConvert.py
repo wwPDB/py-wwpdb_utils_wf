@@ -10,7 +10,7 @@ Module to handle dictionary compliant SF files from autoPROC in mmCIF format
 import os
 import sys
 try:
-    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    # We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpIoUtils import PdbxExpFileIo, PdbxExpIoUtils
 except ImportError:
     pass
@@ -64,7 +64,7 @@ class SFConvert(object):
             sfIo = PdbxExpFileIo(verbose=self._verbose, log=self._lfh)
             containerList = sfIo.getContainerList(sfIn)
             if len(containerList) < 1:
-                False
+                return False
 
             sfIo.updateContainerNames(idCode=pdbId, containerList=containerList)
             sfIo.updateEntryIds(idCode=pdbId, containerList=containerList)
@@ -88,7 +88,7 @@ class SFConvert(object):
                 if len(modelContainerList) < 1:
                     return None
 
-                mE = PdbxExpIoUtils(dataContainer=modelContainerList[0], verbose=self.__verbose, log=self.__lfh)
+                mE = PdbxExpIoUtils(dataContainer=modelContainerList[0], verbose=self._verbose, log=self._lfh)
                 pdbId = str(mE.getDbCode(dbId='PDB')).lower()
 
                 return pdbId

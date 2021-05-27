@@ -38,7 +38,7 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 try:
-    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    # We will have present on annotation system - but allow testing without
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
     from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
@@ -98,7 +98,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             dirPath = inpObjD["src"].getDirPathReference()
@@ -119,7 +119,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -150,7 +150,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -185,7 +185,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -221,7 +221,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -252,7 +252,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -283,7 +283,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -314,7 +314,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
@@ -344,7 +344,7 @@ class AnnotationUtils(UtilsBase):
         """ DCC generated check report of model and SF file --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             sfPath = inpObjD["src2"].getFilePathReference()
             xyzPath = inpObjD["src1"].getFilePathReference()
             #
@@ -380,7 +380,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -414,7 +414,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -448,7 +448,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -482,7 +482,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -515,7 +515,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -544,7 +544,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -572,7 +572,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -600,7 +600,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -628,7 +628,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -661,7 +661,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
 
             topFilePath = inpObjD["src2"].getFilePathReference()
@@ -696,7 +696,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
 
             topFilePath = inpObjD["src2"].getFilePathReference()
@@ -729,7 +729,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
@@ -772,7 +772,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
@@ -809,7 +809,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             assemblyReportPath = outObjD["dst1"].getFilePathReference()
@@ -919,7 +919,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
@@ -950,7 +950,7 @@ class AnnotationUtils(UtilsBase):
         """
         pA = PisaAssemblyReader(verbose=self._verbose, log=self._lfh)
         _ok = pA.read(reportPath)  # noqa: F841
-        self.__assemblyD = pA.getAssemblyDict()
+        self.__assemblyD = pA.getAssemblyDict()  # pylint: disable=attribute-defined-outside-init
         return self.__assemblyD
 
     def __readSelection(self, selectPath):
@@ -974,7 +974,7 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpXyzPath = inpObjD["src1"].getFilePathReference()
             newXyzPath = inpObjD["src2"].getFilePathReference()
 
@@ -1075,7 +1075,7 @@ class AnnotationUtils(UtilsBase):
            src2 and output to dst1. Will not overwrite if present
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             srcPath = inpObjD["src1"].getFilePathReference()
             mrgPath = inpObjD["src2"].getFilePathReference()
             outPath = outObjD["dst"].getFilePathReference()
@@ -1130,7 +1130,7 @@ class AnnotationUtils(UtilsBase):
         """Performs mapfix if needed automatically.  Typically run on model and map files in archive as they need to be in sync.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             sessdir = inpObjD["sessdir"].getDirPathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
@@ -1151,7 +1151,7 @@ class AnnotationUtils(UtilsBase):
         """Updates version numbers of files in em_map category in model file.  Typically run on model and map files in archive as they need to be in sync.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             sessdir = inpObjD["sessdir"].getDirPathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
@@ -1179,7 +1179,7 @@ class AnnotationUtils(UtilsBase):
         """Updates pdbx_database_related by performing lookups on deposition ids D_XXX in the db_id field for PDB, BMRB and EMDB
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbxOutPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -1203,7 +1203,7 @@ class AnnotationUtils(UtilsBase):
         """Updates wavelnegth in SF fie
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             sfPath = inpObjD["src2"].getFilePathReference()
             sfOutPath = outObjD["dst"].getFilePathReference()
@@ -1237,7 +1237,7 @@ class AnnotationUtils(UtilsBase):
         """Checks EMD -> XML header conversion
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
@@ -1258,7 +1258,7 @@ class AnnotationUtils(UtilsBase):
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
-            hostName = str(socket.gethostname()).split('.')[0]
+            hostName = str(socket.gethostname()).split('.')[0]  # pylint: disable=no-member
             if ((hostName is not None) and (len(hostName) > 0)):
                 suffix = '-' + hostName
             else:

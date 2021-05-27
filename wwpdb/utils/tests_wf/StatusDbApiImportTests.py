@@ -19,11 +19,11 @@ if __package__ is None or __package__ == '':
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401 pylint: disable=import-error
+    from commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401 pylint: disable=import-error,unused-import
 else:
     from .commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401
 
-from wwpdb.utils.wf.dbapi.StatusDbApi import StatusDbApi  # noqa: F401
+from wwpdb.utils.wf.dbapi.StatusDbApi import StatusDbApi  # noqa: F401 pylint: disable=unused-import
 
 
 class ImportTests(unittest.TestCase):

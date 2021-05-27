@@ -61,7 +61,7 @@ class LocalDbApi(object):
                 else:
                     break
         except MySQLdb.Error as e:
-            self.__lfh.write("Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("Database error %s: %s\n" % (e.args[0], e.args[1]))
             curs.close()
             self.__dbcon.close()
             sys.exit(1)

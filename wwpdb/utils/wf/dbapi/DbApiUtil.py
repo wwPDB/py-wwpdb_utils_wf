@@ -89,7 +89,7 @@ class DbApiUtil(object):
             rows = curs.fetchall()
         except MySQLdb.Error as e:
             self.__dbState = e.args[0]
-            self.__lfh.write("Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("Database error %s: %s\n" % (e.args[0], e.args[1]))
 
         return rows
 
@@ -107,7 +107,7 @@ class DbApiUtil(object):
         except MySQLdb.Error as e:
             self.__dbcon.rollback()
             self.__dbState = e.args[0]
-            self.__lfh.write("Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("Database error %s: %s\n" % (e.args[0], e.args[1]))
         #
         return None
 

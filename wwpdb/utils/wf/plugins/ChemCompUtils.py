@@ -59,7 +59,7 @@ class ChemCompUtils(UtilsBase):
         """Performs chemical component linkage calculation on PDBx format files.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             ccLinkPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -84,7 +84,7 @@ class ChemCompUtils(UtilsBase):
         """Performs chemical component assignment calculation on PDBx format files.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             #
@@ -120,7 +120,7 @@ class ChemCompUtils(UtilsBase):
         """Performs chemical component assignment calculation on PDBx format files.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             #
@@ -155,7 +155,7 @@ class ChemCompUtils(UtilsBase):
         """Performs chemical component assignment calculation with exact match option on PDBx format files.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             #
@@ -192,7 +192,7 @@ class ChemCompUtils(UtilsBase):
             This method assumes no link file being provided.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             #
@@ -226,7 +226,7 @@ class ChemCompUtils(UtilsBase):
            Requires: extra input files for assignment and user selection.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             #
             ccAssignFilePath = inpObjD["src2"].getFilePathReference()

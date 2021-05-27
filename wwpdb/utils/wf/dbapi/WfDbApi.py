@@ -32,7 +32,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 
 
-class WfDbApi(object):
+class WfDbApi():
     """
       Sample of WfSchemaMap class:
 
@@ -48,19 +48,19 @@ class WfDbApi(object):
                     }
 
     """
-
-    __schemaWf = WfSchemaMap._schemaMap
-    __selectList = WfSchemaMap._selectColumns
-    __constraintList = WfSchemaMap._constraintList
+    # This could be rewritten wih inheritance - later
+    __schemaWf = WfSchemaMap._schemaMap  # pylint: disable=protected-access
+    __selectList = WfSchemaMap._selectColumns  # pylint: disable=protected-access
+    __constraintList = WfSchemaMap._constraintList  # pylint: disable=protected-access
     # __statusList = WfSchemaMap._columnForStatus
-    __statusList = WfSchemaMap._usefulItems[0:3]
-    __columnList = WfSchemaMap._usefulItems
-    __tableList = WfSchemaMap._tables
-    __idList = WfSchemaMap._objIds
-    __refList = WfSchemaMap._referencePairs
-    __sqlJoinStr = WfSchemaMap._tableJoinSyntext
-    __orderBy = WfSchemaMap._orderBy
-    __userInfo = WfSchemaMap._userInfo
+    __statusList = WfSchemaMap._usefulItems[0:3]  # pylint: disable=protected-access
+    __columnList = WfSchemaMap._usefulItems  # pylint: disable=protected-access
+    __tableList = WfSchemaMap._tables  # pylint: disable=protected-access
+    __idList = WfSchemaMap._objIds  # pylint: disable=protected-access
+    __refList = WfSchemaMap._referencePairs  # pylint: disable=protected-access
+    __sqlJoinStr = WfSchemaMap._tableJoinSyntext  # pylint: disable=protected-access
+    __orderBy = WfSchemaMap._orderBy  # pylint: disable=protected-access
+    __userInfo = WfSchemaMap._userInfo  # pylint: disable=protected-access
 
     def __init__(self, log=sys.stderr, verbose=False, siteId=None):
         """
@@ -301,7 +301,7 @@ class WfDbApi(object):
         # Retried loop all gone bad
         return None
 
-    def saveObject(self, dataObj, type='insert', constraintDict=None):
+    def saveObject(self, dataObj, type='insert', constraintDict=None):  # pylint: disable=redefined-builtin
         """
            insert/update a new record in the database
            This method currently is for save one of objects in following list
@@ -358,7 +358,7 @@ class WfDbApi(object):
             # get the last record
             returnObj = dataObj[num - 1]
 
-        for k, v in returnObj.items():
+        for _k, _v in returnObj.items():  # Not clear why for loop
             # a task
             if self.__idList[3] in returnObj.keys() and self.__idList[2] in returnObj.keys() and self.__idList[1] in returnObj.keys() and self.__idList[0] in returnObj.keys():
                 return returnObj[self.__statusList[2]]
@@ -379,7 +379,7 @@ class WfDbApi(object):
            Change status for one entry in table deposition, wf_instance or wf_task
 
         """
-        type = 'update'
+        stype = 'update'
         if(status is None or status == ""):
             self.__lfh.write("WfDbApi::updateStatus(): Failing - no status code given\n")
             exit(1)
@@ -403,7 +403,7 @@ class WfDbApi(object):
             # self.testConnection()
             for retry in range(1, self.__Nretry):
 
-                rDict = self.__db.update(type, tableDef, updateVal, constraintDict)
+                rDict = self.__db.update(stype, tableDef, updateVal, constraintDict)
 
                 if rDict is None:
                     # database error -
@@ -500,7 +500,7 @@ class WfDbApi(object):
         # retried all gone bad
         return None
 
-    def addReference(self, type, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):
+    def addReference(self, type, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):  # pylint: disable=redefined-builtin
         """
            Add or update reference record in the table wf_reference
 
@@ -578,7 +578,7 @@ class WfDbApi(object):
         # all bad
         return None
 
-    def checkId(self, str):
+    def checkId(self, str):  # pylint: disable=redefined-builtin
         """
            Test if an object id is empty.
            If yes return None, else return str.
@@ -717,11 +717,12 @@ class WfDbApi(object):
                wf_task.status_timestamp
         """
 
+        #
+        #   Assumption is that you can't choose classId or instId without
+        #   depId. Also any instId must have depId and classId.
+
         constraintDef = {}
-        """
-           Assumption is that you can't choose classId or instId without
-           depId. Also any instId must have depId and classId.
-        """
+
         depId = self.checkId(depId)
         classId = self.checkId(classId)
         instId = self.checkId(instId)
@@ -762,7 +763,7 @@ class WfDbApi(object):
         # all gone bad
         return None
 
-    def doQuery(self, level, parameterDict, orderList=[], otherOpt=None):
+    def doQuery(self, level, parameterDict, orderList=None, otherOpt=None):
         """
             Function for determining which table to query based on level.
 
@@ -817,6 +818,8 @@ class WfDbApi(object):
                wf_task.task_status
                wf_task.status_timestamp
         """
+        if orderList is None:
+            orderList = []
 
         tableDef = ""
         rList = []
@@ -826,7 +829,7 @@ class WfDbApi(object):
             if otherOpt is not None:
                 self.__lfh.write("+WfDbApi::doQuery(): Failing, otherOpt is only for level 1\n")
                 exit(1)
-            for k, v in parameterDict.items():
+            for k, _v in parameterDict.items():
                 if(k not in self.__constraintList.keys()):
                     self.__lfh.write("+WfDbApi::doQuery(): Failing, no matched columns in the database for %s\n" % k)
                     exit(1)

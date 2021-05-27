@@ -19,7 +19,7 @@ if __package__ is None or __package__ == '':
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from commonsetup import TESTOUTPUT, mockTopPath  # pylint: disable=import-error
+    from commonsetup import TESTOUTPUT, mockTopPath  # pylint: disable=import-error,unused-import
 else:
     from .commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401
 
@@ -54,7 +54,7 @@ class ProcessRunnerTests(unittest.TestCase):
         """Test file copy from archival to workflow instance storage.
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testCopyOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
@@ -115,7 +115,7 @@ class ProcessRunnerTests(unittest.TestCase):
         """Test obtaining the size of an archival data file.
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testSizeOfOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
@@ -160,7 +160,7 @@ class ProcessRunnerTests(unittest.TestCase):
         """Test of obtaining the modification time of an archival data file.
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testMtimeOfOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp = WfDataObject()
@@ -206,7 +206,7 @@ class ProcessRunnerTests(unittest.TestCase):
            an archival file.
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testDiffOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp1 = WfDataObject()
@@ -271,7 +271,7 @@ class ProcessRunnerTests(unittest.TestCase):
         """
 
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testDiffIntOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp1 = WfDataObject()
@@ -335,7 +335,7 @@ class ProcessRunnerTests(unittest.TestCase):
            an archival file.  Files identified by stringified versions.
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function  testDiffStringOp")
         self.__lfh.write(" -------------------------\n")
         try:
             wfoInp1 = WfDataObject()

@@ -53,9 +53,9 @@ class StatusDbApi(object):
         self.__dbApi.setSchemaMap(self.__schemaMap)
 
     def __getDataDir(self, key, parameter, idx):
-        list = self.__dbApi.selectData(key=key, parameter=parameter)
-        if list:
-            return list[idx]
+        dlist = self.__dbApi.selectData(key=key, parameter=parameter)
+        if dlist:
+            return dlist[idx]
         #
         return None
 

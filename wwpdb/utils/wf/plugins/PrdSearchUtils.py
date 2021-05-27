@@ -50,7 +50,7 @@ class PrdSearchUtils(UtilsBase):
         """Performs PRD search on PDBx format files.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             resultFilePath = outObjD["dst"].getFilePathReference()
@@ -80,17 +80,17 @@ class PrdSearchUtils(UtilsBase):
             dp1.op("prd-process-summary")
             if (self.__cleanUp):
                 dp1.cleanup()
-            """
-            myReqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
-            myReqObj.setValue("TopSessionPath", cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH'))
-            myReqObj.setValue("TopPath", cI.get('SITE_WEB_APPS_TOP_PATH'))
-            myReqObj.setValue("WWPDB_SITE_ID",  siteId)
-            prdUtil = ProcessPrdSummary(reqObj=myReqObj, verbose=self._verbose, log=self._lfh)
-            prdUtil.setTopDirPath(dirPath)
-            prdUtil.setPrdSummaryFile(resultFilePath)
-            prdUtil.run()
-            #
-            """
+            # """
+            # myReqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
+            # myReqObj.setValue("TopSessionPath", cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH'))
+            # myReqObj.setValue("TopPath", cI.get('SITE_WEB_APPS_TOP_PATH'))
+            # myReqObj.setValue("WWPDB_SITE_ID",  siteId)
+            # prdUtil = ProcessPrdSummary(reqObj=myReqObj, verbose=self._verbose, log=self._lfh)
+            # prdUtil.setTopDirPath(dirPath)
+            # prdUtil.setPrdSummaryFile(resultFilePath)
+            # prdUtil.run()
+            # #
+            # """
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)

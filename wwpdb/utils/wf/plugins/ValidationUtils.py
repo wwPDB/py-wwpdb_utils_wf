@@ -71,7 +71,7 @@ class ValidationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             #
@@ -181,7 +181,7 @@ class ValidationUtils(UtilsBase):
            Supports output of 2fo and fo edmap coefficients
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             #
@@ -315,7 +315,7 @@ class ValidationUtils(UtilsBase):
            Supports src6 - nmr-data-str file - which will override a CS file
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             #

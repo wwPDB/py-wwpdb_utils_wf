@@ -51,7 +51,7 @@ class DictUtils(UtilsBase):
         """ Convert PDBx EM dialect to EMD dialect.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             #
             dstPath = outObjD["dst"].getFilePathReference()
@@ -63,7 +63,7 @@ class DictUtils(UtilsBase):
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
             im.setMappingFilePath(mappingInfoPath)
             ok = im.translate(pdbxPath, dstPath, mode="src-dst")
-            self._lfh.write("+%s %s return status %r \n" % (self.__class__.__name__, sys._getframe().f_code.co_name, ok))
+            self._lfh.write("+DictUtils em2emdOp return status %r \n" % ok)
             #
             if (self._verbose):
                 self._lfh.write("+DictUtils.em2emdOp() - Input model PDBx file path: %s\n" % pdbxPath)
@@ -78,7 +78,7 @@ class DictUtils(UtilsBase):
         """ Convert EMD dialect to PDBx EM dialect.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             #
             dstPath = outObjD["dst"].getFilePathReference()
@@ -90,7 +90,7 @@ class DictUtils(UtilsBase):
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
             im.setMappingFilePath(mappingInfoPath)
             ok = im.translate(pdbxPath, dstPath, mode="dst-src")
-            self._lfh.write("+%s %s return status %r \n" % (self.__class__.__name__, sys._getframe().f_code.co_name, ok))
+            self._lfh.write("+DictUtils emd2emOp return status %r \n" % ok)
             #
             if (self._verbose):
                 self._lfh.write("+DictUtils.emd2emOp() - Input model PDBx file path: %s\n" % pdbxPath)

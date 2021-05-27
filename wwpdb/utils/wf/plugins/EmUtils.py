@@ -63,7 +63,7 @@ class EmUtils(UtilsBase):
         """
 
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inputPath = inpObjD["src"].getFilePathReference()
             outPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()
@@ -100,7 +100,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
             outMapPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()
@@ -136,7 +136,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
             outMapPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()
@@ -179,7 +179,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src"].getFilePathReference()
             outMapPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()
@@ -223,7 +223,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             inpMapPath = inpObjD["src1"].getFilePathReference()
             inpArgsPath = inpObjD["src2"].getFilePathReference()
             outMapPath = outObjD["dst1"].getFilePathReference()
@@ -279,7 +279,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwArgs)
             inpCfgPath = inpObjD["src1"].getFilePathReference()
             dataSetId = inpObjD["src1"].getDepositionDataSetId()
             dirPath = inpObjD["src1"].getDirPathReference()
@@ -340,7 +340,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             inpImgPath = inpObjD["src"].getFilePathReference()
             outImgPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()

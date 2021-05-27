@@ -12,6 +12,8 @@ __email__ = "peisach@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+# pylint: disable=unused-import
+
 import unittest
 import datetime
 

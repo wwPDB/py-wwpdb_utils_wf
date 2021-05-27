@@ -83,7 +83,7 @@ class dbAPI(object):
                 if limit > 0:
                     sql += ' limit ' + str(limit)
                 if self.verbose:
-                    logger.info("WFE.dbAPI.runSelect > " + str(sql))
+                    logger.info("WFE.dbAPI.runSelect > %s", str(sql))
                 if run:
                     ret = self.con.runSelectSQL(sql)
                     return ret
@@ -92,7 +92,7 @@ class dbAPI(object):
             else:
                 return []
         except Exception as e:
-            logger.exception("WFE.dbAPI.runSelect :Exception " + str(e))
+            logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
             return []
 
     def runUpdateOnOrdinal(self, table=None, ordinal=None, data=None, run=True):
@@ -121,17 +121,17 @@ class dbAPI(object):
             sql = "update " + str(table) + " set " + ','.join(['%s = %s' % (k, v) for k, v in data.items()])
             sql = sql + " where ordinal = " + str(ordinal)
             if self.verbose:
-                logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
+                logger.info("WFE.dbAPI.runInsertUpdate(update) > %s", str(sql))
 
             if run:
                 ok = self.con.runUpdateSQL(sql)
                 if not ok:
-                    logger.info("WFE.dbAPI.runSelect :False to update/insert data " + str(sql))
+                    logger.info("WFE.dbAPI.runSelect :False to update/insert data %s", str(sql))
                 return ok
             else:
                 return sql
         except Exception as e:
-            logger.info("WFE.dbAPI.runSelect :Exception " + str(e))
+            logger.info("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False
 
     def runInsertUpdateNQ(self, table=None, depID=None, where=None, data=None, run=True):
@@ -174,14 +174,14 @@ class dbAPI(object):
                 sql += ")"
 
             if self.verbose:
-                logger.info("WFE.dbAPI.runInsertUpdate(insert) > " + str(sql))
+                logger.info("WFE.dbAPI.runInsertUpdate(insert) > %s", str(sql))
 
             if run:
                 return self.con.runInsertSQL(sql)
             else:
                 return sql
         except Exception as e:
-            logger.exception("WFE.dbAPI.runInsert :Exception " + str(e))
+            logger.exception("WFE.dbAPI.runInsert :Exception %s", str(e))
             return False
 
     def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
@@ -194,7 +194,7 @@ class dbAPI(object):
                 sql += ' where ' + ' and '.join(['%s = %s' % (k, v) for k, v in where.items()])
 
             if self.verbose:
-                logger.info("WFE.dbAPI.runInsertUpdate(update) > " + str(sql))
+                logger.info("WFE.dbAPI.runInsertUpdate(update) > %s", str(sql))
 
             if run:
                 return self.con.runUpdateSQL(sql)
@@ -202,7 +202,7 @@ class dbAPI(object):
                 return sql
 
         except Exception as e:
-            logger.exception("WFE.dbAPI.runUpdate :Exception " + str(e))
+            logger.exception("WFE.dbAPI.runUpdate :Exception %s", str(e))
             return False
 
     def runInsertUpdate(self, table=None, depID=None, where=None, data=None, run=True):
@@ -265,11 +265,11 @@ class dbAPI(object):
             else:
                 return ok
         except Exception as e:
-            logger.exception("WFE.dbAPI.runSelect :Exception " + str(e))
+            logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False
 
 
-def main(argv):
+def main(_argv):
 
     print("starting DBAPI test")
 

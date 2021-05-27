@@ -24,8 +24,18 @@ import sys
 import traceback
 from wwpdb.utils.config.ConfigInfo import getSiteId
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.apps.seqmodule.webapp.SeqModWebRequest import SeqModInputRequest
-from wwpdb.apps.seqmodule.control.DataImporter import DataImporter
+try:
+    # We will have present on annotation system - but allow testing
+    from wwpdb.apps.seqmodule.webapp.SeqModWebRequest import SeqModInputRequest
+except ImportError:
+    pass
+
+try:
+    # We will have present on annotation system - but allow testing
+    from wwpdb.apps.seqmodule.control.DataImporter import DataImporter
+except ImportError:
+    pass
+
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 
@@ -53,6 +63,15 @@ class SeqdbUtils(UtilsBase):
         self.__cleanUp = False
         """Flag to remove any temporary directories created by this class.
         """
+        # Init here to keep pylint happy
+        self.__maxRefAlign = 0
+        self.__siteId = None
+        self.__reqObj = None
+        self.__sessionId = None
+        self.__sessionObj = None
+        self.__sessionPath = None
+        self.__doAutoProcessFlag = False
+        self.__includeSeqAssignFileFlag = False
         #
 
     def mySetup(self, topSessionPath='.'):
@@ -100,7 +119,7 @@ class SeqdbUtils(UtilsBase):
         """Find matching sequences for all entities.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             dstPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -145,7 +164,7 @@ class SeqdbUtils(UtilsBase):
         """ Performs sequence assignment update operation on PDBx format model file.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
             instanceId = inpObjD["src1"].getWorkflowInstanceId()
@@ -191,7 +210,7 @@ class SeqdbUtils(UtilsBase):
     def __runMatchAllOp(self, kwArgs, functionName):
         """ Find matching sequences for all entities.
         """
-        (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+        (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
         pdbxPath = inpObjD["src"].getFilePathReference()
         dirPath = outObjD["dst"].getDirPathReference()
         #
@@ -210,7 +229,7 @@ class SeqdbUtils(UtilsBase):
         dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
         dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId)
         dI.copyFiles(messageHead="SeqdbUtils." + functionName + "(OnStart)")
-        entityIdList, ok = dI.loadSeqDataAssemble(doAutoProcess=self.__doAutoProcessFlag)
+        entityIdList, _ok = dI.loadSeqDataAssemble(doAutoProcess=self.__doAutoProcessFlag)
         #
         # Return the files according to the destination setting --
         #

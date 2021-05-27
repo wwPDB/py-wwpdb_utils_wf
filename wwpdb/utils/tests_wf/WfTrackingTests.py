@@ -23,7 +23,7 @@ if __package__ is None or __package__ == '':
     from os import path
 
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from commonsetup import MyNoop  # pylint: disable=import-error
+    from commonsetup import MyNoop  # pylint: disable=import-error,unused-import
 else:
     from .commonsetup import MyNoop  # noqa: F401
 
@@ -52,7 +52,7 @@ class WfTrackingTests(unittest.TestCase):
         """
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function testInstanceUpdateStart")
         self.__lfh.write(" -------------------------\n")
         try:
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
@@ -69,7 +69,7 @@ class WfTrackingTests(unittest.TestCase):
         """
         """
         self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  %s" % sys._getframe().f_code.co_name)
+        self.__lfh.write("Starting test function testInstanceUpdateFinish")
         self.__lfh.write(" -------------------------\n")
         try:
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)

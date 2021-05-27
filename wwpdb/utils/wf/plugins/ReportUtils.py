@@ -65,7 +65,7 @@ class ReportUtils(UtilsBase):
            src2 and output to dst1. Will not overwrite if present
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             srcPath = inpObjD["src1"].getFilePathReference()
             mrgPath = inpObjD["src2"].getFilePathReference()
             outPath = outObjD["dst"].getFilePathReference()

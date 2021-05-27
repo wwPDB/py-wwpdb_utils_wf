@@ -50,6 +50,6 @@ def getTimeFromEpoc(timestamp):
 
 def getTimeReadable(timestamp):
 
-    one = ((zeroDate.days * 24 * 60 * 60 + zeroDate.seconds) * 1000000 + zeroDate.microseconds) / 1000000.0
+    one = ((zeroDate.days * 24 * 60 * 60 + zeroDate.seconds) * 1000000 + zeroDate.microseconds) / 1000000.0  # pylint: disable=no-member
     two = float(str(timestamp))
     return datetime.datetime.utcfromtimestamp(one + two)

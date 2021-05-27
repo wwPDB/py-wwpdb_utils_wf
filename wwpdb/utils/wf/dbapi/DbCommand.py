@@ -181,8 +181,8 @@ class DbCommand:
                           str(c[1]).upper() in self.__logOps):
                         constraint += " %s " % str(c[1]).upper()
                     else:
-                        if (self.__log):
-                            self.__log.indent("Constraint error: %s\n" % str(c))
+                        if (self.__lfh):
+                            self.__lfh.write("Constraint error: %s\n" % str(c))
 
         else:
             #           Just ignore if contraints are entered as None
@@ -248,14 +248,14 @@ class DbCommand:
                     if (result is not None):
                         row = []
                         ir = 0
-                        for k in result:
+                        for _k in result:
                             row.append(result[ir])
                             ir += 1
                         returnList.append(row)
                     else:
                         break
             except MySQLdb.Error as e:
-                self.__lfh.write("DbCommand::runSelectSQL(): Database error %d: %s\n" % (e.args[0], e.args[1]))
+                self.__lfh.write("DbCommand::runSelectSQL(): Database error %s: %s\n" % (e.args[0], e.args[1]))
                 self.__lfh.write("DbCommand::runSelectSQL(): Failing on query %s\n" % query)
 # no curs defined here
 #                curs.close()
@@ -265,11 +265,11 @@ class DbCommand:
     #            sys.exit (1)
     #
         if self.__debug:
-            self.__lfh.write("+DbCommand.runSelectSQL - result length is %d\n" % len(returnList))
+            self.__lfh.write("+DbCommand.runSelectSQL - result length is %s\n" % len(returnList))
 
         return returnList
 
-    def selectRows(self, tableDef, constraintDef, orderList=[], selectList=[]):
+    def selectRows(self, tableDef, constraintDef, orderList=None, selectList=None):
         """
             Execute query on the table described by "tableDef"
             subject to the conditions in constraintDef and
@@ -284,6 +284,11 @@ class DbCommand:
 
             Return a <row list or row dictionary>.
         """
+        if orderList is None:
+            orderList = []
+        if selectList is None:
+            selectList = []
+        
         tableName = tableDef['TABLE_NAME']
         attribDict = tableDef['ATTRIBUTES']
         if (len(selectList) > 0):
@@ -330,7 +335,7 @@ class DbCommand:
                 else:
                     break
         except MySQLdb.Error as e:
-            self.__lfh.write("DbCommand::selectRows(): Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("DbCommand::selectRows(): Database error %s: %s\n" % (e.args[0], e.args[1]))
             self.__lfh.write("DbCommand::selectRows(): Failing on query %s\n" % query)
 # Tom : no curs defined here
 #            curs.close()
@@ -344,7 +349,7 @@ class DbCommand:
         else:
             return row
 
-    def update(self, type, tableDef, updateVal, constraintDef=None):
+    def update(self, type, tableDef, updateVal, constraintDef=None):  # pylint: disable=redefined-builtin
         """
            Update value for any column(s) in a giving table.
            type may be 'insert' or 'update', default is 'insert'.
@@ -390,7 +395,7 @@ class DbCommand:
             curs.execute(command)
 
         except MySQLdb.Error as e:
-            self.__lfh.write("DbCommand::update(): Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("DbCommand::update(): Database error %s: %s\n" % (e.args[0], e.args[1]))
 
             self.__dbcon.rollback()
 # no curs defined here
@@ -447,7 +452,7 @@ class DbCommand:
                 else:
                     break
         except MySQLdb.Error as e:
-            self.__lfh.write("DbCommand::selectRows(): Database error %d: %s\n" % (e.args[0], e.args[1]))
+            self.__lfh.write("DbCommand::selectRows(): Database error %s: %s\n" % (e.args[0], e.args[1]))
 # Tom : no curs defined here
 #          curs.close()
             self.dbState = e.args[0]
