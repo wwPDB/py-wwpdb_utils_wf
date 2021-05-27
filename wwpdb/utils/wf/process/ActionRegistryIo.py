@@ -84,7 +84,7 @@ class ActionRegistryIo(object):
         self.__lfh = log
         self.__verbose = verbose
         #
-        #self.lt = time.strftime("%Y%m%d", time.localtime())
+        # self.lt = time.strftime("%Y%m%d", time.localtime())
         #
         self.__fileName = filePath
         self.__dict = {}
@@ -96,7 +96,7 @@ class ActionRegistryIo(object):
             self.__dom = minidom.parse(self.__fileName)
             self.__dict = self.__getActionDictionary()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             self.__lfh.write("+ActionRegistryIo.__setup() - read failed for %s\n" % self.__fileName)
             traceback.print_exc(file=self.__lfh)
             return False

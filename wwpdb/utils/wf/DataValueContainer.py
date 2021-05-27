@@ -15,8 +15,6 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import sys
-import types
 from datetime import datetime, date
 # For python 2/3 compatible comparsigon with isinstace
 from builtins import str

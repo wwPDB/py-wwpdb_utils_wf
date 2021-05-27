@@ -14,9 +14,18 @@ __version__ = "V0.01"
 
 import unittest
 
-from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
-from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
-from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
+if __package__ is None or __package__ == '':
+    import sys
+    from os import path
+
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from commonsetup import HERE  # pylint: disable=import-error
+else:
+    from .commonsetup import HERE  # noqa: F401
+
+from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry  # noqa: F401
+from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo  # noqa: F401
+from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner  # noqa: F401
 
 
 class ImportTests(unittest.TestCase):

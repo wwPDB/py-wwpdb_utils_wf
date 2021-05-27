@@ -70,7 +70,7 @@ class DictUtils(UtilsBase):
                 self._lfh.write("+DictUtils.em2emdOp() - Output result path: %s\n" % dstPath)
             #
             return ok
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -97,6 +97,6 @@ class DictUtils(UtilsBase):
                 self._lfh.write("+DictUtils.emd2emOp() - Output result path: %s\n" % dstPath)
             #
             return ok
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False

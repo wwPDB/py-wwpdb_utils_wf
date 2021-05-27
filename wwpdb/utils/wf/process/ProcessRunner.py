@@ -17,11 +17,9 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
 import sys
 import traceback
 #
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
 
@@ -52,7 +50,7 @@ class ProcessRunner(object):
         try:
             self.__inputD[str(name)] = wfDataObject
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             return False
 
     def setOutput(self, name, wfDataObject):
@@ -65,7 +63,7 @@ class ProcessRunner(object):
         try:
             self.__outputD[str(name)] = wfDataObject
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             return False
 
     def setAction(self, actionId):
@@ -93,7 +91,7 @@ class ProcessRunner(object):
             for k, v in dd.items():
                 self.__userParameterD[k] = v
 
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=sys.stderr)
             return False
 
@@ -127,7 +125,7 @@ class ProcessRunner(object):
                 self.__lfh.write("+ProcessRunner.setParameterDict() parameter settings:\n")
                 for k, v in self.getParameterDict().items():
                     self.__lfh.write("+ProcessRunner.setParameterDict() parameter %s = %r\n" % (k, v))
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=sys.stderr)
             return False
 
@@ -261,7 +259,7 @@ class ProcessRunner(object):
             mpL = modulePath.split('.')
             clN = mpL[-1]
             #
-            #aObj = getattr(aMod,modulePath)()
+            # aObj = getattr(aMod,modulePath)()
             aObj = getattr(aMod, clN)(verbose=self.__verbose, log=self.__lfh)
             aMeth = getattr(aObj, self.__aReg.getMethodName(self.__actionId), None)
             if (aMeth is not None):
@@ -272,7 +270,7 @@ class ProcessRunner(object):
                 return ok
             else:
                 return False
-        except:
+        except Exception as _e:  # noqa: F841
             if self.__verbose:
                 traceback.print_exc(file=self.__lfh)
             return False

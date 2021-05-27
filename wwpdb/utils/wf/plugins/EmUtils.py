@@ -91,7 +91,7 @@ class EmUtils(UtilsBase):
                 dp.cleanup()
 
             return ret
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return -100
 
@@ -127,7 +127,7 @@ class EmUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -156,7 +156,7 @@ class EmUtils(UtilsBase):
             dp.addInput(name="input_map_file_path", value=inpMapPath)
             dp.addInput(name="output_map_file_path", value=outMapPath)
             dp.op("deposit-update-map-header-in-place")
-            #dp.op("annot-update-map-header-in-place")
+            # dp.op("annot-update-map-header-in-place")
             dp.exp(rptPath)
             dp.expLog(logPath)
 
@@ -170,7 +170,7 @@ class EmUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -212,7 +212,7 @@ class EmUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -243,7 +243,7 @@ class EmUtils(UtilsBase):
                 options = ifh.read()
                 ifh.close()
                 dp.addInput(name="options", value=options)
-            except:
+            except Exception as _e:  # noqa: F841
                 pass
             dp.addInput(name="input_map_file_path", value=inpMapPath)
             dp.addInput(name="output_map_file_path", value=outMapPath)
@@ -262,7 +262,7 @@ class EmUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -296,7 +296,7 @@ class EmUtils(UtilsBase):
                 cmdLineArgList = cD['cmd-line-arg-list']
                 for p, arg in zip(pL, cmdLineArgList):
                     cTupL.append((p, mapContentType, arg))
-            except:
+            except Exception as _e:  # noqa: F841
                 self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - failed processing configuration file  %s\n" % inpCfgPath)
                 traceback.print_exc(file=self._lfh)
 
@@ -330,7 +330,7 @@ class EmUtils(UtilsBase):
                 if (self.__cleanUp):
                     dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -369,6 +369,6 @@ class EmUtils(UtilsBase):
                 dp.cleanup()
 
             return ret
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return -100

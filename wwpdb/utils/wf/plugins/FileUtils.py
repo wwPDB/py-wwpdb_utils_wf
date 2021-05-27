@@ -20,7 +20,6 @@ import sys
 import traceback
 import shutil
 import datetime
-import time
 import difflib
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
@@ -67,7 +66,7 @@ class FileUtils(UtilsBase):
                 self._lfh.write("+FileUtils.copyOp Output path %s\n" % oPth)
             shutil.copyfile(iPth, oPth)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -88,8 +87,8 @@ class FileUtils(UtilsBase):
             if os.access(iPth, os.R_OK):
                 shutil.copyfile(iPth, oPth)
             return True
-        except:
-            #if (self._verbose): traceback.print_exc(file=self._lfh)
+        except Exception as _e:  # noqa: F841
+            # if (self._verbose): traceback.print_exc(file=self._lfh)
             return True
 
     def makeDirOp(self, **kwargs):
@@ -109,7 +108,7 @@ class FileUtils(UtilsBase):
                 modeO = int(modeS, 8)
                 os.makedirs(newPth, modeO)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -132,7 +131,7 @@ class FileUtils(UtilsBase):
             else:
                 outObjD["dst"].setValue(0)
                 return False
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -150,7 +149,7 @@ class FileUtils(UtilsBase):
                 return True
             else:
                 return False
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -177,7 +176,7 @@ class FileUtils(UtilsBase):
             oL = difflib.context_diff(aL1, aL2, 'src1', 'src2')
             outObjD['dst'].setValue(oL)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False

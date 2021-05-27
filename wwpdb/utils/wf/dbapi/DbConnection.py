@@ -57,7 +57,7 @@ class DbConnection:
 
         try:
             self.__dbPort = int(self.__dbPort)
-        except:
+        except Exception as _e:  # noqa: F841
             pass
 
         if dbSocket is None:

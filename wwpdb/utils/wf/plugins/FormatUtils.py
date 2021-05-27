@@ -24,12 +24,6 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
-import shutil
-import datetime
-import time
-import difflib
-import string
-import random
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
@@ -89,7 +83,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -114,7 +108,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -139,7 +133,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -164,7 +158,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.cif2cifOp() - RCSB cif file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.cif2cifOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -189,7 +183,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx input  file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx output file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -249,7 +243,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - PDBx SF output file path:  %s\n" % sfPdbxFilePath)
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - Log file path:             %s\n" % logFilePath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -276,7 +270,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -303,7 +297,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 

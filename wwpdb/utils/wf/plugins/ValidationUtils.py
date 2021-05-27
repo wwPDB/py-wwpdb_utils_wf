@@ -140,12 +140,12 @@ class ValidationUtils(UtilsBase):
                 dp.addInput(name="vol_file_path", value=volPath)
             else:
                 volPath = None
-                
+
             if fscPath is not None and os.access(fscPath, os.R_OK):
                 dp.addInput(name="fsc_file_path", value=fscPath)
             else:
                 fscPath = None
-            
+
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
             dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath, cifReportPath])
@@ -168,7 +168,7 @@ class ValidationUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -199,7 +199,7 @@ class ValidationUtils(UtilsBase):
                 volPath = inpObjD["src4"].getFilePathReference()
             else:
                 volPath = None
-            
+
             if "src5" in inpObjD:
                 authorFSCPath = inpObjD["src5"].getFilePathReference()
             else:
@@ -274,10 +274,9 @@ class ValidationUtils(UtilsBase):
             else:
                 emdbXMLPath = None
 
-
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, \
+            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath,
                                     imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
@@ -301,7 +300,7 @@ class ValidationUtils(UtilsBase):
             if (self.__cleanUp):
                 vw.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -334,7 +333,7 @@ class ValidationUtils(UtilsBase):
                 volPath = inpObjD["src4"].getFilePathReference()
             else:
                 volPath = None
-            
+
             if "src5" in inpObjD:
                 authorFSCPath = inpObjD["src5"].getFilePathReference()
             else:
@@ -415,7 +414,7 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
-            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, \
+            vw.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath,
                                     imageTarPath, cifReportPath, coeffoReportPath, coef2foReportPath])
 
             if (self._verbose):
@@ -439,7 +438,7 @@ class ValidationUtils(UtilsBase):
             if (self.__cleanUp):
                 vw.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #

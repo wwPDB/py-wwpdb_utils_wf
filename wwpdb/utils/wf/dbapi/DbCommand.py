@@ -18,7 +18,6 @@ Updates :
 """
 
 import sys
-import os
 import MySQLdb
 
 
@@ -60,20 +59,20 @@ class DbCommand:
         cType = str(type(constraintDef))
 
         if (cType.find('dict') > 0):
-            l = []
+            ld = []
             for k, v in constraintDef.items():
                 if(k in attribDict.keys()):
                     if(v is None or v == 'None'):
                         c = " %s = NULL " % (attribDict[k])
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
-                    l.append(c)
+                    ld.append(c)
                 else:
                     if(self.__verbose):
                         self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
-                if (len(l) > 0):
-                    changingVal = " SET " + l[0]
-                    for c in l[1:]:
+                if (len(ld) > 0):
+                    changingVal = " SET " + ld[0]
+                    for c in ld[1:]:
                         changingVal += ", " + c
 
         return changingVal
@@ -89,21 +88,21 @@ class DbCommand:
 
         """
         constraint = ""
-        l = []
+        ld = []
         for k, v in constraintDef.items():
             if(k in constraintList.keys()):
                 if(v is None or v == 'None'):
                     c = " %s is NULL " % (constraintList[k])
                 else:
                     c = " %s = '%s' " % (constraintList[k], v)
-                l.append(c)
+                ld.append(c)
             else:
                 if(self.__verbose):
                     self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
 
-            if (len(l) > 0):
-                constraint = " WHERE " + l[0]
-                for c in l[1:]:
+            if (len(ld) > 0):
+                constraint = " WHERE " + ld[0]
+                for c in ld[1:]:
                     constraint += " AND " + c
 
         return constraint
@@ -122,26 +121,26 @@ class DbCommand:
         cType = str(type(constraintDef))
 
         if (cType.find('dict') > 0):
-            l = []
+            ld = []
             for k, v in constraintDef.items():
                 if(k in attribDict.keys()):
                     if(v == 'None' or v is None):
                         c = " %s is NULL " % (attribDict[k])
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
-                    l.append(c)
+                    ld.append(c)
 
                 elif (k == "EXTERNAL_TABLE"):
                     # "EXTERNAL_TABLE" is special designed for SQL syntex
                     # like " column in (select column from another table)"
                     c = "  %s " % (v)
-                    l.append(c)
+                    ld.append(c)
                 else:
                     if(self.__verbose):
                         self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
-                if (len(l) > 0):
-                    constraint = " WHERE " + l[0]
-                    for c in l[1:]:
+                if (len(ld) > 0):
+                    constraint = " WHERE " + ld[0]
+                    for c in ld[1:]:
                         constraint += " AND " + c
         elif (cType.find('list') > 0):
             #
@@ -172,13 +171,13 @@ class DbCommand:
                                       (attribDict[str(c[1]).upper()],
                                        self.__opDict[str(c[0]).upper()],
                                        str(c[2]))
-                    elif (len(c) == 2 and str(c[0]).upper() == 'GROUP' and
+                    elif (len(c) == 2 and str(c[0]).upper() == 'GROUP' and  # noqa: W504
                           str(c[1]).upper() in self.__grpOps):
                         if (str(c[1]).upper() == 'BEGIN'):
                             constraint += "("
                         else:
                             constraint += ")"
-                    elif (len(c) == 2 and str(c[0]).upper() == 'LOGOP' and
+                    elif (len(c) == 2 and str(c[0]).upper() == 'LOGOP' and  # noqa: W504
                           str(c[1]).upper() in self.__logOps):
                         constraint += " %s " % str(c[1]).upper()
                     else:
@@ -205,10 +204,10 @@ class DbCommand:
 
         return orderBy
 
-    def runInsertSQL(self, query, args = None):
+    def runInsertSQL(self, query, args=None):
         return self.runUpdateSQL(query, args)
 
-    def runUpdateSQL(self, query, args = None):
+    def runUpdateSQL(self, query, args=None):
         try:
             curs = self.__dbcon.cursor()
             curs.execute("set autocommit=0")
@@ -304,7 +303,7 @@ class DbCommand:
             order = " ORDER BY " + orderList[0]
             for a in orderList[1:]:
                 order += ", " + a
-            #order += " desc "
+            # order += " desc "
 
         #
         query = "SELECT " + attribsCsv + " FROM " + tableName + constraint + order

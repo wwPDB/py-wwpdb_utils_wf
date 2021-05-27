@@ -7,14 +7,15 @@ Module to handle dictionary compliant SF files from autoPROC in mmCIF format
 """
 
 
+import os
 import sys
 try:
     # XXX We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpIoUtils import PdbxExpFileIo, PdbxExpIoUtils
 except ImportError:
     pass
-from wwpdb.io.locator.PathInfo import PathInfo
 from mmcif.io.IoAdapterCore import IoAdapterCore
+
 
 class SFConvert(object):
     def __init__(self, verbose=False, log=sys.stderr):
@@ -41,36 +42,35 @@ class SFConvert(object):
                 for cl in containerList:
                     if cat in cl.getObjNameList():
                         return True
-        except:
+        except Exception as _e:  # noqa: F841
             pass
 
         return False
 
-
     def handleSpecialSF(self, sfIn, sfOut, modelIn, sfDiagFilePath, logFilePath):
 
         # Empty log and diagnostic
-        with open(sfDiagFilePath, "w") as fout:
+        with open(sfDiagFilePath, "w") as _fout:  # noqa: F841
             pass
-        with open(logFilePath, "w") as fout:
+        with open(logFilePath, "w") as _fout:  # noqa: F841
             pass
 
         # Get pdbid
         pdbId = self.__getmodelPdbId(modelIn)
         if pdbId is None:
             pdbId = "xxxx"
-        
+
         try:
-            sfIo = PdbxExpFileIo(verbose=self._verbose,log=self._lfh)
-            containerList=sfIo.getContainerList(sfIn)
+            sfIo = PdbxExpFileIo(verbose=self._verbose, log=self._lfh)
+            containerList = sfIo.getContainerList(sfIn)
             if len(containerList) < 1:
                 False
-                
+
             sfIo.updateContainerNames(idCode=pdbId, containerList=containerList)
             sfIo.updateEntryIds(idCode=pdbId, containerList=containerList)
             self.__stripAudit(containerList)
             self.__correctGphlAlias(containerList)
-            err = self.__checkErrors(containerList, sfDiagFilePath, logFilePath)
+            _err = self.__checkErrors(containerList, sfDiagFilePath, logFilePath)  # noqa: F841
             # We always write to avoid complaint about pdbx2pdbx failing
             sfIo.writeContainerList(sfOut, containerList)
             return True
@@ -79,21 +79,20 @@ class SFConvert(object):
 
         return False
 
-
     def __getmodelPdbId(self, modelIn):
         """Gets pdb id if present"""
         try:
             if modelIn and os.path.exists(modelIn):
-                mIo = PdbxExpFileIo(verbose=self._verbose,log=self._lfh)
+                mIo = PdbxExpFileIo(verbose=self._verbose, log=self._lfh)
                 modelContainerList = mIo.getContainerList(modelIn)
                 if len(modelContainerList) < 1:
                     return None
 
-                mE=PdbxExpIoUtils(dataContainer=modelContainerList[0],verbose=self.__verbose,log=self.__lfh)
-                pdbId=str(mE.getDbCode(dbId='PDB')).lower()
+                mE = PdbxExpIoUtils(dataContainer=modelContainerList[0], verbose=self.__verbose, log=self.__lfh)
+                pdbId = str(mE.getDbCode(dbId='PDB')).lower()
 
                 return pdbId
-        except Exception as e:
+        except Exception as _e:  # noqa: F841
             pass
 
         return None
@@ -108,9 +107,9 @@ class SFConvert(object):
     def __correctGphlAlias(self, cList):
         """Strip out Audit records from uploaded files"""
 
-        rmappings = { "gphl_signal_type": "pdbx_signal_type",
-                      "gphl_observed_signal_threshold": "pdbx_observed_signal_threshold"
-                  }
+        rmappings = {"gphl_signal_type": "pdbx_signal_type",
+                     "gphl_observed_signal_threshold": "pdbx_observed_signal_threshold"
+                     }
 
         for container in cList:
             if "reflns" in container.getObjNameList():
@@ -124,7 +123,7 @@ class SFConvert(object):
 
         if len(cList) < 1:
             errs.append("Error: empty file")
-      
+
         else:
             # In first datablock, refln category should have at least one of: F/I/F+/F-/I+/I-
             b0 = cList[0]
@@ -150,7 +149,7 @@ class SFConvert(object):
                     errs.append("Error: cannot have _refln and _diffrn_refln categories in same data block")
 
         if len(errs) > 0:
-            #sfDiagFilePath, logFilePath):
+            # sfDiagFilePath, logFilePath):
             with open(sfDiagFilePath, "a") as fOut:
                 for e in errs:
                     fOut.write("%s\n" % e)
@@ -162,4 +161,3 @@ class SFConvert(object):
             return True
 
         return False
-            

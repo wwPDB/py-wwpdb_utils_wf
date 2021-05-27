@@ -16,13 +16,12 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
 import sys
 import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from  mmcif.core.mmciflib import ParseCifSimple
+from mmcif.core.mmciflib import ParseCifSimple
 
 
 class CifFile(object):
@@ -104,7 +103,7 @@ class PdbxUtils(UtilsBase):
                 self.__block = self.__cifFile.GetBlock(self.__blockList[self.__targetBlockIndex])
             #
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -156,7 +155,7 @@ class PdbxUtils(UtilsBase):
                         rV.append(myTable(indices[0], str(atN)))
                     outObjD['dst'].setValue(rV)
                     return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -189,7 +188,7 @@ class PdbxUtils(UtilsBase):
 
             myTable = self.__block.GetTable(targetCategory)
             cL = []
-            colNames = list(myTable.GetColumnNames())
+            # colNames = list(myTable.GetColumnNames())
             rList = list(myTable.GetColumn(cL, targetAttribute))
 
             if (outObjD['dst'].getContainerTypeName() == 'value'):
@@ -200,7 +199,7 @@ class PdbxUtils(UtilsBase):
                 return False
             #
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -236,7 +235,7 @@ class PdbxUtils(UtilsBase):
             outObjD['dst'].setValue(myTable.GetNumRows())
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False
@@ -380,7 +379,7 @@ class PdbxUtils(UtilsBase):
 
             outObjD['dst'].setValue(d)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return False

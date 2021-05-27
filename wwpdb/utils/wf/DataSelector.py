@@ -15,8 +15,6 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import sys
-
 
 class DataSelector(object):
 
@@ -59,7 +57,7 @@ class DataSelector(object):
         try:
             self.__targetCategoryName = categoryName
             return True
-        except:
+        except:  # noqa: E722
             return False
 
     def getSelectCategoryName(self):
@@ -79,7 +77,7 @@ class DataSelector(object):
                 self.__targetAttributeList.append(attributeName)
                 self.__selectorType = 'attribute'
             return True
-        except:
+        except:  # noqa: E722
             return False
 
     def getSelectAttributeList(self):
@@ -103,7 +101,7 @@ class DataSelector(object):
         try:
             self.__selectConditionList.append((attributeName, attributeValue, comparisonOp))
             return True
-        except:
+        except:  # noqa: E722
             return False
 
     def getSelectConditionList(self):

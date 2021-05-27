@@ -252,7 +252,7 @@ class dbAPI(object):
         try:
             if rowExists:
                 ok = self.runUpdate(table, depID, where, data, run)
-                
+
             else:
                 ok = self.runInsert(table, depID, where, data, run)
 
@@ -276,7 +276,7 @@ def main(argv):
     depid = 'D_1100201819'
     ss = dbAPI(depid, verbose=True)
 
-# table join test - notice that in the where clause be careful with the key must not repeat - so be carful with the inner join
+    # table join test - notice that in the where clause be careful with the key must not repeat - so be carful with the inner join
     ret = ss.runSelect(
         table='deposition,wf_instance',
         select=[
@@ -284,9 +284,7 @@ def main(argv):
             'wf_instance.wf_inst_id'],
         where={
             "deposition.dep_set_id": "wf_instance.dep_set_id",
-            "wf_instance.dep_set_id": "'" +
-            depid +
-            "'",
+            "wf_instance.dep_set_id": "'" + depid + "'",
             "wf_instance.wf_inst_id": "'W_001'"},
         run=True)
     print(str(ret))
@@ -329,6 +327,6 @@ def main(argv):
 
     print("finished")
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     main(sys.argv[1:])

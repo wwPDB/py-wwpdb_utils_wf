@@ -19,24 +19,15 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
-import logging
-import shutil
-import datetime
-import time
-import difflib
-import string
-import random
 import json
 import re
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-sys.stdout = sys.stderr
-# CCPN project removed as not Python3 compatible
-# from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
+
 try:
     # XXX We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
@@ -44,6 +35,9 @@ except ImportError:
     pass
 
 from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
+
+sys.stdout = sys.stderr
+
 
 class NmrUtils(UtilsBase):
 
@@ -80,29 +74,6 @@ class NmrUtils(UtilsBase):
         if self._verbose:
             self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
         return False
-
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            ccpnPath = inpObjD["src"].getFilePathReference()
-            pdbPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
-            strPath = outObjD["dst2"].getFilePathReference()
-            #
-            uniq = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(6)) + '_ccpn-convert'
-
-            CcpnProject(ccpn=ccpnPath,
-                        star=strPath,
-                        pdb=pdbPath,
-                        uniq=uniq
-                        ).process()
-            if (self._verbose):
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - CCPn input  file path:     %s\n" % ccpnPath)
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - PDB  output file path:     %s\n" % pdbPath)
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - NMRSTAR  output file path: %s\n" % strPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
 
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
@@ -158,7 +129,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Error count : %d\n %s\n" % (len(errors), ('\n').join(errors)))
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -216,7 +187,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftAltOp() - CS name list :    %s\n" % nameList)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftAltOp() - CS output path :  %s\n" % csOutPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -267,7 +238,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.atomNameShiftOp() Error count : %d\n %s\n" % (len(errors), ('\n').join(errors)))
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -305,7 +276,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzAltOp() - Cs input  file path:    %s\n" % csPath)
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzAltOp() - Report file path:       %s\n" % chkPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -338,10 +309,10 @@ class NmrUtils(UtilsBase):
             util.setOutputModelFileName(fileName=xyzOutPath)
             util.setOutputCsFileName(fileName=csOutPath)
             util.setOutputReportFileName(fileName=csReportPath)
-            util.setOutputValidationFileList(dstPathList=[ validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath ])
+            util.setOutputValidationFileList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath])
             util.run()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -388,7 +359,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -435,7 +406,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - mmCIF input file path:            %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - JSON output file path:            %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -479,11 +450,11 @@ class NmrUtils(UtilsBase):
 
                 for mr in mr_list:
                     mr_file = mr['file_name']
-                    #mr_orig_file = mr['original_file_name']
+                    # mr_orig_file = mr['original_file_name']
                     mr_file_type = mr['file_type']
 
-                    #mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
-                    #if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
+                    # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
+                    # if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
 
                     if mr_file_type.startswith('nm-res'):
                         has_datablock = False
@@ -507,7 +478,7 @@ class NmrUtils(UtilsBase):
 
                             ifp.close()
 
-                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop: # NMR-STAR or NEF
+                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop:  # NMR-STAR or NEF
                             mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
@@ -537,7 +508,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -602,7 +573,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON output file path 1:    %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON output file path 2:    %s\n" % logOutPath2)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -659,7 +630,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON output file path:             %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -719,7 +690,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 1:           %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 2:           %s\n" % logOutPath2)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -747,6 +718,6 @@ class NmrUtils(UtilsBase):
             util.setOutputNefFileName(fileName=nefOutPath)
             util.runNefProcess()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False

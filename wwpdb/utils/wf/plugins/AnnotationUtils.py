@@ -30,10 +30,7 @@ import os
 import sys
 import traceback
 import shutil
-import datetime
-import time
 import tempfile
-import difflib
 import logging
 import socket
 
@@ -113,7 +110,7 @@ class AnnotationUtils(UtilsBase):
             ok = dbLd.doLoadStatus(pdbxPath, dirPath)
             self._lfh.write("+AnnotationUtils.statusLoadOp() - returns   %r\n" % ok)
             return ok
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -124,7 +121,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -145,7 +141,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.specialPositionCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.specialPositionCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -156,7 +152,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -181,7 +176,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.formatCheckPdbxOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.formatCheckPdbxOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -190,13 +185,12 @@ class AnnotationUtils(UtilsBase):
 
         """
         try:
-            (inpObjD,outObjD,uD,pD)=self._getArgs(kwArgs)
-            pdbPath            =inpObjD["src"].getFilePathReference()
-            depDataSetId       =inpObjD["src"].getDepositionDataSetId()
-            
-            reportPath         =outObjD["dst"].getFilePathReference()
-            dirPath            =outObjD["dst"].getDirPathReference()
-            logPath=os.path.join(dirPath,"format-check-pdb.log")
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbPath = inpObjD["src"].getFilePathReference()
+
+            reportPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "format-check-pdb.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -218,7 +212,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.formatCheckPdbOp() - PDB input  file path:  %s\n" % pdbPath)
                 self._lfh.write("+AnnotationUtils.formatCheckPdbOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -229,7 +223,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -250,7 +243,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -261,7 +254,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -282,7 +274,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.dictR4CheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.dictR4CheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -293,7 +285,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -314,7 +305,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.geometryCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.geometryCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -325,7 +316,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -346,7 +336,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.miscCheckReportOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.miscCheckReportOp() - Report file path:       %s\n" % reportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -381,7 +371,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - LOG output file path:          %s\n" % logFilePath)
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - REPORT/PDBx output file path:  %s\n" % reportFilePath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -392,7 +382,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -413,7 +402,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -427,7 +416,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -451,7 +439,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -462,7 +450,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -486,7 +473,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -497,7 +484,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -520,7 +506,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -531,7 +517,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -550,7 +535,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -561,7 +546,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -579,7 +563,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.cisPeptideOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.cidPeptideOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -590,7 +574,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -608,7 +591,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -619,7 +602,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -637,7 +619,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.getCorresInfo() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.getCorresInfo() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -648,7 +630,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -669,7 +650,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -682,7 +663,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
-            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
 
             topFilePath = inpObjD["src2"].getFilePathReference()
 
@@ -705,7 +685,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -718,7 +698,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
-            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
 
             topFilePath = inpObjD["src2"].getFilePathReference()
 
@@ -741,7 +720,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -784,7 +763,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.siteEnvironmentOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
                 self._lfh.write("+AnnotationUtils.siteEnvironmentOp() - Site anal file path:    %s\n" % resultPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -819,7 +798,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.chemCompLinkOp() - Assembly report file path: %s\n" % assemblyReportPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -835,7 +814,6 @@ class AnnotationUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             assemblyReportPath = outObjD["dst1"].getFilePathReference()
             dirPath = outObjD["dst1"].getDirPathReference()
-            wfInstanceId = outObjD["dst1"].getWorkflowInstanceId()
             pisaSession = "session_" + depDataSetId
             logPath1 = os.path.join(dirPath, "assembly-analysis.log")
             logPath2 = os.path.join(dirPath, "assembly-report.log")
@@ -883,60 +861,58 @@ class AnnotationUtils(UtilsBase):
             if (self.__cleanUp):
                 dp.cleanup()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
-    def assemblyInstanceUpdateOp(self, **kwArgs):
-        """Performs assembly assignment update operations on PDBx format model files.
+    # def assemblyInstanceUpdateOp(self, **kwArgs):
+    #     """Performs assembly assignment update operations on PDBx format model files.
 
-           Requires: extra input files for assignment and user selection.
-        """
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            pdbxPath = inpObjD["src1"].getFilePathReference()
-            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
-            #
-            reportFilePath = inpObjD["src2"].getFilePathReference()
-            selectFilePath = inpObjD["src3"].getFilePathReference()
-            #
-            outputModelPdbxPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            wfInstanceId = outObjD["dst"].getWorkflowInstanceId()
-            logPath = os.path.join(dirPath, "assembly-update.log")
-            #
-            cI = ConfigInfo()
-            siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
-            #
-            dp.imp(pdbxPath)
-            selectString = __readSelection(selectFilePath)
-            iL = []
-            sL = selectString.split(',')
-            for s in sL:
-                if s is not None and len(s) > 0:
-                    iL.append("%d" % int(s))
+    #        Requires: extra input files for assignment and user selection.
+    #     """
+    #     try:
+    #         (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+    #         pdbxPath = inpObjD["src1"].getFilePathReference()
+    #         #
+    #         reportFilePath = inpObjD["src2"].getFilePathReference()
+    #         selectFilePath = inpObjD["src3"].getFilePathReference()
+    #         #
+    #         outputModelPdbxPath = outObjD["dst"].getFilePathReference()
+    #         dirPath = outObjD["dst"].getDirPathReference()
+    #         logPath = os.path.join(dirPath, "assembly-update.log")
+    #         #
+    #         cI = ConfigInfo()
+    #         siteId = cI.get("SITE_PREFIX")
+    #         dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+    #         #
+    #         dp.imp(pdbxPath)
+    #         selectString = __readSelection(selectFilePath)
+    #         iL = []
+    #         sL = selectString.split(',')
+    #         for s in sL:
+    #             if s is not None and len(s) > 0:
+    #                 iL.append("%d" % int(s))
 
-            tupleList = ','.join(iL)
-            dp.addInput(name="pisa_assembly_tuple_list", value=tupleList)
-            dp.addInput(name="pisa_assembly_file_path", value=reportFilePath)
-            #
-            dp.op("pisa-assembly-merge-cif")
-            dp.exp(outputModelPdbxPath)
-            dp.expLog(logPath)
+    #         tupleList = ','.join(iL)
+    #         dp.addInput(name="pisa_assembly_tuple_list", value=tupleList)
+    #         dp.addInput(name="pisa_assembly_file_path", value=reportFilePath)
+    #         #
+    #         dp.op("pisa-assembly-merge-cif")
+    #         dp.exp(outputModelPdbxPath)
+    #         dp.expLog(logPath)
 
-            if (self._verbose):
-                self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - PDBx file path:         %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - report file path:       %s\n" % reportFilePath)
-                self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - select file path:       %s\n" % selectFilePath)
-                self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - PDBx output file path:  %s\n" % outputModelPdbxPath)
+    #         if (self._verbose):
+    #             self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - PDBx file path:         %s\n" % pdbxPath)
+    #             self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - report file path:       %s\n" % reportFilePath)
+    #             self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - select file path:       %s\n" % selectFilePath)
+    #             self._lfh.write("+AnnotationUtils.assemblyInstanceUpdateOp() - PDBx output file path:  %s\n" % outputModelPdbxPath)
 
-            if (self.__cleanUp):
-                dp.cleanup()
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
+    #         if (self.__cleanUp):
+    #             dp.cleanup()
+    #         return True
+    #     except Exception as _e:  # noqa: F841
+    #         traceback.print_exc(file=self._lfh)
+    #         return False
 
     def assemblyUpdateDepInfoOp(self, **kwArgs):
         """Performs an update of the pdbx_struct_assembly_gen_depositor_info
@@ -945,7 +921,6 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -966,7 +941,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -974,22 +949,9 @@ class AnnotationUtils(UtilsBase):
         """  Read assembly calculation report and return a dictionary of assembly details.
         """
         pA = PisaAssemblyReader(verbose=self._verbose, log=self._lfh)
-        ok = pA.read(reportPath)
+        _ok = pA.read(reportPath)  # noqa: F841
         self.__assemblyD = pA.getAssemblyDict()
         return self.__assemblyD
-
-    def __writeSelection(self, selectPath):
-        """  Save the comma separated selection string in a file in the current session directory.
-        """
-        try:
-            ofh = open(selectPath, 'w')
-            ofh.write("%s\n" % selectString)
-            ofh.close()
-            return True
-        except:
-            if (self._verbose):
-                traceback.print_exc(file=self._lfh)
-            return False
 
     def __readSelection(self, selectPath):
         """  Read the comma separated selection string from a file in the current session directory.
@@ -1002,7 +964,7 @@ class AnnotationUtils(UtilsBase):
                 return tS[:-1]
             else:
                 return None
-        except:
+        except Exception as _e:  # noqa: F841
             if (self._verbose):
                 traceback.print_exc(file=self._lfh)
             return None
@@ -1075,7 +1037,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.mergeXyzOp() - return status:          %r\n" % myStatus)
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1109,7 +1071,7 @@ class AnnotationUtils(UtilsBase):
         return status
 
     def combineCifFilesOp(self, **kwArgs):
-        """Merges the first datablock from src1 and selected categories in 
+        """Merges the first datablock from src1 and selected categories in
            src2 and output to dst1. Will not overwrite if present
         """
         try:
@@ -1138,7 +1100,7 @@ class AnnotationUtils(UtilsBase):
 
             srcBlock = dIn[0]
 
-            mrgIn = ioObj.readFile(inputFilePath = mrgPath, selectList = mrgCat, outDirPath = tmpdir)
+            mrgIn = ioObj.readFile(inputFilePath=mrgPath, selectList=mrgCat, outDirPath=tmpdir)
             if not mrgIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - Failed to load src2\n")
                 return False
@@ -1150,7 +1112,7 @@ class AnnotationUtils(UtilsBase):
             if len(mrgBlock.getObjNameList()) == 0:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - nothing to merge\n")
                 return True
-                
+
             for cName in mrgBlock.getObjNameList():
                 # If destination has object - do not overwrite
                 if cName not in dstNameList:
@@ -1158,9 +1120,9 @@ class AnnotationUtils(UtilsBase):
                     srcBlock.append(cObj)
 
             # Write out
-            ret = ioObj.writeFile(outputFilePath = outPath, containerList = dIn)
+            ret = ioObj.writeFile(outputFilePath=outPath, containerList=dIn)
             return ret
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1177,14 +1139,13 @@ class AnnotationUtils(UtilsBase):
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
-            eaf = EmAutoFix(sessionPath=sessdir, siteId = siteId)
-            ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)
+            eaf = EmAutoFix(sessionPath=sessdir, siteId=siteId)
+            _ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)  # noqa: F841
             # Always return true - even if no work done
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
-
 
     def em3dAutoEmMapFixVersOp(self, **kwArgs):
         """Updates version numbers of files in em_map category in model file.  Typically run on model and map files in archive as they need to be in sync.
@@ -1204,13 +1165,13 @@ class AnnotationUtils(UtilsBase):
             else:
                 location = 'archive'
 
-            eaf = EmMapAutoFixVers(sessionPath=sessdir, siteId = siteId)
+            eaf = EmMapAutoFixVers(sessionPath=sessdir, siteId=siteId)
             ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath, location=location)
             self._lfh.write("+em3dAutoEmMapFixVersOp fixvers returns %s\n" % ret)
 
             # Always return true - even if no work done
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1227,7 +1188,6 @@ class AnnotationUtils(UtilsBase):
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
-
             ur = UpdateRelated(siteId=siteId)
             ret = ur.updateRelatedEntries(pdbxPath, pdbxOutPath, logPath)
 
@@ -1235,7 +1195,7 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1259,7 +1219,7 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             myReqObj = InputRequest({}, verbose=True, log=sys.stderr)
             myReqObj.setValue("TopSessionPath", dirPath)
-            myReqObj.setValue("WWPDB_SITE_ID",  siteId)
+            myReqObj.setValue("WWPDB_SITE_ID", siteId)
             myReqObj.newSessionObj()
 
             peu = PdbxExpUpdate(myReqObj, verbose=self._verbose, log=self._lfh)
@@ -1269,10 +1229,9 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
-
 
     def emdXmlHeaderCheckOp(self, **kwArgs):
         """Checks EMD -> XML header conversion
@@ -1284,8 +1243,7 @@ class AnnotationUtils(UtilsBase):
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
-            #logPath = os.path.join(dirPath, "dict-check.log")
-
+            # logPath = os.path.join(dirPath, "dict-check.log")
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             dIn = ioObj.readFile(inputFilePath=pdbxPath, selectList=['em_admin'])
@@ -1296,7 +1254,6 @@ class AnnotationUtils(UtilsBase):
             if not cObj:
                 # No em_admin
                 return True
-
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -1318,8 +1275,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("Translation of model failed\n")
                 return True
 
-
-            status = emh.transHeader(emdModelPath, emdXmlPath, reportPath, validateXml = True)
+            status = emh.transHeader(emdModelPath, emdXmlPath, reportPath, validateXml=True)
             self._lfh.write("Status of xml translation %s\n" % status)
 
             # Cleanup directory
@@ -1327,7 +1283,6 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
-

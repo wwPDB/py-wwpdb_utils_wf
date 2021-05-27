@@ -14,17 +14,20 @@ Module of sequence database search utilities.
 
 """
 __docformat__ = "restructuredtext en"
-__author__    = "John Westbrook"
-__email__     = "jwest@rcsb.rutgers.edu"
-__license__   = "Creative Commons Attribution 3.0 Unported"
-__version__   = "V0.01"
+__author__ = "John Westbrook"
+__email__ = "jwest@rcsb.rutgers.edu"
+__license__ = "Creative Commons Attribution 3.0 Unported"
+__version__ = "V0.01"
 
-import  os,sys,traceback
-from wwpdb.utils.config.ConfigInfo                        import getSiteId
-from wwpdb.utils.wf.plugins.UtilsBase                        import UtilsBase
-from wwpdb.apps.seqmodule.webapp.SeqModWebRequest       import SeqModInputRequest
-from wwpdb.apps.seqmodule.control.DataImporter          import DataImporter
+import os
+import sys
+import traceback
+from wwpdb.utils.config.ConfigInfo import getSiteId
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.apps.seqmodule.webapp.SeqModWebRequest import SeqModInputRequest
+from wwpdb.apps.seqmodule.control.DataImporter import DataImporter
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+
 
 class SeqdbUtils(UtilsBase):
     """ Utility class to perform sequence database searches.
@@ -45,30 +48,29 @@ class SeqdbUtils(UtilsBase):
         True on success or False otherwise.
 
     """
-    def __init__(self, verbose=True,log=sys.stderr):
-        super(SeqdbUtils,self).__init__(verbose,log)
-        self.__cleanUp=False
+    def __init__(self, verbose=True, log=sys.stderr):
+        super(SeqdbUtils, self).__init__(verbose, log)
+        self.__cleanUp = False
         """Flag to remove any temporary directories created by this class.
         """
-
         #
 
-    def mySetup(self,topSessionPath='.'):
+    def mySetup(self, topSessionPath='.'):
         """  Setup application environment for managing session storage of
              temporaty data files.
         """
-        self.__maxRefAlign=100
-        self.__siteId=getSiteId(defaultSiteId="WWPDB_DEPOLY_TEST")
+        self.__maxRefAlign = 100
+        self.__siteId = getSiteId(defaultSiteId="WWPDB_DEPOLY_TEST")
         #
-        self.__reqObj=SeqModInputRequest({},verbose=self._verbose,log=self._lfh)
+        self.__reqObj = SeqModInputRequest({}, verbose=self._verbose, log=self._lfh)
         self.__reqObj.setValue("TopSessionPath", topSessionPath)
         self.__reqObj.setValue("WWPDB_SITE_ID", self.__siteId)
         #
         self.__sessionId = self.__reqObj.getSessionId()
-        self.__sessionObj=self.__reqObj.newSessionObj()
+        self.__sessionObj = self.__reqObj.newSessionObj()
         self.__sessionPath = self.__sessionObj.getPath()
 
-    def matchAllOp(self,**kwArgs):
+    def matchAllOp(self, **kwArgs):
         """Find matching sequences for all entities.
         """
         try:
@@ -76,12 +78,12 @@ class SeqdbUtils(UtilsBase):
             self.__includeSeqAssignFileFlag = False
             self.__runMatchAllOp(kwArgs, "matchAllOp")
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #
 
-    def matchAllAutoOp(self,**kwArgs):
+    def matchAllAutoOp(self, **kwArgs):
         """Find matching sequences for all entities.
         """
         try:
@@ -89,41 +91,41 @@ class SeqdbUtils(UtilsBase):
             self.__includeSeqAssignFileFlag = True
             self.__runMatchAllOp(kwArgs, "matchAllAutoOp")
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #
 
-    def matchEntityOp(self,**kwArgs):
+    def matchEntityOp(self, **kwArgs):
         """Find matching sequences for all entities.
         """
         try:
-            (inpObjD,outObjD,uD,pD)=self._getArgs(kwArgs)
-            pdbxPath =inpObjD["src"].getFilePathReference()
-            dstPath =outObjD["dst"].getFilePathReference()
-            dirPath  =outObjD["dst"].getDirPathReference()
-            entityId=str(uD['entity_id'])
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            dstPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            entityId = str(uD['entity_id'])
             #
             # details of the input file -
             #
-            depDataSetId       =inpObjD["src"].getDepositionDataSetId()
-            instanceId         =inpObjD["src"].getWorkflowInstanceId()
-            fileSource         =inpObjD["src"].getStorageType()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            instanceId = inpObjD["src"].getWorkflowInstanceId()
+            fileSource = inpObjD["src"].getStorageType()
             #
             self.mySetup(topSessionPath=dirPath)
-            self.__reqObj.setValue("identifier",depDataSetId)
-            self.__reqObj.setValue("instance",instanceId)
+            self.__reqObj.setValue("identifier", depDataSetId)
+            self.__reqObj.setValue("instance", instanceId)
             #
-            dI = DataImporter(reqObj=self.__reqObj,fileSource=fileSource,maxRefAlign=self.__maxRefAlign,verbose=self._verbose,log=self._lfh)
+            dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
             dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId)
             dI.copyFiles(messageHead="SeqdbUtils.matchAllOp(OnStart)")
-            entityIdList,ok = dI.loadSeqDataAssemble(selectedEntityIdList=[entityId], doRefSearch=True)
+            entityIdList, ok = dI.loadSeqDataAssemble(selectedEntityIdList=[entityId], doRefSearch=True)
             #
             # Return the files according to the destination setting --
             #
-            instanceId         =outObjD["dst"].getWorkflowInstanceId()
-            fileSource         =outObjD["dst"].getStorageType()
-            dI.copyFiles(inputFileSource="session", outputFileSource=fileSource, outputWfInstanceId=instanceId, versionIndex=4, \
+            instanceId = outObjD["dst"].getWorkflowInstanceId()
+            fileSource = outObjD["dst"].getStorageType()
+            dI.copyFiles(inputFileSource="session", outputFileSource=fileSource, outputWfInstanceId=instanceId, versionIndex=4,
                          includePolyLinkFile=True, entityIdList=entityIdList, messageHead="SeqdbUtils.matchEntityOp(OnFinish)")
             #
             if (self._verbose):
@@ -135,7 +137,7 @@ class SeqdbUtils(UtilsBase):
                 pass
             #
             return ok
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -143,22 +145,22 @@ class SeqdbUtils(UtilsBase):
         """ Performs sequence assignment update operation on PDBx format model file.
         """
         try:
-            (inpObjD,outObjD,uD,pD)=self._getArgs(kwArgs)
-            pdbxPath     = inpObjD["src1"].getFilePathReference()
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
             depDataSetId = inpObjD["src1"].getDepositionDataSetId()
-            instanceId   = inpObjD["src1"].getWorkflowInstanceId()
-            fileSource   = inpObjD["src1"].getStorageType()
+            instanceId = inpObjD["src1"].getWorkflowInstanceId()
+            fileSource = inpObjD["src1"].getStorageType()
             #
-            seqAssignFilePath =inpObjD["src2"].getFilePathReference()
+            seqAssignFilePath = inpObjD["src2"].getFilePathReference()
             #
-            outputModelPdbxPath   =outObjD["dst"].getFilePathReference()
-            dirPath               =outObjD["dst"].getDirPathReference()
+            outputModelPdbxPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
             #
             self.mySetup(topSessionPath=dirPath)
-            self.__reqObj.setValue("identifier",depDataSetId)
-            self.__reqObj.setValue("instance",instanceId)
+            self.__reqObj.setValue("identifier", depDataSetId)
+            self.__reqObj.setValue("instance", instanceId)
             #
-            dp=RcsbDpUtility(tmpPath=dirPath,siteId=self.__siteId,verbose=self._verbose,log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=self.__siteId, verbose=self._verbose, log=self._lfh)
             #
             if ((seqAssignFilePath is not None) and os.path.exists(seqAssignFilePath)):
                 dp.addInput(name="seqmod_assign_file_path", value=seqAssignFilePath, type="file")
@@ -166,7 +168,8 @@ class SeqdbUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-merge-sequence-data")
             dp.exp(outputModelPdbxPath)
-            if (self.__cleanUp): dp.cleanup()
+            if (self.__cleanUp):
+                dp.cleanup()
             if (self._verbose):
                 self._lfh.write("+SeqdbUtils.updateModelWithSeqAssignmentOp() - PDBx file path:        %s\n" % pdbxPath)
                 self._lfh.write("+SeqdbUtils.updateModelWithSeqAssignmentOp() - Seq assign file path:  %s\n" % seqAssignFilePath)
@@ -174,13 +177,13 @@ class SeqdbUtils(UtilsBase):
             #
             # Copy files back to archive
             #
-            dI = DataImporter(reqObj=self.__reqObj,fileSource=fileSource,maxRefAlign=self.__maxRefAlign,verbose=self._verbose,log=self._lfh)
+            dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
             dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId, outputFileSource="archive", versionIndex=4)
-            dI.copyFiles(inputFileSource=fileSource, inputWfInstanceId=instanceId, outputFileSource="archive", versionIndex=4, includePolyLinkFile=True, \
+            dI.copyFiles(inputFileSource=fileSource, inputWfInstanceId=instanceId, outputFileSource="archive", versionIndex=4, includePolyLinkFile=True,
                          includeSeqAssignFile=True, messageHead="SeqdbUtils.updateModelWithSeqAssignmentOp(OnFinish)")
             #
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -188,34 +191,33 @@ class SeqdbUtils(UtilsBase):
     def __runMatchAllOp(self, kwArgs, functionName):
         """ Find matching sequences for all entities.
         """
-        (inpObjD,outObjD,uD,pD)=self._getArgs(kwArgs)
-        pdbxPath =inpObjD["src"].getFilePathReference()
-        dstPath  =outObjD["dst"].getFilePathReference()
-        dirPath  =outObjD["dst"].getDirPathReference()
+        (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+        pdbxPath = inpObjD["src"].getFilePathReference()
+        dirPath = outObjD["dst"].getDirPathReference()
         #
         # details of the input file -
         #
-        depDataSetId       =inpObjD["src"].getDepositionDataSetId()
-        instanceId         =inpObjD["src"].getWorkflowInstanceId()
-        fileSource         =inpObjD["src"].getStorageType()
+        depDataSetId = inpObjD["src"].getDepositionDataSetId()
+        instanceId = inpObjD["src"].getWorkflowInstanceId()
+        fileSource = inpObjD["src"].getStorageType()
         #
         self.mySetup(topSessionPath=dirPath)
-        self.__reqObj.setValue("identifier",depDataSetId)
-        self.__reqObj.setValue("instance",instanceId)
+        self.__reqObj.setValue("identifier", depDataSetId)
+        self.__reqObj.setValue("instance", instanceId)
         #
         # Do all the work here
         #
-        dI = DataImporter(reqObj=self.__reqObj,fileSource=fileSource,maxRefAlign=self.__maxRefAlign,verbose=self._verbose,log=self._lfh)
+        dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
         dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId)
-        dI.copyFiles(messageHead="SeqdbUtils."+functionName+"(OnStart)")
-        entityIdList,ok = dI.loadSeqDataAssemble(doAutoProcess=self.__doAutoProcessFlag)
+        dI.copyFiles(messageHead="SeqdbUtils." + functionName + "(OnStart)")
+        entityIdList, ok = dI.loadSeqDataAssemble(doAutoProcess=self.__doAutoProcessFlag)
         #
         # Return the files according to the destination setting --
         #
-        instanceId         =outObjD["dst"].getWorkflowInstanceId()
-        fileSource         =outObjD["dst"].getStorageType()
-        dI.copyFiles(inputFileSource="session", outputFileSource=fileSource, outputWfInstanceId=instanceId, versionIndex=4, includePolyLinkFile=True, \
-                     includeSeqAssignFile=self.__includeSeqAssignFileFlag, entityIdList=entityIdList, messageHead="SeqdbUtils."+functionName+"(OnFinish)")
+        instanceId = outObjD["dst"].getWorkflowInstanceId()
+        fileSource = outObjD["dst"].getStorageType()
+        dI.copyFiles(inputFileSource="session", outputFileSource=fileSource, outputWfInstanceId=instanceId, versionIndex=4, includePolyLinkFile=True,
+                     includeSeqAssignFile=self.__includeSeqAssignFileFlag, entityIdList=entityIdList, messageHead="SeqdbUtils." + functionName + "(OnFinish)")
         #
         if (self._verbose):
             self._lfh.write("+SeqdbUtils.matchAllOp() - Input model PDBx file path: %s\n" % pdbxPath)

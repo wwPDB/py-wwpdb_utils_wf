@@ -82,5 +82,6 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
         output.close()
         return contents
 
+
 if __name__ == '__main__':
     wfd = WfDataObject()
