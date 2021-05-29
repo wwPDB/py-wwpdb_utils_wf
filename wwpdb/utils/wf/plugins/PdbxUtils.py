@@ -16,13 +16,12 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
 import sys
 import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from  mmcif.core.mmciflib import ParseCifSimple
+from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 
 
 class CifFile(object):
@@ -36,11 +35,11 @@ class CifFile(object):
         self.__cifFile = ParseCifSimple(self.__fileName, verbose=False, intCaseSense=0, maxLineLength=1024, nullValue="?", parseLogFileName="")
 
     def getCifFile(self):
-        return (self.__cifFile)
+        return self.__cifFile
 
     @classmethod
     def getFileExt(cls):
-        return ('cif')
+        return "cif"
 
     def write(self, fileName):
         self.__cifFile.Write(fileName)
@@ -52,20 +51,20 @@ class CifFile(object):
 
 class PdbxUtils(UtilsBase):
 
-    """ Utility class of methods to access data within PDBx files.
+    """Utility class of methods to access data within PDBx files.
 
-        Current supported operations include:
+    Current supported operations include:
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -83,11 +82,11 @@ class PdbxUtils(UtilsBase):
         self._lfh = log
 
     def __getBlock(self, pdbxPath):
-        """ Open the input PDBx file and set the target data block.
+        """Open the input PDBx file and set the target data block.
 
-            Returns:
+        Returns:
 
-            True for success or False otherwise.
+        True for success or False otherwise.
 
         """
         try:
@@ -98,19 +97,19 @@ class PdbxUtils(UtilsBase):
             # print self.__blockList
 
             # take the target block by name if specified or just the first block otherwise
-            if (self.__targetBlockName is not None and self.__targetBlockName in self.__blockList):
+            if self.__targetBlockName is not None and self.__targetBlockName in self.__blockList:
                 self.__block = self.__cifFile.GetBlock(self.__targetBlockName)
             else:
                 self.__block = self.__cifFile.GetBlock(self.__blockList[self.__targetBlockIndex])
             #
             return True
-        except:
-            if (self._verbose):
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
 
     def __templateSelection(self, kwD):
-        """ Template selection method.
+        """Template selection method.
 
         This method supports equality selection conditions within the target category.
 
@@ -124,20 +123,20 @@ class PdbxUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
-            if (not self.__getBlock(pdbxPath)):
+            if not self.__getBlock(pdbxPath):
                 return False
             #
 
             targetCategory = str(inpObjD["src"].getSelectCategoryName())
-            if (not self.__block.IsTablePresent(targetCategory)):
+            if not self.__block.IsTablePresent(targetCategory):
                 return False
 
             myTable = self.__block.GetTable(targetCategory)
 
             conditionList = inpObjD["src"].getSelectConditionList()
-            if (len(conditionList) > 0):
+            if len(conditionList) > 0:
                 aNL = []
                 aVL = []
                 for cTup in conditionList:
@@ -149,22 +148,22 @@ class PdbxUtils(UtilsBase):
                 # print "aNt",aNT
                 # print "aVt",aVT
                 indices = myTable.Search(aVT, aNT)
-                if (len(indices) > 0):
+                if len(indices) > 0:
                     attributeList = inpObjD["src"].getSelectAttributeList()
                     rV = []
                     for atN in attributeList:
                         rV.append(myTable(indices[0], str(atN)))
-                    outObjD['dst'].setValue(rV)
+                    outObjD["dst"].setValue(rV)
                     return True
-        except:
-            if (self._verbose):
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
 
         return False
 
     def __templateFetchAttribute(self, kwD):
-        """ Template fetch column method.
+        """Template fetch column method.
 
         This method supports recovering the values of an attribute (or column of attributes).
 
@@ -175,13 +174,13 @@ class PdbxUtils(UtilsBase):
         Only container types *list* and *value* are support.
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
-            if (not self.__getBlock(pdbxPath)):
+            if not self.__getBlock(pdbxPath):
                 return False
             #
             targetCategory = str(inpObjD["src"].getSelectCategoryName())
-            if (not self.__block.IsTablePresent(targetCategory)):
+            if not self.__block.IsTablePresent(targetCategory):
                 return False
 
             attributeList = inpObjD["src"].getSelectAttributeList()
@@ -189,24 +188,24 @@ class PdbxUtils(UtilsBase):
 
             myTable = self.__block.GetTable(targetCategory)
             cL = []
-            colNames = list(myTable.GetColumnNames())
+            # colNames = list(myTable.GetColumnNames())
             rList = list(myTable.GetColumn(cL, targetAttribute))
 
-            if (outObjD['dst'].getContainerTypeName() == 'value'):
-                outObjD['dst'].setValue(rList[0])
-            elif (outObjD['dst'].getContainerTypeName() == 'list'):
-                outObjD['dst'].setValue(rList)
+            if outObjD["dst"].getContainerTypeName() == "value":
+                outObjD["dst"].setValue(rList[0])
+            elif outObjD["dst"].getContainerTypeName() == "list":
+                outObjD["dst"].setValue(rList)
             else:
                 return False
             #
             return True
-        except:
-            if (self._verbose):
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
 
     def __getCategoryRowCount(self, kwD):
-        """ Template method to count category size/test for existence .
+        """Template method to count category size/test for existence .
 
         Input src defines pdbx file and dst will hold integer row count.
 
@@ -216,28 +215,28 @@ class PdbxUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwD)
             pdbxPath = str(inpObjD["src"].getFilePathReference())
-            if (not self.__getBlock(pdbxPath)):
-                outObjD['dst'].setValue(0)
+            if not self.__getBlock(pdbxPath):
+                outObjD["dst"].setValue(0)
                 return True
             #
-            if 'category' in uD:
-                targetCategory = str(uD['category'])
+            if "category" in uD:
+                targetCategory = str(uD["category"])
             else:
-                outObjD['dst'].setValue(0)
+                outObjD["dst"].setValue(0)
                 return True
 
-            if (not self.__block.IsTablePresent(targetCategory)):
-                outObjD['dst'].setValue(0)
+            if not self.__block.IsTablePresent(targetCategory):
+                outObjD["dst"].setValue(0)
                 return True
 
             myTable = self.__block.GetTable(targetCategory)
-            outObjD['dst'].setValue(myTable.GetNumRows())
+            outObjD["dst"].setValue(myTable.GetNumRows())
 
             return True
-        except:
-            if (self._verbose):
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
 
@@ -277,83 +276,84 @@ class PdbxUtils(UtilsBase):
         """
         d = {}
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwD)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            if (not self.__getBlock(pdbxPath)):
+            if not self.__getBlock(pdbxPath):
                 return False
             #
-            targetCategory = 'struct'
-            if (self.__block.IsTablePresent(targetCategory)):
-                targetAttribute = 'title'
+            targetCategory = "struct"
+            if self.__block.IsTablePresent(targetCategory):
+                targetAttribute = "title"
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
                 cL = []
                 rList = list(myTable.GetColumn(cL, targetAttribute))
-                if (len(rList) > 0):
-                    d['title'] = rList[0]
+                if len(rList) > 0:
+                    d["title"] = rList[0]
                 else:
-                    d['title'] = None
+                    d["title"] = None
             #
-            targetCategory = 'exptl'
-            if (self.__block.IsTablePresent(targetCategory)):
-                targetAttribute = 'method'
+            targetCategory = "exptl"
+            if self.__block.IsTablePresent(targetCategory):
+                targetAttribute = "method"
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
                 cL = []
                 rList = list(myTable.GetColumn(cL, targetAttribute))
-                if (len(rList) > 0):
-                    d['exp_method'] = rList[0]
+                if len(rList) > 0:
+                    d["exp_method"] = rList[0]
                 else:
-                    d['exp_method'] = None
+                    d["exp_method"] = None
 
-            targetCategory = 'pdbx_database_status'
-            if (self.__block.IsTablePresent(targetCategory)):
-                aList = [("recvd_initial_deposition_date", "recvd_initial_deposition_date"),
-                         ("author_release_status_code", "author_release_status_code"),
-                         ("deposit_site", "deposit_site"),
-                         ("process_site", "process_site"),
-                         ("status_code", "status_code"),
-                         ("annotator_initials", "rcsb_annotator"),
-                         ("status_code_mr", "status_code_mr"),
-                         ("status_code_sf", "status_code_sf")]
+            targetCategory = "pdbx_database_status"
+            if self.__block.IsTablePresent(targetCategory):
+                aList = [
+                    ("recvd_initial_deposition_date", "recvd_initial_deposition_date"),
+                    ("author_release_status_code", "author_release_status_code"),
+                    ("deposit_site", "deposit_site"),
+                    ("process_site", "process_site"),
+                    ("status_code", "status_code"),
+                    ("annotator_initials", "rcsb_annotator"),
+                    ("status_code_mr", "status_code_mr"),
+                    ("status_code_sf", "status_code_sf"),
+                ]
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
                 for aTup in aList:
                     if aTup[1] in colNames:
                         cL = []
                         rList = list(myTable.GetColumn(cL, aTup[1]))
-                        if (len(rList) > 0):
+                        if len(rList) > 0:
                             # Cannot be unicode for comparisons
-                            d[aTup[0]] = rList[0].encode('utf-8')
+                            d[aTup[0]] = rList[0].encode("utf-8")
                         else:
                             d[aTup[0]] = None
             #
             #
-            targetCategory = 'pdbx_SG_project'
-            if (self.__block.IsTablePresent(targetCategory)):
-                aList = [('full_name_of_center', 'full_name_of_center'),
-                         ('initial_of_center', 'initial_of_center')]
+            targetCategory = "pdbx_SG_project"
+            if self.__block.IsTablePresent(targetCategory):
+                aList = [("full_name_of_center", "full_name_of_center"), ("initial_of_center", "initial_of_center")]
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
                 for aTup in aList:
                     if aTup[1] in colNames:
                         cL = []
                         rList = list(myTable.GetColumn(cL, aTup[1]))
-                        if (len(rList) > 0):
+                        if len(rList) > 0:
                             d[aTup[0]] = rList[0]
                         else:
                             d[aTup[0]] = None
             #
-            targetCategory = 'database_2'
-            dbIdList = ['PDB', 'BMRRB', 'EMDB']
+            targetCategory = "database_2"
+            dbIdList = ["PDB", "BMRRB", "EMDB"]
             accessionD = {}
             for dbId in dbIdList:
                 accessionD[dbId] = []
             #
-            if (self.__block.IsTablePresent(targetCategory)):
+            if self.__block.IsTablePresent(targetCategory):
                 myTable = self.__block.GetTable(targetCategory)
                 for dbId in dbIdList:
-                    indexList = myTable.Search((dbId,), ('database_id',))
+                    indexList = myTable.Search((dbId,), ("database_id",))
                     if len(indexList) > 0:
                         tList = []
                         for idx in range(0, len(indexList)):
@@ -362,27 +362,25 @@ class PdbxUtils(UtilsBase):
                     else:
                         accessionD[dbId] = []
 
-            d['accessions'] = accessionD
+            d["accessions"] = accessionD
 
-            targetCategory = 'audit_author'
-            if (self.__block.IsTablePresent(targetCategory)):
-                targetAttribute = 'name'
+            targetCategory = "audit_author"
+            if self.__block.IsTablePresent(targetCategory):
+                targetAttribute = "name"
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
                 cL = []
                 rList = list(myTable.GetColumn(cL, targetAttribute))
-                if (len(rList) > 0):
-                    d['audit_author'] = []
+                if len(rList) > 0:
+                    d["audit_author"] = []
                     for r in rList:
-                        d['audit_author'].append(r)
+                        d["audit_author"].append(r)
                 else:
-                    d['audit_author'] = []
+                    d["audit_author"] = []
 
-            outObjD['dst'].setValue(d)
+            outObjD["dst"].setValue(d)
             return True
-        except:
-            if (self._verbose):
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
-
-        pass

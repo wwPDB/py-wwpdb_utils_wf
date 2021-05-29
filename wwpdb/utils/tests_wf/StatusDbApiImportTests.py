@@ -14,7 +14,16 @@ __version__ = "V0.01"
 
 import unittest
 
-from wwpdb.utils.wf.dbapi.StatusDbApi import StatusDbApi
+if __package__ is None or __package__ == "":
+    import sys
+    from os import path
+
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401 pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401
+
+from wwpdb.utils.wf.dbapi.StatusDbApi import StatusDbApi  # noqa: F401 pylint: disable=unused-import
 
 
 class ImportTests(unittest.TestCase):
@@ -23,9 +32,7 @@ class ImportTests(unittest.TestCase):
 
     def testInstantiate(self):
         pass
-        
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     unittest.main()
-
-
-    

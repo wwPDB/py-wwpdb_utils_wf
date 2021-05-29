@@ -1,0 +1,6 @@
+mmcif
+mysqlclient
+wwpdb.io
+wwpdb.utils.config
+wwpdb.utils.dp
+wwpdb.utils.session

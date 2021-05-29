@@ -14,20 +14,28 @@ __version__ = "V0.01"
 
 import unittest
 
+if __package__ is None or __package__ == "":
+    import sys
+    from os import path
+
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from commonsetup import HERE  # pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401
+
 from wwpdb.utils.wf.WfDataObject import WfDataObject
+
 
 class ImportTests(unittest.TestCase):
     def setUp(self):
         pass
 
     def testInstantiate(self):
-        #vT = WfDbApi()
+        # vT = WfDbApi()
         dO = WfDataObject()
         # __repr__ should not crash if not fixed
         print(dO)
-        
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     unittest.main()
-
-
-    

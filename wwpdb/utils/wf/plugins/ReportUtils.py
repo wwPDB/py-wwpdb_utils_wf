@@ -31,24 +31,25 @@ import traceback
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.dp.PdbxMergeCategory import PdbxMergeCategory
 
+
 class ReportUtils(UtilsBase):
 
-    """ Utility class to perform annotation utility operations.
+    """Utility class to perform annotation utility operations.
 
-        Current supported operations include:
+    Current supported operations include:
 
-        - Merging of deposition ligand of interest information
+    - Merging of deposition ligand of interest information
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -60,30 +61,28 @@ class ReportUtils(UtilsBase):
         #
 
     def combineLigandInfoOp(self, **kwArgs):
-        """Merges the first datablock from src1 and selected categories in 
-           src2 and output to dst1. Will not overwrite if present
+        """Merges the first datablock from src1 and selected categories in
+        src2 and output to dst1. Will not overwrite if present
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             srcPath = inpObjD["src1"].getFilePathReference()
             mrgPath = inpObjD["src2"].getFilePathReference()
             outPath = outObjD["dst"].getFilePathReference()
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - src1 input  file paths:  %s\n" % srcPath)
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - src2 input  file paths:  %s\n" % mrgPath)
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - output path: %s\n" % outPath)
 
             pm = PdbxMergeCategory()
             # srcin, src2in, dstoit, mergelist replacelist
-            ret = pm.merge(srcPath, mrgPath, outPath, ['pdbx_entry_details'], 
-                           ['pdbx_binding_assay', 'pdbx_entity_instance_feature'])
+            ret = pm.merge(srcPath, mrgPath, outPath, ["pdbx_entry_details"], ["pdbx_binding_assay", "pdbx_entity_instance_feature"])
 
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - return: %s\n" % ret)
 
             return ret
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
-

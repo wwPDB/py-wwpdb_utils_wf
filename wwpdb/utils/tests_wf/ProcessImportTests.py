@@ -12,11 +12,22 @@ __email__ = "peisach@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+# pylint: disable=unused-import
+
 import unittest
 
-from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
-from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
-from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
+if __package__ is None or __package__ == "":
+    import sys
+    from os import path
+
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from commonsetup import HERE  # pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401
+
+from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry  # noqa: F401
+from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo  # noqa: F401
+from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner  # noqa: F401
 
 
 class ImportTests(unittest.TestCase):
@@ -28,5 +39,5 @@ class ImportTests(unittest.TestCase):
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

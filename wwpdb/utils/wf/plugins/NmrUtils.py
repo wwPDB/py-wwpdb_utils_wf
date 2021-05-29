@@ -19,49 +19,48 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
-import logging
-import shutil
-import datetime
-import time
-import difflib
-import string
-import random
 import json
 import re
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-sys.stdout = sys.stderr
-# CCPN project removed as not Python3 compatible
-# from wwpdb.utils.nmr.ExtractFromCCPN import CcpnProject
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
+
 try:
-    # XXX We will have present on annotation system - but allow testing of DepUI merge without
+    # We will have present on annotation system - but allow testing of DepUI merge without
     from wwpdb.apps.ann_tasks_v2.nmr.NmrChemShiftProcessUtils import NmrChemShiftProcessUtils
 except ImportError:
     pass
 
-from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
+try:
+    # We will have present on annotation system - but allow testing of DepUI merge without
+    from wwpdb.utils.nmr.NmrDpUtility import NmrDpUtility
+except ImportError:
+    pass
+
+
+sys.stdout = sys.stderr
+
 
 class NmrUtils(UtilsBase):
 
-    """ Utility class to perform NMR file format conversions.
+    """Utility class to perform NMR file format conversions.
 
 
 
 
-        Each method in this class implements the method calling interface of the
-        `ProcessRunner()` class.   This interface provides the keyword arguments:
+    Each method in this class implements the method calling interface of the
+    `ProcessRunner()` class.   This interface provides the keyword arguments:
 
-        - inputObjectD   dictionary of input objects
-        - outputObjectD  dictionary of output objects
-        - userParameterD  dictionary of user adjustable parameters
-        - internalParameterD dictionary of internal parameters
+    - inputObjectD   dictionary of input objects
+    - outputObjectD  dictionary of output objects
+    - userParameterD  dictionary of user adjustable parameters
+    - internalParameterD dictionary of internal parameters
 
-        Each method in the class handles its own exceptions and returns
-        True on success or False otherwise.
+    Each method in the class handles its own exceptions and returns
+    True on success or False otherwise.
 
     """
 
@@ -72,49 +71,25 @@ class NmrUtils(UtilsBase):
         """
         #
 
-    def ccpnExtractOp(self, **kwArgs):
-        """Extract PDB and NMRSTAR files from CCPn project
-        """
+    def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
+        """Extract PDB and NMRSTAR files from CCPn project"""
 
         # Disabled as not python3 compatible
         if self._verbose:
             self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
         return False
 
-        try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
-            ccpnPath = inpObjD["src"].getFilePathReference()
-            pdbPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
-            strPath = outObjD["dst2"].getFilePathReference()
-            #
-            uniq = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(6)) + '_ccpn-convert'
-
-            CcpnProject(ccpn=ccpnPath,
-                        star=strPath,
-                        pdb=pdbPath,
-                        uniq=uniq
-                        ).process()
-            if (self._verbose):
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - CCPn input  file path:     %s\n" % ccpnPath)
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - PDB  output file path:     %s\n" % pdbPath)
-                self._lfh.write("+NmrUtils.ccpnExtractOp() - NMRSTAR  output file path: %s\n" % strPath)
-            return True
-        except:
-            traceback.print_exc(file=self._lfh)
-            return False
-
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
-           Data sections are assigned to user provided input names corresponding to each input file.
+        Data sections are assigned to user provided input names corresponding to each input file.
 
-           Output is a concatenated chemical shift file,  text status (ok,warning,error) and text list of
-           warnings and/or errors.
+        Output is a concatenated chemical shift file,  text status (ok,warning,error) and text list of
+        warnings and/or errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = inpObjD["src1"].getValue()
             nameList = inpObjD["src2"].getValue()
             #
@@ -138,52 +113,52 @@ class NmrUtils(UtilsBase):
             dp.exp(csOutPath)
 
             csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
-            status = str(''.join(csr.getStatus())).lower()
+            status = str("".join(csr.getStatus())).lower()
             warnings = csr.getWarnings()
             errors = csr.getErrors()
 
-            outObjD['dst3'].setValue(status)
-            outObjD['dst4'].setValue(warnings)
-            outObjD['dst5'].setValue(errors)
+            outObjD["dst3"].setValue(status)
+            outObjD["dst4"].setValue(warnings)
+            outObjD["dst5"].setValue(errors)
 
             #
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() - CS path list :    %s\n" % csPathList)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() - CS name list :    %s\n" % nameList)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() - CS output path :  %s\n" % csOutPath)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Status code: %s\n" % status)
-                self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Warning count : %d\n %s\n" % (len(warnings), ('\n').join(warnings)))
-                self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Error count : %d\n %s\n" % (len(errors), ('\n').join(errors)))
+                self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Warning count : %d\n %s\n" % (len(warnings), ("\n").join(warnings)))
+                self._lfh.write("+AnnotationUtils.uploadChemicalShiftOp() Error count : %d\n %s\n" % (len(errors), ("\n").join(errors)))
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
     def uploadChemicalShiftAltOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
-           Data sections are assigned to user provided input names corresponding to each input file.
+        Data sections are assigned to user provided input names corresponding to each input file.
 
-           Output is a concatenated chemical shift file, and check report file -
+        Output is a concatenated chemical shift file, and check report file -
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             nameList = []
             nameListFilePath = inpObjD["src2"].getFilePathReference()
             #
-            ifh = open(csPathListFilePath, 'r')
+            ifh = open(csPathListFilePath, "r")
             for tline in ifh:
                 txt = str(tline[:-1]).strip()
                 csPathList.append(txt)
             ifh.close()
             #
-            ifh = open(nameListFilePath, 'r')
+            ifh = open(nameListFilePath, "r")
             for tline in ifh:
                 txt = str(tline[:-1]).strip()
                 nameList.append(txt)
@@ -209,24 +184,24 @@ class NmrUtils(UtilsBase):
             dp.exp(csOutPath)
 
             #
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftAltOp() - CS path list :    %s\n" % csPathList)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftAltOp() - CS name list :    %s\n" % nameList)
                 self._lfh.write("+AnnotationUtils.uploadChemicalShiftAltOp() - CS output path :  %s\n" % csOutPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
     def atomNameCheckCsXyzOp(self, **kwArgs):
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report,
-           status (text=ok,warning,error), and both  warnings and error messages as a list of strings.
+        status (text=ok,warning,error), and both  warnings and error messages as a list of strings.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPath = inpObjD["src1"].getFilePathReference()
             xyzPath = inpObjD["src2"].getFilePathReference()
 
@@ -249,35 +224,35 @@ class NmrUtils(UtilsBase):
             dp.exp(csOutPath)
 
             csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
-            status = str(''.join(csr.getStatus())).lower()
+            status = str("".join(csr.getStatus())).lower()
             warnings = csr.getWarnings()
             errors = csr.getErrors()
 
-            outObjD['dst3'].setValue(status)
-            outObjD['dst4'].setValue(warnings)
-            outObjD['dst5'].setValue(errors)
+            outObjD["dst3"].setValue(status)
+            outObjD["dst4"].setValue(warnings)
+            outObjD["dst5"].setValue(errors)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzOp() - Cs input  file path:    %s\n" % csPath)
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzOp() - Report file path:       %s\n" % chkPath)
                 self._lfh.write("+AnnotationUtils.atomNameShiftOp() Status code: %s\n" % status)
-                self._lfh.write("+AnnotationUtils.atomNameShiftOp() Warning count : %d\n %s\n" % (len(warnings), ('\n').join(warnings)))
-                self._lfh.write("+AnnotationUtils.atomNameShiftOp() Error count : %d\n %s\n" % (len(errors), ('\n').join(errors)))
+                self._lfh.write("+AnnotationUtils.atomNameShiftOp() Warning count : %d\n %s\n" % (len(warnings), ("\n").join(warnings)))
+                self._lfh.write("+AnnotationUtils.atomNameShiftOp() Error count : %d\n %s\n" % (len(errors), ("\n").join(errors)))
 
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
     def atomNameCheckCsXyzAltOp(self, **kwArgs):
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
-            * workflow version * returns chemical shift file and check report output --
+        * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPath = inpObjD["src1"].getFilePathReference()
             xyzPath = inpObjD["src2"].getFilePathReference()
 
@@ -299,23 +274,23 @@ class NmrUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(csOutPath)
 
-            if (self.__cleanUp):
+            if self.__cleanUp:
                 dp.cleanup()
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzAltOp() - Cs input  file path:    %s\n" % csPath)
                 self._lfh.write("+AnnotationUtils.atomNameCheckCsXyzAltOp() - Report file path:       %s\n" % chkPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
     def autoChemShiftProcessOp(self, **kwArgs):
         """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
-            * workflow version * returns chemical shift file and check report output --
+        * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             xyzPath = inpObjD["src1"].getFilePathReference()
             csPath = inpObjD["src2"].getFilePathReference()
             #
@@ -338,10 +313,10 @@ class NmrUtils(UtilsBase):
             util.setOutputModelFileName(fileName=xyzOutPath)
             util.setOutputCsFileName(fileName=csOutPath)
             util.setOutputReportFileName(fileName=csReportPath)
-            util.setOutputValidationFileList(dstPathList=[ validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath ])
+            util.setOutputValidationFileList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath])
             util.run()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -355,11 +330,11 @@ class NmrUtils(UtilsBase):
     def nefConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NEF with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -369,26 +344,26 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, 'r') as file:
+                with open(cnfInpPath, "r") as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
+                    dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-nef-consistency-check")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - NEF input file path:      %s\n" % nefInpPath)
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -402,11 +377,11 @@ class NmrUtils(UtilsBase):
     def strConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input NMR-STAR V3.2 with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -416,26 +391,26 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, 'r') as file:
+                with open(cnfInpPath, "r") as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
+                    dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - mmCIF input file path:            %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - JSON output file path:            %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -449,15 +424,15 @@ class NmrUtils(UtilsBase):
     def csStrConsistencyCheckOp(self, **kwArgs):
         """Performs consistency check on input chemical shift/restraint list with coordinate and outputs a JSON report file, which provides diagnostic information to depositor.
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             csPathList = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             #
-            ifh = open(csPathListFilePath, 'r')
+            ifh = open(csPathListFilePath, "r")
             for tline in ifh:
                 txt = str(tline[:-1]).strip()
                 csPathList.append(txt)
@@ -468,31 +443,31 @@ class NmrUtils(UtilsBase):
             #
             if os.path.exists(mrInpPath):
 
-                with open(mrInpPath, 'r') as file:
+                with open(mrInpPath, "r") as file:
                     mr_list = json.loads(file.read())
 
-                datablock_pattern = re.compile(r'\s*data_\S+\s*')
-                sf_anonymous_pattern = re.compile(r'\s*save_\S+\s*')
-                save_pattern = re.compile(r'\s*save_\s*')
-                loop_pattern = re.compile(r'\s*loop_\s*')
-                stop_pattern = re.compile(r'\s*stop_\s*')
+                datablock_pattern = re.compile(r"\s*data_\S+\s*")
+                sf_anonymous_pattern = re.compile(r"\s*save_\S+\s*")
+                save_pattern = re.compile(r"\s*save_\s*")
+                loop_pattern = re.compile(r"\s*loop_\s*")
+                stop_pattern = re.compile(r"\s*stop_\s*")
 
                 for mr in mr_list:
-                    mr_file = mr['file_name']
-                    #mr_orig_file = mr['original_file_name']
-                    mr_file_type = mr['file_type']
+                    mr_file = mr["file_name"]
+                    # mr_orig_file = mr['original_file_name']
+                    mr_file_type = mr["file_type"]
 
-                    #mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
-                    #if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
+                    # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
+                    # if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
 
-                    if mr_file_type.startswith('nm-res'):
+                    if mr_file_type.startswith("nm-res"):
                         has_datablock = False
                         has_anonymous_saveframe = False
                         has_save = False
                         has_loop = False
                         has_stop = False
 
-                        with open(mr_file, 'r') as ifp:
+                        with open(mr_file, "r") as ifp:
                             for line in ifp:
                                 if datablock_pattern.match(line):
                                     has_datablock = True
@@ -507,7 +482,7 @@ class NmrUtils(UtilsBase):
 
                             ifp.close()
 
-                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop: # NMR-STAR or NEF
+                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop:  # NMR-STAR or NEF
                             mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
@@ -516,28 +491,28 @@ class NmrUtils(UtilsBase):
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
-            dp.addInput(name='chem_shift_file_path_list', value=csPathList, type='file_list')
+            dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_list")
             if len(mrPathList) > 0:
-                dp.addInput(name='restraint_file_path_list', value=mrPathList, type='file_list')
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
+                dp.addInput(name="restraint_file_path_list", value=mrPathList, type="file_list")
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
 
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            dp.addInput(name='nonblk_bad_nterm', value=True, type='param')
-            dp.addInput(name='resolve_conflict', value=True, type='param')
-            dp.addInput(name='check_mandatory_tag', value=False, type='param')
+            dp.addInput(name="nonblk_anomalous_cs", value=True, type="param")
+            dp.addInput(name="nonblk_bad_nterm", value=True, type="param")
+            dp.addInput(name="resolve_conflict", value=True, type="param")
+            dp.addInput(name="check_mandatory_tag", value=False, type="param")
 
             dp.setLog(logOutPath)
             stat = dp.op("nmr-cs-str-consistency-check")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - CS file path list:        %s\n" % csPathList)
                 if len(mrPathList) > 0:
                     self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - MR file path list:        %s\n" % mrPathList)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -555,11 +530,11 @@ class NmrUtils(UtilsBase):
     def nef2strDepositOp(self, **kwArgs):
         """Perform NEF to NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -573,27 +548,27 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(nefInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
-            dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
+            dp.addInput(name="report_file_path", value=logInpPath, type="file")
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, 'r') as file:
+                with open(cnfInpPath, "r") as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
+                    dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setDestination(nefOutPath)
-            dp.addOutput(name='nmr-star_file_path', value=strOutPath, type='file')
-            dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
-            dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
-            dp.addOutput(name='leave_intl_note', value=False, type='param')
+            dp.addOutput(name="nmr-star_file_path", value=strOutPath, type="file")
+            dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
+            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
+            dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-nef2str-deposit")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - NEF input file path:        %s\n" % nefInpPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - mmCIF input file path:      %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON input file path:       %s\n" % logInpPath)
@@ -602,7 +577,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON output file path 1:    %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - JSON output file path 2:    %s\n" % logOutPath2)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -618,11 +593,11 @@ class NmrUtils(UtilsBase):
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 format conversion operation (special processing for deposition sessions)
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             cnfInpPath = inpObjD["src0"].getFilePathReference()
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
@@ -634,32 +609,32 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='proc_coord_file_path', value=prcInpPath, type='file')
-            dp.addInput(name='report_file_path', value=logInpPath, type='file')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
+            dp.addInput(name="report_file_path", value=logInpPath, type="file")
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, 'r') as file:
+                with open(cnfInpPath, "r") as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
-                    dp.addInput(name=item, value=conf[item], type='param')
+                    dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setDestination(strOutPath)
-            dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
-            dp.addOutput(name='leave_intl_note', value=False, type='param')
+            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
+            dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - mmCIF input file path:             %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON input file path:              %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR V3.2 output file path:    %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON output file path:             %s\n" % logOutPath)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -675,11 +650,11 @@ class NmrUtils(UtilsBase):
     def str2nefReleaseOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 to NEF format conversion operation for public release
 
-           Returns True for success or False for warnings/errors.
+        Returns True for success or False for warnings/errors.
 
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             logOutPath = outObjD["dst0"].getFilePathReference()
@@ -691,26 +666,26 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setVerbose(flag=True)
             dp.setSource(strInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='nonblk_anomalous_cs', value=True, type='param')
-            dp.addInput(name='nonblk_bad_nterm', value=True, type='param')
-            dp.addInput(name='resolve_conflict', value=True, type='param')
-            dp.addInput(name='check_mandatory_tag', value=True, type='param')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="nonblk_anomalous_cs", value=True, type="param")
+            dp.addInput(name="nonblk_bad_nterm", value=True, type="param")
+            dp.addInput(name="resolve_conflict", value=True, type="param")
+            dp.addInput(name="check_mandatory_tag", value=True, type="param")
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str-consistency-check")
             #
             dp.setSource(strInpPath)
-            dp.addInput(name='coordinate_file_path', value=cifInpPath, type='file')
-            dp.addInput(name='report_file_path', value=logOutPath, type='file')
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="report_file_path", value=logOutPath, type="file")
             dp.setDestination(strOutPath)
-            dp.addOutput(name='nef_file_path', value=nefOutPath, type='file')
-            dp.addOutput(name='report_file_path', value=logOutPath2, type='file')
-            dp.addOutput(name='insert_entry_id_to_loops', value=True, type='param')
-            dp.addOutput(name='leave_intl_note', value=False, type='param')
+            dp.addOutput(name="nef_file_path", value=nefOutPath, type="file")
+            dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
+            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
+            dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-str2nef-release")
             #
-            if (self._verbose):
+            if self._verbose:
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - mmCIF input file path:             %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON input file path:              %s\n" % logOutPath)
@@ -719,17 +694,17 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 1:           %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - JSON output file path 2:           %s\n" % logOutPath2)
             return stat
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
 
     def autoNmrNefProcessOp(self, **kwArgs):
         """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
-            * workflow version * returns chemical shift file and check report output --
+        * workflow version * returns chemical shift file and check report output --
         """
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             xyzPath = inpObjD["src1"].getFilePathReference()
             nefPath = inpObjD["src2"].getFilePathReference()
             #
@@ -747,6 +722,6 @@ class NmrUtils(UtilsBase):
             util.setOutputNefFileName(fileName=nefOutPath)
             util.runNefProcess()
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
