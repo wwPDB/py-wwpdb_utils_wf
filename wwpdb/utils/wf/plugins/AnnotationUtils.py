@@ -37,6 +37,7 @@ import socket
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.dp.DensityWrapper import DensityWrapper
 
 try:
     # We will have present on annotation system - but allow testing without
@@ -1236,6 +1237,29 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def emVolumeBcifConversionOp(self, **kwArgs):
+        """
+        converts EM volume from map format into bcif
+        :param kwArgs:
+        :return bool: True if worked, False if failed
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            mapPath = inpObjD["src"].getFilePathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+
+            mapBcifPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            if not os.path.exists(mapPath):
+                # no EM map
+                return True
+
+            dw = DensityWrapper()
+            return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
