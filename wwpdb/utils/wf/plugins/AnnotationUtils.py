@@ -1279,15 +1279,19 @@ class AnnotationUtils(UtilsBase):
 
             mapBcifPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
-            if not os.path.exists(twofofcmap) or not os.path.exists(fofcmap) or not os.path.exists(coordinates):
+            if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
+
+                dw = DensityWrapper()
+                return dw.convert_xray_density_map(coord_file=coordinates,
+                                                   in_2fofc_cif=twofofcmap,
+                                                   in_fofc_cif=fofcmap,
+                                                   out_binary_volume=mapBcifPath,
+                                                   working_dir=dirPath
+                                                   )
+            else:
                 # no x-ray mmCIF map files
                 return True
 
-            dw = DensityWrapper()
-            return dw.convert_xray_density_map(coord_file=coordinates, in_2fofc_cif=twofofcmap,
-                                               in_fofc_cif=fofcmap,
-                                               out_binary_volume=mapBcifPath,
-                                               working_dir=dirPath)
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
