@@ -1263,3 +1263,31 @@ class AnnotationUtils(UtilsBase):
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
+
+    def xrayBcifConversionOp(self, **kwArgs):
+        """
+        converts X-ray maps from maps format into bcif
+        :param kwArgs:
+        :return bool: True if worked, False if failed
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            coordinates = inpObjD["src1"].getFilePathReference()
+            twofofcmap = inpObjD["src2"].getFilePathReference()
+            fofcmap = inpObjD["src3"].getFilePathReference()
+            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+
+            mapBcifPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            if not os.path.exists(twofofcmap) or not os.path.exists(fofcmap) or not os.path.exists(coordinates):
+                # no x-ray mmCIF map files
+                return True
+
+            dw = DensityWrapper()
+            return dw.convert_xray_density_map(coord_file=coordinates, in_2fofc_cif=twofofcmap,
+                                               in_fofc_cif=fofcmap,
+                                               out_binary_volume=mapBcifPath,
+                                               working_dir=dirPath)
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
