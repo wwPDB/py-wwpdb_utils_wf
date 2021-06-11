@@ -1250,7 +1250,7 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             mapPath = inpObjD["src"].getFilePathReference()
-            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            # depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             mapBcifPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
