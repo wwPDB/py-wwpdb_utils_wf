@@ -482,7 +482,7 @@ class NmrUtils(UtilsBase):
 
                             ifp.close()
 
-                        if has_datablock and has_anonymous_saveframe and has_save and has_loop and has_stop:  # NMR-STAR or NEF
+                        if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop: # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
