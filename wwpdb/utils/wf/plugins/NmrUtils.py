@@ -439,6 +439,7 @@ class NmrUtils(UtilsBase):
             ifh.close()
             #
             mrPathList = []
+            arPathList = []
             mrInpPath = inpObjD["src2"].getFilePathReference()
             #
             if os.path.exists(mrInpPath):
@@ -484,6 +485,8 @@ class NmrUtils(UtilsBase):
 
                         if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop: # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
+                        else:
+                            arPathList.append({"file_name": mr_file, "file_type": mr_file_type})
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
             prcInpPath = inpObjD["prc3"].getFilePathReference()
@@ -494,6 +497,8 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_list")
             if len(mrPathList) > 0:
                 dp.addInput(name="restraint_file_path_list", value=mrPathList, type="file_list")
+            if len(arPathList) > 0:
+                dp.addInput(name="atypical_restraint_file_path_list", value=arPathList, type="file_dict_list")
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
 
@@ -509,6 +514,8 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - CS file path list:        %s\n" % csPathList)
                 if len(mrPathList) > 0:
                     self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - MR file path list:        %s\n" % mrPathList)
+                if len(arPathList) > 0:
+                    self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - AR file path list:        %s\n" % arPathList)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - mmCIF input file path:    %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - JSON output file path:    %s\n" % logOutPath)
             return stat
