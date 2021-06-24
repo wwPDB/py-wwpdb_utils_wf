@@ -23,7 +23,7 @@ except ImportError:
     import io as StringIO
 
 from wwpdb.utils.wf.DataSelector import DataSelector
-from io.locator.DataReference import DataFileReference
+from wwpdb.io.locator.DataReference import DataFileReference
 from wwpdb.utils.wf.DataValueContainer import DataValueContainer
 
 
