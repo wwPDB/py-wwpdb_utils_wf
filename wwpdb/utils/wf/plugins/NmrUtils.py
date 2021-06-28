@@ -483,7 +483,7 @@ class NmrUtils(UtilsBase):
 
                             ifp.close()
 
-                        if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop: # NMR-STAR or NEF (DAOTHER-6830)
+                        if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop:  # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
                         else:
                             arPathList.append({"file_name": mr_file, "file_type": mr_file_type})
