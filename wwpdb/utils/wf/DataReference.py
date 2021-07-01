@@ -78,7 +78,7 @@ class ReferenceFileInfo(object):
 
     def __init__(self, verbose=False, log=sys.stderr):
         self.__verbose = verbose
-        self.__debug = False
+        # self.__debug = False
         self.__lfh = log
         #
         self.__ciD = ConfigInfoData(siteId=None, verbose=self.__verbose, log=self.__lfh).getConfigDictionary()
@@ -849,31 +849,31 @@ class DataFileReference(DataReferenceBase):
         else:
             return False
 
-    def __getExternalPath(self):
-        """Get the path of the current external file reference.
+    # def __getExternalPath(self):
+    #     """Get the path of the current external file reference.
 
-        Returns:
+    #     Returns:
 
-        The external file path.  *None* is returned on failure.
-        """
-        try:
-            (pth, _fn) = os.path.split(self.__externalFilePath)
-            return pth
-        except Exception as _e:  # noqa: F841
-            return None
+    #     The external file path.  *None* is returned on failure.
+    #     """
+    #     try:
+    #         (pth, _fn) = os.path.split(self.__externalFilePath)
+    #         return pth
+    #     except Exception as _e:  # noqa: F841
+    #         return None
 
-    def __getExternalFileNameBase(self):
-        """Get the base file name for the current external file reference.
+    # def __getExternalFileNameBase(self):
+    #     """Get the base file name for the current external file reference.
 
-        Returns:
+    #     Returns:
 
-        The external base file name.  *None* is returned on failure.
-        """
-        try:
-            (_pth, fn) = os.path.split(self.__externalFilePath)
-            return fn
-        except Exception as _e:  # noqa: F841
-            return None
+    #     The external base file name.  *None* is returned on failure.
+    #     """
+    #     try:
+    #         (_pth, fn) = os.path.split(self.__externalFilePath)
+    #         return fn
+    #     except Exception as _e:  # noqa: F841
+    #         return None
 
     def __getInternalPath(self):
         """Compute the path to the current file reference within the archive/workflow file system.

@@ -38,10 +38,11 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
 
     """
 
-    def __init__(self):
-        super(WfDataObject, self).__init__()
-        self.__verbose = False
-        # sys.stderr.write("WfDataObject.__init_()\n")
+    # Inherit base __init__
+    # def __init__(self):
+    #    super(WfDataObject, self).__init__()
+    # self.__verbose = False
+    # sys.stderr.write("WfDataObject.__init_()\n")
 
     def printMe(self, ofh):
         if self.getReferenceType() in ["file"]:

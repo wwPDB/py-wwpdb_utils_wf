@@ -27,12 +27,12 @@ class LocalDbApi(object):
         connect to local database
         """
         self.__lfh = log
-        self.__verbose = verbose
+        self.__verbose = verbose  # pylint: disable=unused-private-member
         self.__dbServer = "mysql"
-        self.__dbHost = "pdb-a-linux-5.rutgers.edu"
-        self.__dbName = "msd1"
-        self.__dbUser = "rcsbuser"
-        self.__dbPw = "rcsb0000"
+        self.__dbHost = "somehome"
+        self.__dbName = "unknown"
+        self.__dbUser = "user"
+        self.__dbPw = "password"
         self.__dbPort = 3306
 
         self.__myDb = DbConnection(dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort)

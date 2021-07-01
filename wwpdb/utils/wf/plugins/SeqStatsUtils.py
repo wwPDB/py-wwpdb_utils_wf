@@ -43,9 +43,8 @@ class SeqStatsUtils(UtilsBase):
 
     def __init__(self, verbose=True, log=sys.stderr):
         super(SeqStatsUtils, self).__init__(verbose, log)
-        self.__cleanUp = True
-        """Flag to remove any temporary directories created by this class.
-        """
+        # Flag to remove any temporary directories created by this class.
+        self.__cleanUp = True  # pylint: disable=unused-private-member
         #
 
     def prepareSequenceDataOp(self, **kwArgs):
