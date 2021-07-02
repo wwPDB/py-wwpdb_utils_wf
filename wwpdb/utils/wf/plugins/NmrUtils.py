@@ -461,7 +461,7 @@ class NmrUtils(UtilsBase):
                     # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
                     # if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
 
-                    if mr_file_type.startswith("nm-res") or mr_file.startswith("nm-aux"):
+                    if mr_file_type.startswith("nm-res") or mr_file_type.startswith("nm-aux"):
                         has_datablock = False
                         has_anonymous_saveframe = False
                         has_save = False
