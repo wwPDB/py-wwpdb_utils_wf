@@ -51,18 +51,19 @@ class WfDbApi:
     """
 
     # This could be rewritten wih inheritance - later
-    __schemaWf = WfSchemaMap._schemaMap  # pylint: disable=protected-access
-    __selectList = WfSchemaMap._selectColumns  # pylint: disable=protected-access
-    __constraintList = WfSchemaMap._constraintList  # pylint: disable=protected-access
+    # pylint is picking up on shared data among instances and thinks unused
+    __schemaWf = WfSchemaMap._schemaMap  # pylint: disable=protected-access,unused-private-member
+    __selectList = WfSchemaMap._selectColumns  # pylint: disable=protected-access,unused-private-member
+    __constraintList = WfSchemaMap._constraintList  # pylint: disable=protected-access,unused-private-member
     # __statusList = WfSchemaMap._columnForStatus
-    __statusList = WfSchemaMap._usefulItems[0:3]  # pylint: disable=protected-access
-    __columnList = WfSchemaMap._usefulItems  # pylint: disable=protected-access
-    __tableList = WfSchemaMap._tables  # pylint: disable=protected-access
-    __idList = WfSchemaMap._objIds  # pylint: disable=protected-access
-    __refList = WfSchemaMap._referencePairs  # pylint: disable=protected-access
-    __sqlJoinStr = WfSchemaMap._tableJoinSyntext  # pylint: disable=protected-access
-    __orderBy = WfSchemaMap._orderBy  # pylint: disable=protected-access
-    __userInfo = WfSchemaMap._userInfo  # pylint: disable=protected-access
+    __statusList = WfSchemaMap._usefulItems[0:3]  # pylint: disable=protected-access,unused-private-member
+    __columnList = WfSchemaMap._usefulItems  # pylint: disable=protected-access,unused-private-member
+    __tableList = WfSchemaMap._tables  # pylint: disable=protected-access,unused-private-member
+    __idList = WfSchemaMap._objIds  # pylint: disable=protected-access,unused-private-member
+    __refList = WfSchemaMap._referencePairs  # pylint: disable=protected-access,unused-private-member
+    __sqlJoinStr = WfSchemaMap._tableJoinSyntext  # pylint: disable=protected-access,unused-private-member
+    __orderBy = WfSchemaMap._orderBy  # pylint: disable=protected-access,unused-private-member
+    __userInfo = WfSchemaMap._userInfo  # pylint: disable=protected-access,unused-private-member
 
     def __init__(self, log=sys.stderr, verbose=False, siteId=None):
         """

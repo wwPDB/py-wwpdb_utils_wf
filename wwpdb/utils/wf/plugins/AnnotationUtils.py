@@ -915,20 +915,20 @@ class AnnotationUtils(UtilsBase):
         self.__assemblyD = pA.getAssemblyDict()  # pylint: disable=attribute-defined-outside-init
         return self.__assemblyD
 
-    def __readSelection(self, selectPath):
-        """Read the comma separated selection string from a file in the current session directory."""
-        try:
-            ofh = open(selectPath, "r")
-            tS = ofh.readline()
-            ofh.close()
-            if (tS is not None) and (len(tS) > 1):
-                return tS[:-1]
-            else:
-                return None
-        except Exception as _e:  # noqa: F841
-            if self._verbose:
-                traceback.print_exc(file=self._lfh)
-            return None
+    # def __readSelection(self, selectPath):
+    #     """Read the comma separated selection string from a file in the current session directory."""
+    #     try:
+    #         ofh = open(selectPath, "r")
+    #         tS = ofh.readline()
+    #         ofh.close()
+    #         if (tS is not None) and (len(tS) > 1):
+    #             return tS[:-1]
+    #         else:
+    #             return None
+    #     except Exception as _e:  # noqa: F841
+    #         if self._verbose:
+    #             traceback.print_exc(file=self._lfh)
+    #         return None
 
     def mergeXyzOp(self, **kwArgs):
         """Merge coordinate data files and report status -"""
@@ -1013,20 +1013,6 @@ class AnnotationUtils(UtilsBase):
             ifh.close()
         else:
             status = "error"
-        return status
-
-    def __XcheckMergeStatus(self, logFilePath):
-        status = "ok"
-        if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath, "r")
-            for line in ifh:
-                if str(line).upper().startswith("++ERROR") or str(line).upper().startswith("ERROR:"):
-                    return "error"
-                if str(line).upper().startswith("++WARN") or str(line).upper().startswith("WARN:"):
-                    return "warn"
-            ifh.close()
-        else:
-            return "error"
         return status
 
     def combineCifFilesOp(self, **kwArgs):

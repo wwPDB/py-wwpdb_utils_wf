@@ -34,7 +34,7 @@ class DataSelector(object):
 
     def __init__(self):
         super(DataSelector, self).__init__()
-        self.__verbose = False
+        # self.__verbose = False
         # sys.stderr.write("DataSelector.__init_()\n")
         self.__selectorType = None
         #

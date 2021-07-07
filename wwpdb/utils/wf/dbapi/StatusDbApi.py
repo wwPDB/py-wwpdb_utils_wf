@@ -28,12 +28,12 @@ from wwpdb.utils.wf.dbapi.DbApiUtil import DbApiUtil
 
 
 class StatusDbApi(object):
-    __schemaMap = {
+    """ """
+
+    __schemaMap = {  # pylint: disable=unused-private-member
         "GET_GROUP_ID": "select group_id from group_deposition_information where dep_set_id = '%s'",
         "GET_DEP_ID": "select dep_set_id from group_deposition_information where group_id = '%s'",
     }
-    """
-    """
 
     def __init__(self, siteId=None, verbose=False, log=sys.stderr):
         """ """
