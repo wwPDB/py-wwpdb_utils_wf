@@ -69,9 +69,9 @@ class SeqdbUtils(UtilsBase):
         self.__maxRefAlign = 0
         self.__siteId = None
         self.__reqObj = None
-        self.__sessionId = None
-        self.__sessionObj = None
-        self.__sessionPath = None
+        # self.__sessionId = None
+        # self.__sessionObj = None
+        # self.__sessionPath = None
         self.__doAutoProcessFlag = False
         self.__includeSeqAssignFileFlag = False
         #
@@ -87,9 +87,10 @@ class SeqdbUtils(UtilsBase):
         self.__reqObj.setValue("TopSessionPath", topSessionPath)
         self.__reqObj.setValue("WWPDB_SITE_ID", self.__siteId)
         #
-        self.__sessionId = self.__reqObj.getSessionId()
-        self.__sessionObj = self.__reqObj.newSessionObj()
-        self.__sessionPath = self.__sessionObj.getPath()
+        #  self.__sessionId = self.__reqObj.getSessionId()
+        # The following has side effects
+        _sessionObj = self.__reqObj.newSessionObj()  # noqa: F841
+        #  self.__sessionPath = self.__sessionObj.getPath()
 
     def matchAllOp(self, **kwArgs):
         """Find matching sequences for all entities."""

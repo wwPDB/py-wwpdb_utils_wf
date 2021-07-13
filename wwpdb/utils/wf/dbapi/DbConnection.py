@@ -23,7 +23,7 @@ class DbConnection:
 
     def __init__(self, dbServer="mysql", dbHost="localhost", dbName=None, dbUser=None, dbPw=None, dbPort=None, dbSocket=None, log=sys.stderr, verbose=True):
         self.__lfh = log
-        self.__verbose = verbose
+        self.__verbose = verbose  # pylint: disable=unused-private-member
         self.__debug = False
         if self.__debug:
             self.__lfh.write(

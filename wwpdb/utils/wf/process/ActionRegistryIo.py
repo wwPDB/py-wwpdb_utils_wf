@@ -82,7 +82,7 @@ class ActionRegistryIo(object):
     def __init__(self, filePath="./examples/resources/actionData.xml", verbose=False, log=sys.stderr):
         #
         self.__lfh = log
-        self.__verbose = verbose
+        self.__verbose = verbose  # pylint: disable=unused-private-member
         #
         # self.lt = time.strftime("%Y%m%d", time.localtime())
         #
