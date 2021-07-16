@@ -12,7 +12,9 @@ packages = []
 thisPackage = "wwpdb.utils.wf"
 
 with open("wwpdb/utils/wf/__init__.py", "r") as fd:
-    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(),
+                        re.MULTILINE).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -40,7 +42,12 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     #
-    install_requires=["mysqlclient", "wwpdb.utils.config >= 0.22.2", "wwpdb.io", "mmcif", "wwpdb.utils.dp ~= 0.21", "wwpdb.utils.session"],
+    install_requires=["mysqlclient",
+                      "wwpdb.utils.config >= 0.22.2",
+                      "wwpdb.io",
+                      "mmcif",
+                      "wwpdb.utils.dp ~= 0.21",
+                      "wwpdb.utils.session"],
     packages=find_packages(exclude=["wwpdb.utils.tests_wf", "mock-data", "tests.*"]),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
@@ -57,7 +64,9 @@ setup(
         "test": ["coverage"],
     },
     # Added for
-    command_options={"build_sphinx": {"project": ("setup.py", thisPackage), "version": ("setup.py", version), "release": ("setup.py", version)}},
+    command_options={"build_sphinx": {"project": ("setup.py", thisPackage),
+                                      "version": ("setup.py", version),
+                                      "release": ("setup.py", version)}},
     # This setting for namespace package support -
     zip_safe=False,
 )

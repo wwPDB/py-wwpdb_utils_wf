@@ -26,18 +26,19 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
-import sys
-import traceback
-import shutil
-import tempfile
 import logging
+import os
+import shutil
 import socket
+import sys
+import tempfile
+import traceback
+
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.dp.DensityWrapper import DensityWrapper
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
-from wwpdb.utils.dp.DensityWrapper import DensityWrapper
 
 try:
     # We will have present on annotation system - but allow testing without
@@ -58,7 +59,6 @@ logger = logging.getLogger(__name__)
 
 
 class AnnotationUtils(UtilsBase):
-
     """Utility class to perform annotation utility operations.
 
     Current supported operations include:
@@ -354,7 +354,8 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - SF  input  file path:          %s\n" % sfPath)
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - XYZ input  file path:          %s\n" % xyzPath)
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - LOG output file path:          %s\n" % logFilePath)
-                self._lfh.write("+FormatUtils.dccCheckReportOp() - REPORT/PDBx output file path:  %s\n" % reportFilePath)
+                self._lfh.write(
+                    "+FormatUtils.dccCheckReportOp() - REPORT/PDBx output file path:  %s\n" % reportFilePath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -383,7 +384,8 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.nucleicAcidGeometryOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -483,7 +485,8 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx output file path:  %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.solventPositionAnalysis() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -561,8 +564,10 @@ class AnnotationUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
-                self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.updateGeometryValidationOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write(
+                    "+AnnotationUtils.updateGeometryValidationOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -617,7 +622,8 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.secondaryStructureOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -651,8 +657,10 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx input  file path:     %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
-                self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
+                self._lfh.write(
+                    "+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -686,8 +694,10 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx input  file path:     %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
-                self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
+                self._lfh.write(
+                    "+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -761,7 +771,8 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.chemCompLinkOp() - Assembly report file path: %s\n" % assemblyReportPath)
+                self._lfh.write(
+                    "+AnnotationUtils.chemCompLinkOp() - Assembly report file path: %s\n" % assemblyReportPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -786,7 +797,8 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - PDBx file path:    %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - Assembly report file path: %s\n" % assemblyReportPath)
+                self._lfh.write(
+                    "+AnnotationUtils.assemblyReportAndModels() - Assembly report file path: %s\n" % assemblyReportPath)
                 self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - dirPath : %s\n" % dirPath)
                 self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - siteId  : %s\n" % siteId)
                 self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - logPath : %s\n" % logPath1)
@@ -807,19 +819,23 @@ class AnnotationUtils(UtilsBase):
             pathList = []
             if len(assemD) > 0:
                 if self._verbose:
-                    self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - assembly uid list %r\n" % assemD.keys())
+                    self._lfh.write(
+                        "+AnnotationUtils.assemblyReportAndModels() - assembly uid list %r\n" % assemD.keys())
                 #
                 for assemblyUid in sorted(assemD.keys()):
                     if assemblyUid > maxAssems:
                         break
                     if assemblyUid == 0:
                         continue
-                    assemModelFileName = os.path.join(dirPath, depDataSetId + "_assembly-model-xyz_P" + str(assemblyUid) + ".cif.V1")
+                    assemModelFileName = os.path.join(dirPath, depDataSetId + "_assembly-model-xyz_P" + str(
+                        assemblyUid) + ".cif.V1")
                     dp.addInput(name="pisa_assembly_id", value=assemblyUid)
                     dp.op("pisa-assembly-coordinates-cif")
                     dp.exp(assemModelFileName)
                     if self._verbose:
-                        self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - creating assembly model %r file %s\n" % (assemblyUid, assemModelFileName))
+                        self._lfh.write(
+                            "+AnnotationUtils.assemblyReportAndModels() - creating assembly model %r file %s\n" % (
+                            assemblyUid, assemModelFileName))
                     pathList.append(assemModelFileName)
 
             outObjD["dst2"].setValue(pathList)
@@ -902,7 +918,8 @@ class AnnotationUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+                self._lfh.write(
+                    "+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -971,7 +988,8 @@ class AnnotationUtils(UtilsBase):
                 dp.addInput(name="new_coordinate_file_path", value=newXyzPath, type="file")
                 dp.addInput(name="new_coordinate_format", value=newXyzFormat, type="param")
             else:
-                self._lfh.write("+AnnotationUtils.mergeXyzOp() - XYZ new source input not found in file path:  %s\n" % newXyzPath)
+                self._lfh.write(
+                    "+AnnotationUtils.mergeXyzOp() - XYZ new source input not found in file path:  %s\n" % newXyzPath)
             if isDeposit:
                 dp.addInput(name="deposit", value=True, type="param")
 
@@ -1109,7 +1127,8 @@ class AnnotationUtils(UtilsBase):
                 location = "archive"
 
             eaf = EmMapAutoFixVers(sessionPath=sessdir, siteId=siteId)
-            ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath, location=location)
+            ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath,
+                                           location=location)
             self._lfh.write("+em3dAutoEmMapFixVersOp fixvers returns %s\n" % ret)
 
             # Always return true - even if no work done
@@ -1164,7 +1183,8 @@ class AnnotationUtils(UtilsBase):
             myReqObj.newSessionObj()
 
             peu = PdbxExpUpdate(myReqObj, verbose=self._verbose, log=self._lfh)
-            ret = peu.doUpdate(entryId, modelInputFile=pdbxPath, expInputFile=sfPath, expOutputFile=sfOutPath, skipNotChanged=True)
+            ret = peu.doUpdate(entryId, modelInputFile=pdbxPath, expInputFile=sfPath, expOutputFile=sfOutPath,
+                               skipNotChanged=True)
 
             self._lfh.write("+updateSFWavelengthOp returns %s\n" % ret)
 
@@ -1247,5 +1267,37 @@ class AnnotationUtils(UtilsBase):
             dw = DensityWrapper()
             return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
         except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def xrayBcifConversionOp(self, **kwArgs):
+        """
+        converts X-ray maps from maps format into bcif
+        :param kwArgs:
+        :return bool: True if worked, False if failed
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            coordinates = inpObjD["src1"].getFilePathReference()
+            twofofcmap = inpObjD["src2"].getFilePathReference()
+            fofcmap = inpObjD["src3"].getFilePathReference()
+            # depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+
+            mapBcifPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
+                dw = DensityWrapper()
+                return dw.convert_xray_density_map(coord_file=coordinates,
+                                                   in_2fofc_cif=twofofcmap,
+                                                   in_fofc_cif=fofcmap,
+                                                   out_binary_volume=mapBcifPath,
+                                                   working_dir=dirPath
+                                                   )
+            else:
+                # no x-ray mmCIF map files
+                return True
+
+        except Exception as _e:  # noqa: F841
+            logging.error(_e)
             traceback.print_exc(file=self._lfh)
             return False
