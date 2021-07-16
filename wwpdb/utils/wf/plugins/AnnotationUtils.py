@@ -1276,6 +1276,8 @@ class AnnotationUtils(UtilsBase):
         :param kwArgs:
         :return bool: True if worked, False if failed
         """
+        print('starting X-ray map conversion')
+        logging.info('starting x-ray map conversion')
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             coordinates = inpObjD["src1"].getFilePathReference()
@@ -1285,8 +1287,11 @@ class AnnotationUtils(UtilsBase):
 
             mapBcifPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
+            print('checking files')
+            logging.info('checking files')
             if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
-
+                print('files exist - starting')
+                logging.info('files exist - starting')
                 dw = DensityWrapper()
                 return dw.convert_xray_density_map(coord_file=coordinates,
                                                    in_2fofc_cif=twofofcmap,
@@ -1295,9 +1300,12 @@ class AnnotationUtils(UtilsBase):
                                                    working_dir=dirPath
                                                    )
             else:
+                print('missing files - no map generation')
+                logging.info('missing files - no map generation')
                 # no x-ray mmCIF map files
                 return True
 
         except Exception as _e:  # noqa: F841
+            logging.error(_e)
             traceback.print_exc(file=self._lfh)
             return False
