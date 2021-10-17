@@ -19,7 +19,6 @@ import sys
 import traceback
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 
@@ -70,5 +69,32 @@ class DpUtils(UtilsBase):
                 self._lfh.write("+DpUtils.polymerLinkageDistanceOp() - Distance file path: %s\n" % distPath)
             return True
         except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def centreOfMassCalculation(self,**kwargs):
+
+        try:
+            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            pdbxOutputPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "centre-of-mass.log")
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.op("centre-of-mass")
+            dp.expLog(logPath)
+            dp.exp(pdbxOutputPath)
+
+            if self.__cleanUp:
+                dp.cleanup()
+            if self._verbose:
+                self._lfh.write("+DpUtils.centreOfMassCalculation() - PDBx     file path: %s\n" % pdbxPath)
+            return True
+        except:
             traceback.print_exc(file=self._lfh)
             return False
