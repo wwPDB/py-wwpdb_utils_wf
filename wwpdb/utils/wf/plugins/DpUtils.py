@@ -22,6 +22,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 import os
 
+
 class DpUtils(UtilsBase):
     """Utility class to perform data processing operations.
 
@@ -72,10 +73,10 @@ class DpUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def centreOfMassCalculation(self,**kwargs):
+    def centreOfMassCalculation(self, **kwargs):
 
         try:
-            (inpObjD, outObjD, uD, pD) = self._getArgs(kwargs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
@@ -95,6 +96,6 @@ class DpUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write("+DpUtils.centreOfMassCalculation() - PDBx     file path: %s\n" % pdbxPath)
             return True
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
