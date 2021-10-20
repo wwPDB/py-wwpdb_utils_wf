@@ -21,9 +21,11 @@ import sys
 import traceback
 import json
 import re
+import shutil
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.nmr.NmrStarToCif import NmrStarToCif
 
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
@@ -117,10 +119,19 @@ class NmrUtils(UtilsBase):
             warnings = csr.getWarnings()
             errors = csr.getErrors()
 
+            if not os.path.exists(csOutPath) and len(csPathList) == 1: # DAOTHER-7389, issue #4
+                nmr_star_to_cif = NmrStarToCif()
+                if nmr_star_to_cif.convert(csPathList[0], csOutPath, nameList[0], 'nm-uni-nef' if 'nmr-data-nef' in csPathList[0] else 'nm-uni-str'):
+                    with open(chkPath, 'w', encoding='UTF-8') as ofp:
+                        ofp.write('data_Chemical_Shift_Check\n#\n_pdbx_shift_check.status   Ok\n#\n')
+
+                    status = 'ok'
+                    warnings = []
+                    errors = []
+
             outObjD["dst3"].setValue(status)
             outObjD["dst4"].setValue(warnings)
             outObjD["dst5"].setValue(errors)
-
             #
             if self.__cleanUp:
                 dp.cleanup()
@@ -183,6 +194,11 @@ class NmrUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(csOutPath)
 
+            if not os.path.exists(csOutPath): # DAOTHER-7389, issue #4
+                nmr_star_to_cif = NmrStarToCif()
+                if nmr_star_to_cif.convert(csPathList[0], csOutPath, nameList[0], 'nm-uni-nef' if 'nmr-data-nef' in csPathList[0] else 'nm-uni-str'):
+                    with open(chkPath, 'w', encoding='UTF-8') as ofp:
+                        ofp.write('data_Chemical_Shift_Check\n#\n_pdbx_shift_check.status   Ok\n#\n')
             #
             if self.__cleanUp:
                 dp.cleanup()
@@ -232,6 +248,22 @@ class NmrUtils(UtilsBase):
             outObjD["dst4"].setValue(warnings)
             outObjD["dst5"].setValue(errors)
 
+            if 'error' in status: # DAOTHER-7389, issue #4
+                read_failed_pattern = re.compile(r'.*Read \'\S+\' failed.*')
+                for error in errors:
+                    if read_failed_pattern.match(error):
+                        shutil.copy(csPath, csOutPath)
+                        with open(chkPath, 'w', encoding='UTF-8') as ofp:
+                            ofp.write('data_Chemical_Shift_Check\n#\n_pdbx_shift_check.status   Ok\n#\n')
+                        status = 'ok'
+                        warnings = []
+                        errors = []
+                        break
+
+            outObjD["dst3"].setValue(status)
+            outObjD["dst4"].setValue(warnings)
+            outObjD["dst5"].setValue(errors)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -273,6 +305,19 @@ class NmrUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(csOutPath)
+
+            csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
+            status = str("".join(csr.getStatus())).lower()
+            errors = csr.getErrors()
+
+            if 'error' in status: # DAOTHER-7389, issue #4
+                read_failed_pattern = re.compile(r'.*Read \'\S+\' failed.*')
+                for error in errors:
+                    if read_failed_pattern.match(error):
+                        shutil.copy(csPath, csOutPath)
+                        with open(chkPath, 'w', encoding='UTF-8') as ofp:
+                            ofp.write('data_Chemical_Shift_Check\n#\n_pdbx_shift_check.status   Ok\n#\n')
+                        break
 
             if self.__cleanUp:
                 dp.cleanup()
