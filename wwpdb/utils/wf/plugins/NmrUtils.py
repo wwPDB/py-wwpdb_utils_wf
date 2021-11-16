@@ -455,7 +455,7 @@ class NmrUtils(UtilsBase):
 
                 for mr in mr_list:
                     mr_file = mr["file_name"]
-                    # mr_orig_file = mr['original_file_name']
+                    mr_orig_file = mr['original_file_name']
                     mr_file_type = mr["file_type"]
 
                     # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
@@ -486,7 +486,7 @@ class NmrUtils(UtilsBase):
                         if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop:  # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
                         else:
-                            arPathList.append({"file_name": mr_file, "file_type": mr_file_type})
+                            arPathList.append({"file_name": mr_file, "file_type": mr_file_type, "original_file_name": mr_orig_file})
             #
             cifInpPath = inpObjD["src3"].getFilePathReference()
             prcInpPath = inpObjD["prc3"].getFilePathReference()
