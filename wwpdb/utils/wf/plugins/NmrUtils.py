@@ -455,7 +455,7 @@ class NmrUtils(UtilsBase):
 
                 for mr in mr_list:
                     mr_file = mr["file_name"]
-                    mr_orig_file = mr['original_file_name']
+                    mr_orig_file = mr["original_file_name"]
                     mr_file_type = mr["file_type"]
 
                     # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
