@@ -1239,7 +1239,7 @@ class AnnotationUtils(UtilsBase):
             modelPath = inpObjD["src"].getFilePathReference()
             # depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = inpObjD["src"].getDirPathReference()
             if not os.path.exists(modelPath):
                 # no model
                 raise IOError('Missing model file')
