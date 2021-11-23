@@ -49,6 +49,7 @@ try:
     from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpUpdate import PdbxExpUpdate
     from wwpdb.utils.session.WebRequest import InputRequest
+    from wwpdb.io.locator.PathInfo import PathInfo
 except ImportError:
     pass
 
@@ -1235,15 +1236,32 @@ class AnnotationUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            mapPath = inpObjD["src"].getFilePathReference()
+            modelPath = inpObjD["src"].getFilePathReference()
             # depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
-            mapBcifPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
-            if not os.path.exists(mapPath):
-                # no EM map
+            if not os.path.exists(modelPath):
+                # no model
+                raise IOError('Missing model file')
+
+            ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
+            dIn = ioObj.readFile(inputFilePath=modelPath, selectList=["em_map"])
+            if not dIn or len(dIn) == 0:
                 return True
 
+            cObj = dIn[0].getObj("em_map")
+            if not cObj:
+                # No em_map
+                return True
+
+            mapName = cObj.getValue('file')
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            pi = PathInfo(siteId=siteId)
+            mapNameInfo = pi.parseFileName(mapName)
+            mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
+            mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType='bcif', partNumber=mapNameInfo[3])
             dw = DensityWrapper()
             return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
         except Exception as _e:  # noqa: F841
