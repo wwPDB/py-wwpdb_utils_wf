@@ -1262,7 +1262,7 @@ class AnnotationUtils(UtilsBase):
                 mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
                 mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType='bcif', partNumber=mapNameInfo[3])
                 dw = DensityWrapper()
-                return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
+                dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
