@@ -1253,17 +1253,16 @@ class AnnotationUtils(UtilsBase):
             if not cObj:
                 # No em_map
                 return True
-
-            mapName = cObj.getValue('file')
-
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             pi = PathInfo(siteId=siteId)
-            mapNameInfo = pi.parseFileName(mapName)
-            mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
-            mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType='bcif', partNumber=mapNameInfo[3])
-            dw = DensityWrapper()
-            return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
+            for mapNumber in range(0, (len(cObj)-1)):
+                mapName = cObj.getValue('file', mapNumber)
+                mapNameInfo = pi.parseFileName(mapName)
+                mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
+                mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType='bcif', partNumber=mapNameInfo[3])
+                dw = DensityWrapper()
+                return dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
