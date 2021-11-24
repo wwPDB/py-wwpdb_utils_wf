@@ -1256,7 +1256,7 @@ class AnnotationUtils(UtilsBase):
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             pi = PathInfo(siteId=siteId)
-            for mapNumber in range(0, (len(cObj)-1)):
+            for mapNumber in range(0, len(cObj)):
                 mapName = cObj.getValue('file', mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
                 mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
