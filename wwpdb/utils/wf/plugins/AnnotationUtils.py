@@ -1235,7 +1235,7 @@ class AnnotationUtils(UtilsBase):
         :return bool: True if worked, False if failed
         """
         try:
-            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            (inpObjD, _uD, _pD) = self._getArgs(kwArgs)[0,2,3]
             modelPath = inpObjD["src"].getFilePathReference()
             # depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
