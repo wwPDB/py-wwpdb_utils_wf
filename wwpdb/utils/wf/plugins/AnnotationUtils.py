@@ -1242,7 +1242,7 @@ class AnnotationUtils(UtilsBase):
             dirPath = inpObjD["src"].getDirPathReference()
             if not os.path.exists(modelPath):
                 # no model
-                raise IOError('Missing model file')
+                raise IOError("Missing model file")
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             dIn = ioObj.readFile(inputFilePath=modelPath, selectList=["em_map"])
@@ -1260,10 +1260,10 @@ class AnnotationUtils(UtilsBase):
 
             # loop through all the map file names in the mmcif file and convert to Bcif files
             for mapNumber in range(0, len(cObj)):
-                mapName = cObj.getValue('file', mapNumber)
+                mapName = cObj.getValue("file", mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
                 mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
-                mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType='bcif', partNumber=mapNameInfo[3])
+                mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType="bcif", partNumber=mapNameInfo[3])
                 dw = DensityWrapper()
                 dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
             return True
