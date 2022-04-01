@@ -1254,12 +1254,11 @@ class AnnotationUtils(UtilsBase):
                 # No em_map
                 return True
 
-
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             pi = PathInfo(siteId=siteId)
 
-            #loop through all the map file names in the mmcif file and convert to Bcif files
+            # loop through all the map file names in the mmcif file and convert to Bcif files
             for mapNumber in range(0, len(cObj)):
                 mapName = cObj.getValue('file', mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
