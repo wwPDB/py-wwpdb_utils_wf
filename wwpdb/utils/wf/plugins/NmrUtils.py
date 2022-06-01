@@ -342,7 +342,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.setSource(nefInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -493,7 +493,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_list")
             if len(mrPathList) > 0:
                 dp.addInput(name="restraint_file_path_list", value=mrPathList, type="file_list")
@@ -553,7 +553,7 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst4"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.setSource(nefInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -614,7 +614,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -671,7 +671,7 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst4"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="nonblk_anomalous_cs", value=True, type="param")
