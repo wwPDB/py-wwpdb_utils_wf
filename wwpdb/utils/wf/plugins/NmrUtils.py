@@ -389,7 +389,7 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(flag=True)
+            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
