@@ -242,7 +242,7 @@ class AnnotationUtils(UtilsBase):
 
     def dictCheckFirstOp(self, **kwArgs):
         """Performs PDBx dictionary check on the first block of a PDBx format input file
-           and returns a text check report.
+        and returns a text check report.
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
