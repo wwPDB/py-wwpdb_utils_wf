@@ -240,6 +240,39 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
+    def dictCheckFirstOp(self, **kwArgs):
+        """Performs PDBx dictionary check on the first block of a PDBx format input file
+           and returns a text check report.
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+
+            reportPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "dict-check.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+
+            dp.addInput("first_block")
+
+            #
+            dp.op("check-cif")
+            dp.expLog(logPath)
+            dp.exp(reportPath)
+            if self.__cleanUp:
+                dp.cleanup()
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
     def dictR4CheckOp(self, **kwArgs):
         """Performs PDBx R4 dictionary check on PDBx format input file and returns a text check report."""
         try:
