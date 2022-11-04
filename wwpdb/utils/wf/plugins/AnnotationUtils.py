@@ -1240,16 +1240,22 @@ class AnnotationUtils(UtilsBase):
             wrkPath = tempfile.mkdtemp(suffix, "rcsb-", dirPath)
             os.chmod(wrkPath, 0o750)
 
-            emdModelPath = os.path.join(wrkPath, depDataSetId + "_model-emd.cif")
             emdXmlPath = os.path.join(wrkPath, depDataSetId + "-emd.xml")
 
-            emh = EmHeaderUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
-            status = emh.transEmd(pdbxPath, emdModelPath, mode="src-dst", tags=[])
-            if not status:
-                self._lfh.write("Translation of model failed\n")
-                return True
 
-            status = emh.transHeader(emdModelPath, emdXmlPath, reportPath, validateXml=True)
+            fPath = pdbxPath
+
+            emh = EmHeaderUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
+            if hasattr(emh, "transEmd"):
+                # Still running EM->EMD conversion
+                emdModelPath = os.path.join(wrkPath, depDataSetId + "_model-emd.cif")
+                status = emh.transEmd(pdbxPath, emdModelPath, mode="src-dst", tags=[])
+                if not status:
+                    self._lfh.write("Translation of model failed\n")
+                    return True
+                fPath = emdModelPath
+
+            status = emh.transHeader(fPath, emdXmlPath, reportPath, validateXml=True)
             self._lfh.write("Status of xml translation %s\n" % status)
 
             # Cleanup directory
