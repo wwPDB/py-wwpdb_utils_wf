@@ -1242,7 +1242,6 @@ class AnnotationUtils(UtilsBase):
 
             emdXmlPath = os.path.join(wrkPath, depDataSetId + "-emd.xml")
 
-
             fPath = pdbxPath
 
             emh = EmHeaderUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
