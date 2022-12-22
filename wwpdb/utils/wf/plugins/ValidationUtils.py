@@ -37,6 +37,43 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 
+# For remediation of legacy CS files in annotation.
+# Not a requirements for wwpdb.utils.wf - but if running validation, it will have pulled in wwpdb.utils.nmr
+# into the virtual environment
+try:
+    from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar
+    from mmcif.io.IoAdapterPy import IoAdapterPy
+    import tempfile
+except ImportError:
+    pass
+
+
+def remediate_cs_file(infile, outfile):
+    """Produces an NMR* formatted from input CIF.  Correcting missing section headers that are required"""
+    ctns = CifToNmrStar()
+    return ctns.convert(cifPath=infile, strPath=outfile)
+
+
+def starToPdbx(starPath=None, pdbxPath=None, log=sys.stderr):
+    """Converts NMR* to mmCIF"""
+    if starPath is None or pdbxPath is None:
+        return False
+    #
+    try:
+        myIo = IoAdapterPy(False, sys.stderr)
+        containerList = myIo.readFile(starPath)
+        if containerList is not None and len(containerList) > 1:
+            log.write("Input container list is  %r\n" % ([(c.getName(), c.getType()) for c in containerList]))
+            for c in containerList:
+                c.setType("data")
+            # myIo.writeFile(pdbxPath, containerList=containerList[1:])
+            myIo.writeFile(pdbxPath, containerList=containerList)
+            return True
+    except Exception as _e:  # noqa: F841
+        traceback.print_exc(file=log)
+
+    return False
+
 
 class ValidationUtils(UtilsBase):
 
@@ -410,6 +447,17 @@ class ValidationUtils(UtilsBase):
                 nmrDataPath = None
 
             if nmrDataPath is None and csPath is not None and os.access(csPath, os.R_OK):
+                if inAnnotation in ["yes"]:
+                    tempd = tempfile.TemporaryDirectory(dir=os.path.dirname(csPath))
+                    self._lfh.write("Remediating CS file for validatiobn in %s\n" % tempd.name)
+
+                    tempnmrstarPath = os.path.join(tempd.name, os.path.basename(csPath) + ".str")
+                    newcsPath = os.path.join(tempd.name, os.path.basename(csPath))
+                    starToPdbx(csPath, tempnmrstarPath, self._lfh)
+                    remediate_cs_file(tempnmrstarPath, newcsPath)
+
+                    csPath = newcsPath
+
                 vw.addInput(name="cs_file_path", value=csPath)
             else:
                 csPath = None
