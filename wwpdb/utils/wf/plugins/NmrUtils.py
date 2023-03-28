@@ -70,15 +70,17 @@ class NmrUtils(UtilsBase):
         """Flag to remove any temporary directories created by this class.
         """
         #
+    # """
+    # @obsolete: never implemented before
+    # def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
+    #     """Extract PDB and NMRSTAR files from CCPn project
+    #     ""
 
-    def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
-        """Extract PDB and NMRSTAR files from CCPn project"""
-
-        # Disabled as not python3 compatible
-        if self._verbose:
-            self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
-        return False
-
+    #     # Disabled as not python3 compatible
+    #     if self._verbose:
+    #         self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
+    #     return False
+    # """
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
@@ -87,6 +89,7 @@ class NmrUtils(UtilsBase):
         Output is a concatenated chemical shift file,  text status (ok,warning,error) and text list of
         warnings and/or errors.
 
+        @deprecated: since V5.18 (DAOTHER-7407)
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -144,6 +147,7 @@ class NmrUtils(UtilsBase):
 
         Output is a concatenated chemical shift file, and check report file -
 
+        @deprecated: since V5.18 (DAOTHER-7407)
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -197,6 +201,7 @@ class NmrUtils(UtilsBase):
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report,
         status (text=ok,warning,error), and both  warnings and error messages as a list of strings.
 
+        @deprecated: since V5.18 (DAOTHER-7407)
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -248,6 +253,8 @@ class NmrUtils(UtilsBase):
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
         * workflow version * returns chemical shift file and check report output --
+
+        @deprecated: since V5.18 (DAOTHER-7407)
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
