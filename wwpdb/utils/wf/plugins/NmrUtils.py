@@ -70,17 +70,17 @@ class NmrUtils(UtilsBase):
         """Flag to remove any temporary directories created by this class.
         """
         #
-    """
-    @deprecated: DAOTHER-7407: ccpnExtractOp has never been implemented before
-    def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
-        ""Extract PDB and NMRSTAR files from CCPn project
-        ""
-
-        # Disabled as not python3 compatible
-        if self._verbose:
-            self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
-        return False
-    """
+    # """
+    # @obsolete: DAOTHER-7407: ccpnExtractOp() has never been implemented before
+    # def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
+    #     """Extract PDB and NMRSTAR files from CCPn project
+    #     """
+    #
+    #     # Disabled as not python3 compatible
+    #     if self._verbose:
+    #         self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
+    #     return False
+    # """
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
@@ -560,7 +560,7 @@ class NmrUtils(UtilsBase):
             with open(csAuthFileNamePath, "r") as ifh:
                 for fid, tline in enumerate(ifh):
                     txt = str(tline[:-1]).strip()
-                    if fid < len(csPathList):
+                    if fid < len(csPathList) and len(txt) > 0:
                         csPathList[fid]["original_file_name"] = txt
             #
             mrPathList = []
@@ -754,6 +754,8 @@ class NmrUtils(UtilsBase):
             with open(authFileNamePath, "r") as ifh:
                 for tline in enumerate(ifh):
                     originalFileName = str(tline[:-1]).strip()
+                    if len(origginalFileName) == 0:
+                        originalFileName = None
                     break
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
@@ -885,6 +887,8 @@ class NmrUtils(UtilsBase):
             with open(authFileNamePath, "r") as ifh:
                 for tline in enumerate(ifh):
                     originalFileName = str(tline[:-1]).strip()
+                    if len(origginalFileName) == 0:
+                        originalFileName = None
                     break
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
