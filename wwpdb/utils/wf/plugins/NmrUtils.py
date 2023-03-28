@@ -70,17 +70,17 @@ class NmrUtils(UtilsBase):
         """Flag to remove any temporary directories created by this class.
         """
         #
-    # """
-    # @obsolete: never implemented before
-    # def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
-    #     """Extract PDB and NMRSTAR files from CCPn project
-    #     ""
+    """
+    @deprecated: DAOTHER-7407: ccpnExtractOp has never been implemented before
+    def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
+        ""Extract PDB and NMRSTAR files from CCPn project
+        ""
 
-    #     # Disabled as not python3 compatible
-    #     if self._verbose:
-    #         self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
-    #     return False
-    # """
+        # Disabled as not python3 compatible
+        if self._verbose:
+            self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
+        return False
+    """
     def uploadChemicalShiftOp(self, **kwArgs):
         """Performs format check on a list of chemical shift files and concatenates these.
 
