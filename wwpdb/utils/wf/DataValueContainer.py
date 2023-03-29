@@ -17,7 +17,7 @@ __version__ = "V0.01"
 
 from datetime import datetime, date
 
-# For python 2/3 compatible comparsigon with isinstace
+# For python 2/3 compatible comparison with isinstace
 from builtins import str
 
 

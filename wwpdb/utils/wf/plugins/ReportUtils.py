@@ -7,7 +7,7 @@
 #  17-Dec-2012 jdw add option to calculation derived categories after solvent adjustment.
 #  26-Jun-2013 jdw add formatCheckPdbxOp() & formatCheckPdbOp()
 #  10-Oct-2013 jdw add miscCheckPdbxOp()
-#  15-Jan-2014 jdw add update the content type for assemlby model files
+#  15-Jan-2014 jdw add update the content type for assembly model files
 #  16-Mar-2014 jdw add specialPositionCheckOp()
 #  11-Jun-2104 jdw ad mergeXyzOp()
 #  11-Jun-2104 tjo modified the check for exit status for mergeXYZop - check last line

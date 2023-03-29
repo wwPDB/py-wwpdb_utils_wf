@@ -128,7 +128,7 @@ class SeqStatsUtils(UtilsBase):
             return False
 
     def updateModelSequenceAssignOp(self, **kwArgs):
-        """Update model coordinate file with aligmnent mapping information.
+        """Update model coordinate file with alignment mapping information.
 
         Returns:
 

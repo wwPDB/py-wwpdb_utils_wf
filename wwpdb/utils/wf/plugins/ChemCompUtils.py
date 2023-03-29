@@ -34,7 +34,7 @@ class ChemCompUtils(UtilsBase):
 
     - Chemical component linkage calculation
     - Chemical component assignment
-    - Chemical component instance assignment uppdate
+    - Chemical component instance assignment update
 
     Each method in this class implements the method calling interface of the
     `ProcessRunner()` class.   This interface provides the keyword arguments:

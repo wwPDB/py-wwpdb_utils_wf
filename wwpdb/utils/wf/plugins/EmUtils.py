@@ -263,13 +263,11 @@ class EmUtils(UtilsBase):
     def mapFixInPlaceCfgOp(self, **kwArgs):
         """execution wrapper for mapfix operations for all maps of a particular type.
 
-        --- using explicit data file selection via configuraton file selection.
+        --- using explicit data file selection via configuration file selection.
 
             map-content-type = one of em-volume, em-mask-volume, em-half-volume, em-additional-volume
             partlist = [1,2,3]
             cmdline-arg-list = ['-voxel ...   ','-voxel .... ','-voxel .... ']
-
-
 
         """
         try:

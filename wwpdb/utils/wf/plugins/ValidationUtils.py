@@ -5,7 +5,7 @@
 # Updates:
 #  4-Sep-2012  jdw add validation report method
 #  13-Dec-2012 jdw added method for version 2 of validation module
-#  15-Jan-2014 jdw add annotation context user paramter to validation report
+#  15-Jan-2014 jdw add annotation context user parameter to validation report
 #  24-Jan-2014 jdw add addition report output options
 #  21-Sep-2014 jdw update validationReportTestOp() for NMR
 #  16-Jan-2015 jdw update validationReportTestOp() to test for experimental files -

@@ -78,7 +78,7 @@ class SeqdbUtils(UtilsBase):
 
     def mySetup(self, topSessionPath="."):
         """Setup application environment for managing session storage of
-        temporaty data files.
+        temporally data files.
         """
         self.__maxRefAlign = 100
         self.__siteId = getSiteId(defaultSiteId="WWPDB_DEPOLY_TEST")

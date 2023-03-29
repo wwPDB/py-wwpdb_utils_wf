@@ -94,7 +94,7 @@ class FileUtils(UtilsBase):
 
     def makeDirOp(self, **kwargs):
         """Create the directory path for the file reference in the input object ('src').
-        Set the mode of the directoy according to the value of *mode*.
+        Set the mode of the directory according to the value of *mode*.
 
         Returns:
 

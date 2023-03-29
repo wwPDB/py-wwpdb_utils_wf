@@ -27,7 +27,7 @@ class ActionRegistry(object):
 
     """Container and manager class for the registry of supported process actions.
 
-    The action registry has the following internal data orgaization:
+    The action registry has the following internal data organization:
 
     - A dictionary with unique action identifier referencing a dictionary with the following content:
 
@@ -177,7 +177,7 @@ class ActionRegistry(object):
 
         Returns:
 
-        True is the parameter setting was succesful or False otherwise.
+        True is the parameter setting was successful or False otherwise.
 
         """
         try:
@@ -190,7 +190,7 @@ class ActionRegistry(object):
         """Returns:
 
         The value of a user adjustable parameter for the input action.  The
-        user parameteris identified by the *paramKey*.
+        user parameters identified by the *paramKey*.
 
         """
         try:
