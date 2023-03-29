@@ -100,7 +100,7 @@ class dbAPI(object):
         table = string
         data = values to insert/update
         where clause is hard wired to ordinal (unique) so can only UPDATE
-            a bad ordinal returns 0 rows udpated
+            a bad ordinal returns 0 rows updated
 
         return number of rows updated
         if run = False : returns the SQL
@@ -209,17 +209,17 @@ class dbAPI(object):
         Very simple update/insert SQL creator
         table = string
         data = values to insert/update
-        where clause is hard wired to dep_set_id so can ONLy be used for
-            for tables with unique rows on dep_set_id
-            Ie if the table contains a row with depsetid - then it is update
-                  if not - the data is inserted
+        where clause is hard wired to dep_set_id so can ONLY be used for
+            tables with unique rows on dep_set_id
+            i.e. if the table contains a row with dep_set_id - then it is update
+                 if not - the data is inserted
 
         return number of rows updated
         if run = False : returns the SQL
 
-        if depID is not none - then we test the existance based on depID and the table MUST BE UNIQUE on depID
+        if depID is not none - then we test the existence based on depID and the table MUST BE UNIQUE on depID
           data is added to the row based on the dep_set_id + data
-        if unique is not none - then we test the existance on the synthetic key based on the unique dictionary
+        if unique is not none - then we test the existence on the synthetic key based on the unique dictionary
           data is added to the row based on the where + data
 
 

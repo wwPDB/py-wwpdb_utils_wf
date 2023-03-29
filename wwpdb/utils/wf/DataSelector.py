@@ -83,9 +83,9 @@ class DataSelector(object):
         return self.__targetAttributeList
 
     def addSelectCondition(self, attributeName, attributeValue, comparisonOp="equal"):
-        """Add a selection contition to the current selection.
+        """Add a selection condition to the current selection.
 
-        A selction condition contains the following:
+        A selection condition contains the following:
         - attributeName in the target category.
         - attributeValue
         - one of the comparison operators (equals, ...)

@@ -125,7 +125,7 @@ class DbCommand:
                     ld.append(c)
 
                 elif k == "EXTERNAL_TABLE":
-                    # "EXTERNAL_TABLE" is special designed for SQL syntex
+                    # "EXTERNAL_TABLE" is special designed for SQL syntax
                     # like " column in (select column from another table)"
                     c = "  %s " % (v)
                     ld.append(c)
@@ -168,7 +168,7 @@ class DbCommand:
                             self.__lfh.write("Constraint error: %s\n" % str(c))
 
         else:
-            #           Just ignore if contraints are entered as None
+            #           Just ignore if constraints are entered as None
             #           if(self.__verbose):
             self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- constraint type error: %s\n" % str(cType))
 
@@ -212,7 +212,7 @@ class DbCommand:
 
     def runSelectSQL(self, query):
         """
-        method to run a SQL query : no checking - just a convience method to
+        method to run a SQL query : no checking - just a simple method to
         get things working
         note that this does not use attrib list = but returns a list of lists.
         """
@@ -262,7 +262,7 @@ class DbCommand:
 
         ConstraintDef can be a simple of dictionary of key == value pairs
         which are logically AND'd together, or a more general constraint
-        can be contructed using the compact contraint specification list
+        can be constructed using the compact constraint specification list
         decoded in method makeSqlConstraint() above.
 
         Return a <row list or row dictionary>.
@@ -398,11 +398,11 @@ class DbCommand:
 
     def selectCrossTables(self, selectList, sqlJoinStr, orderBy, constraintList, constraintDef=None):
         """
-        This function is specically for some complicate queries. The
+        This function is specially for some complicate queries. The
         "sql join" is used.
 
         Input selectList, sqlJoinStr, orderBy will be
-        specially definded in WfSchemaMap. constraintDict is {}
+        specially defined in WfSchemaMap. constraintDict is {}
 
         Return a list of rows {dictionaries)
 

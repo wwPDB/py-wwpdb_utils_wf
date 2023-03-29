@@ -193,7 +193,6 @@ class WfDbApi:
         return None
 
     def runSelectSQL(self, sql):
-
         """
         method to run a query
         """
@@ -431,7 +430,6 @@ class WfDbApi:
             return "code-bad"
 
     def processStatus(self, depID, instID, classID):
-
         """
         status owner of process
         None : this depID/instID/classID does NOT own the current process
@@ -456,7 +454,7 @@ class WfDbApi:
         Get a list of reference data from table wf_reference
         An empty id will be treated as None.
 
-        Retrun a rwo list or dictionary (if only one record)
+        Return a row list or dictionary (if only one record)
         """
 
         tableDef = self.__schemaWf[self.__tableList[4]]
@@ -512,7 +510,7 @@ class WfDbApi:
         For a deposition level reference,the classId, instId and taskId should be None
         For a class level reference the instId, taskId should be None
         For a instance level reference taskId should be None
-        For a task level reference all ids ahould be Non-null.
+        For a task level reference all ids should be Non-null.
 
 
         """
@@ -797,8 +795,8 @@ class WfDbApi:
            ASSOCIATED_IDS
            CORRECTIONS ( for Author's Corrections)
            REQ_CITATION ( for entries requested for release)
-           PROBLEM_TYPE ( for Peorblem/Error entries)
-           PROBLEM_DETAILS ( for Peorblem/Error entries)
+           PROBLEM_TYPE ( for Problem/Error entries)
+           PROBLEM_DETAILS ( for Problem/Error entries)
         Level 2:
            deposition.dep_set_id
            deposition.pdb_id
@@ -1073,7 +1071,6 @@ class WfDbApi:
             return int("%s" % returnId[2:]) + 1
 
     def referenceExist(self, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):
-
         """
         Check to see if the reference data still exists
 
@@ -1143,7 +1140,7 @@ class WfDbApi:
         For a deposition level reference,the classId, instId and taskId should be None
         For a class level reference the instId, taskId should be None
         For a instance level reference taskId should be None
-        For a task level reference all ids ahould be Non-null.
+        For a task level reference all ids should be Non-null.
         """
 
         refExist = self.referenceExist(depId, classId, instId, taskId, hashId, hashVal)
