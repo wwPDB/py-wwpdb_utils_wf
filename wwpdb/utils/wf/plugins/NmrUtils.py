@@ -752,9 +752,9 @@ class NmrUtils(UtilsBase):
             #
             originalFileName = None
             with open(authFileNamePath, "r") as ifh:
-                for tline in enumerate(ifh):
+                for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
-                    if len(origginalFileName) == 0:
+                    if len(originalFileName) == 0:
                         originalFileName = None
                     break
             #
@@ -885,9 +885,9 @@ class NmrUtils(UtilsBase):
             #
             originalFileName = None
             with open(authFileNamePath, "r") as ifh:
-                for tline in enumerate(ifh):
+                for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
-                    if len(origginalFileName) == 0:
+                    if len(originalFileName) == 0:
                         originalFileName = None
                     break
             #
