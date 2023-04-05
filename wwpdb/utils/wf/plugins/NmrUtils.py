@@ -615,7 +615,7 @@ class NmrUtils(UtilsBase):
             #
             cifInpPath = inpObjD["src4"].getFilePathReference()
             prcInpPath = inpObjD["prc4"].getFilePathReference()
-            strOutPath = outObjD["dst1"].getFilePathRefernnce()
+            strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
