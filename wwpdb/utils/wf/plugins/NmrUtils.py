@@ -348,7 +348,6 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(nefInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -396,7 +395,6 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -501,7 +499,6 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_list")
             if len(mrPathList) > 0:
                 dp.addInput(name="restraint_file_path_list", value=mrPathList, type="file_list")
@@ -586,7 +583,7 @@ class NmrUtils(UtilsBase):
                     # mr_orig_file_ext = os.path.splitext(mr_orig_file)[1]
                     # if (mr_orig_file_ext == '.str' or mr_orig_file_ext == '.nef') and mr_file_type == 'nm-res-oth':
 
-                    if mr_file_type.startswith("nm-res") or mr_file_type.startswith("nm-aux"):
+                    if mr_file_type.startswith("nm-res") or mr_file_type.startswith("nm-aux") or mr_file_type.startswith("nm-pea"):
                         has_datablock = False
                         has_anonymous_saveframe = False
                         has_save = False
@@ -619,7 +616,6 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_dict_list")
             if len(mrPathList) > 0:
                 dp.addInput(name="restraint_file_path_list", value=mrPathList, type="file_list")
@@ -632,6 +628,7 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="nonblk_bad_nterm", value=True, type="param")
             dp.addInput(name="resolve_conflict", value=True, type="param")
             dp.addInput(name="check_mandatory_tag", value=False, type="param")
+            dp.addInput(name="merge_any_pk_as_is", value=True, type="param")  # DAOTHER-7407 enabled until Phase 2 release
 
             dp.setDestination(strOutPath)
             dp.setLog(logOutPath)
@@ -644,7 +641,7 @@ class NmrUtils(UtilsBase):
                 if len(arPathList) > 0:
                     self._lfh.write("+NmrUtils.csMrMergeOp() - AR file path list:          %s\n" % arPathList)
                 self._lfh.write("+NmrUtils.csMrMergeOp() - mmCIF input file path:      %s\n" % cifInpPath)
-                self._lfh.write("+NmrUtils.csMrMergeOp() - NMR-STAR output file path:  %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.csMrMergeOp() - NMR-STAR output file path:  %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.csMrMergeOp() - JSON output file path:      %s\n" % logOutPath)
             return stat
         except Exception as _e:  # noqa: F841
@@ -682,7 +679,6 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst4"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(nefInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -759,7 +755,6 @@ class NmrUtils(UtilsBase):
                     break
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(nefInpPath, originalFileName)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -823,7 +818,6 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst2"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -892,7 +886,6 @@ class NmrUtils(UtilsBase):
                     break
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(strInpPath, originalFileName)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="proc_coord_file_path", value=prcInpPath, type="file")
@@ -951,7 +944,6 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst4"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setVerbose(True)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="nonblk_anomalous_cs", value=True, type="param")
