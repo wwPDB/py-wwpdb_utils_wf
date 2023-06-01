@@ -170,6 +170,36 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
+    def emmapcheck(self, **kwArgs):
+        """Run EM Map/Model validation on file upload"""
+        try:
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
+            in_map_file = inpObjD["src1"].getFilePathReference()
+            in_model_file = inpObjD["src2"].getFilePathReference()
+            output_file = outObjD["dst"].getFilePathReference()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=output_file, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.setDebugMode(flag=True)
+
+            dp.addInput(name="input_map_file_path", value=in_map_file)
+            dp.addInput(name="input_model_file_path", value=in_model_file)
+            dp.addInput(name="output_file_path", value=output_file)
+            dp.op("em-map-model-upload-check")
+
+            if self._verbose:
+                self._lfh.write("+EmUtils.emmapcheck() - input map  file path:  %s\n" % in_map_file)
+                self._lfh.write("+EmUtils.emmapcheck() - input model  file path:  %s\n" % in_model_file)
+                self._lfh.write("+EmUtils.emmapcheck() - output json file path:  %s\n" % output_file)
+
+            if self.__cleanUp:
+                dp.cleanup()
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
     def em2emSpiderOp(self, **kwArgs):
         """Run em2em to convert Spider map to CCP4 format"""
         try:
