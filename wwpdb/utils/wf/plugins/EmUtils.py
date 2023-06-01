@@ -173,7 +173,7 @@ class EmUtils(UtilsBase):
     def emmapcheck(self, **kwArgs):
         """Run EM Map/Model validation on file upload"""
         try:
-            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             in_map_file = inpObjD["src1"].getFilePathReference()
             in_model_file = inpObjD["src2"].getFilePathReference()
             output_file = outObjD["dst"].getFilePathReference()
