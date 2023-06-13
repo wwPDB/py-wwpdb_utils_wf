@@ -42,6 +42,7 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 try:
     # We will have present on annotation system - but allow testing without
+    from wwpdb.apps.ann_tasks_v2.check.EmMapCheck import EmMapCheckTask
     from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
     from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
@@ -239,6 +240,130 @@ class AnnotationUtils(UtilsBase):
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
+
+    def xmlCheckOp(self, **kwArgs):
+        """ Performs PDBML XML check on PDBx format input file and returns a text check report.
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            (_dir, fileName) = os.path.split(pdbxPath)
+
+            reportPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "cif2pdbx-next.log")
+            expPath = os.path.join(dirPath, fileName + "_model-next_P1.cif")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.addInput(name="destination", value="archive_next")
+            dp.op("cif2pdbx-ext")
+
+            dp.expLog(logPath)
+            dp.exp(expPath)
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if os.access(expPath, os.R_OK):
+                xmlPath = self.__generateXMLFile(siteId, expPath, dirPath)
+                os.remove(expPath)
+                if xmlPath:
+                    self.__checkXMLFile(siteId, xmlPath, dirPath, reportPath, "annot-check-xml-xmllint")
+                    self.__checkXMLFile(siteId, xmlPath, dirPath, reportPath, "annot-check-xml-stdinparse")
+                    if self._verbose:
+                        self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                        self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
+                    #
+                    os.remove(xmlPath)
+                    return True
+                #
+            #
+            return False
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def __generateXMLFile(self, siteId, pdbxPath, dirPath):
+        """ Generate noatom xml file
+        """
+        try:
+            xmlPath = pdbxPath + ".xml-noatom"
+            outputList = []
+            outputList.append(xmlPath)
+            outputList.append(os.path.join(dirPath, "generate_xml_v5.log"))
+            outputList.append(os.path.join(dirPath, "generate_xml_command_v5.log"))
+            for filePath in outputList:
+                if os.access(filePath, os.R_OK):
+                    os.remove(filePath)
+                #
+            #
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.op("annot-public-pdbx-to-xml-noatom")
+            dp.expList(outputList)
+            #
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if os.access(xmlPath, os.R_OK):
+                return xmlPath
+            #
+        except:  # noqa: E722 pylint: disable=bare-except
+            traceback.print_exc(file=self._lfh)
+        #
+        return None
+
+    def __checkXMLFile(self, siteId, xmlPath, dirPath, reportPath, op):
+        """ Check noatom xml file
+        """
+        try:
+            if op == "annot-check-xml-xmllint":
+                statinfo = os.stat(xmlPath)
+                if statinfo.st_size > 100000000:
+                    return
+                #
+            #
+            inReportPath = os.path.join(dirPath, "check-xml.diag.txt")
+            if os.access(inReportPath, os.R_OK):
+                os.remove(inReportPath)
+            #
+            outputList = []
+            outputList.append(inReportPath)
+            #
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(xmlPath)
+            dp.op(op)
+            dp.expList(outputList)
+            #
+            if os.access(inReportPath, os.R_OK):
+                ith = open(inReportPath, "r")
+                data = ith.read()
+                ith.close()
+                if len(data) > 0:
+                    oth = open(reportPath, "a")
+                    for line in data.split("\n"):
+                        strip_line = line.strip()
+                        if (strip_line == "") or (strip_line == "input_file_1 validates") or strip_line.startswith("stdin:"):
+                            continue
+                        elif strip_line.startswith("input_file_1:") or strip_line.startswith("input_file_1 "):
+                            oth.write("%s\n" % strip_line[13:])
+                        else:
+                            oth.write("%s\n" % strip_line)
+                        #
+                    #
+                    oth.close()
+                #
+                os.remove(inReportPath)
+            #
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+        except:  # noqa: E722 pylint: disable=bare-except
+            traceback.print_exc(file=self._lfh)
+        #
 
     def dictCheckFirstOp(self, **kwArgs):
         """Performs PDBx dictionary check on the first block of a PDBx format input file
@@ -1260,6 +1385,27 @@ class AnnotationUtils(UtilsBase):
             # Cleanup directory
             shutil.rmtree(wrkPath, ignore_errors=True)
 
+            # Always return true - even if no work done
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def emMapCheckOp(self, **kwArgs):
+        """Checks em_map category"""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            #
+            reportPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            #
+            checkTask = EmMapCheckTask(siteId=siteId, sessionPath=dirPath, verbose=self._verbose, log=self._lfh)
+            checkTask.run(depDataSetId, pdbxPath, reportPath)
             # Always return true - even if no work done
             return True
         except Exception as _e:  # noqa: F841
