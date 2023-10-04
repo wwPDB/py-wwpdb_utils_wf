@@ -247,12 +247,14 @@ class AnnotationUtils(UtilsBase):
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            (_dir, fileName) = os.path.split(pdbxPath)
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             logPath = os.path.join(dirPath, "cif2pdbx-next.log")
-            expPath = os.path.join(dirPath, fileName + "_model-next_P1.cif")
+            expPath = os.path.join(dirPath, depDataSetId + "_model-temp_P1.cif.V1")
+            if os.path.exists(expPath):
+                os.remove(expPath)
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -391,8 +393,8 @@ class AnnotationUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
-                self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
-                self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
+                self._lfh.write("+AnnotationUtils.dictCheckFirstOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.dictCheckFirstOp() - Report file path:       %s\n" % reportPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
