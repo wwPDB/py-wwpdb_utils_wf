@@ -199,6 +199,45 @@ class EmUtils(UtilsBase):
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
             return False
+    
+    def checkemupload(self, **kwArgs):
+        """Run EM Map/Model validation on file upload"""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            in_map_file = inpObjD["src1"].getFilePathReference()
+            in_half_map_file_1 = inpObjD["src2"].getFilePathReference()
+            in_half_map_file_2 = inpObjD["src3"].getFilePathReference()
+            in_model_file = inpObjD["src4"].getFilePathReference()
+            output_file = outObjD["dst"].getFilePathReference()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=output_file, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.setDebugMode(flag=True)
+
+            dp.addInput(name="input_map_file_path", value=in_map_file)
+            if in_half_map_file_1 is not None:
+                dp.addInput(name="input_half_map_file_path_1", value=in_half_map_file_1)
+            if in_half_map_file_2 is not None:
+                dp.addInput(name="input_half_map_file_path_2", value=in_half_map_file_2)
+            if in_model_file is not None:
+                dp.addInput(name="input_model_file_path", value=in_model_file)
+            dp.addInput(name="output_file_path", value=output_file)
+            dp.op("check-uploaded-em-map-model")
+
+            if self._verbose:
+                self._lfh.write("+EmUtils.checkemupload() - input map  file path:  %s\n" % in_map_file)
+                self._lfh.write("+EmUtils.checkemupload() - input half map 1 file path:  %s\n" % in_half_map_file_1)
+                self._lfh.write("+EmUtils.checkemupload() - input half map 2 file path:  %s\n" % in_half_map_file_2)
+                self._lfh.write("+EmUtils.checkemupload() - input model  file path:  %s\n" % in_model_file)
+                self._lfh.write("+EmUtils.checkemupload() - output json file path:  %s\n" % output_file)
+
+            if self.__cleanUp:
+                dp.cleanup()
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
 
     def em2emSpiderOp(self, **kwArgs):
         """Run em2em to convert Spider map to CCP4 format"""
