@@ -17,6 +17,7 @@
 #  18-Dec-2016 ep  remove unused validationReportAltOp and validationReportV2Op
 #  10-May-2019 ep  add validationReportAllOpV2 for export of edmap coefficients
 #  30-Jun-2020 zf  modify to be compatible with the changes of image tar file output in RcsbDpUtility & ValidationWrapper
+#  31-Jan-2024 zf  add validationGetCorrespondLetterOp
 ##
 """
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -28,14 +29,17 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
-import sys
-import traceback
+import os, sys, shutil, traceback
+
+from wwpdb.io.file.DataExchange import DataExchange
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.session.WebRequest import InputRequest
 
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
+
+from wwpdb.apps.ann_tasks_v2.correspnd.CorresPNDTemplate import CorresPNDTemplate
 
 # For remediation of legacy CS files in annotation.
 # Not a requirements for wwpdb.utils.wf - but if running validation, it will have pulled in wwpdb.utils.nmr
@@ -409,6 +413,10 @@ class ValidationUtils(UtilsBase):
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
+            siteName = cI.get("SITE_NAME")
+            if ("dst9" in outObjD) and (outObjD["dst9"].getContainerTypeName() == "value"):
+                outObjD["dst9"].setValue(siteName)
+            #
             vw = ValidationWrapper(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             vw.imp(pdbxPath)
             #
@@ -508,6 +516,66 @@ class ValidationUtils(UtilsBase):
 
             if self.__cleanUp:
                 vw.cleanup()
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def validationGetCorrespondLetterOp(self, **kwArgs):
+        """Create the correspondence letter
+        """
+        try:
+            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            if not os.access(pdbxPath, os.R_OK):
+                return False
+            #
+            xmlReportPath = inpObjD["src2"].getFilePathReference()
+            #
+            correspondLetterPath = outObjD["dst"].getFilePathReference()
+            #
+            dirPath = outObjD["dst"].getDirPathReference()
+            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+            instanceId = inpObjD["src1"].getWorkflowInstanceId()
+            fileSource = inpObjD["src1"].getStorageType()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            topPath = cI.get("SITE_WEB_APPS_TOP_PATH")
+            templatePath = os.path.join(topPath, "htdocs", "validation_tasks_v2")
+            #
+            self.__reqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
+            self.__reqObj.setValue("TopSessionPath", dirPath)
+            self.__reqObj.setValue("TopPath", topPath)
+            self.__reqObj.setValue("TemplatePath", templatePath)
+            self.__reqObj.setValue("WWPDB_SITE_ID", siteId)
+            self.__reqObj.setValue("entryid", depDataSetId)
+            self.__reqObj.setValue("entryfilename", depDataSetId + "_model_P1.cif")
+            #
+            self.__sessionObj = self.__reqObj.newSessionObj()
+            self.__sessionPath = self.__sessionObj.getPath()
+            #
+            de = DataExchange(reqObj=self.__reqObj, depDataSetId=depDataSetId, wfInstanceId=instanceId, fileSource=fileSource, verbose=self._verbose, log=self._lfh)
+            pth = de.copyToSession(contentType="model", formatType="pdbx", version="latest", partitionNumber=1)
+            if pth is None:
+                return False
+            #
+            pth = de.copyToSession(contentType="validation-data", formatType="xml", version="latest", partitionNumber=1)
+            #
+            CorresPNDTObj = CorresPNDTemplate(reqObj=self.__reqObj, verbose=self._verbose, log=self._lfh)
+            _content = CorresPNDTObj.get()
+            #
+            filePath = os.path.join(self.__sessionPath, depDataSetId + "_correspondence-to-depositor_P1.txt")
+            if os.access(filePath, os.R_OK):
+                shutil.copyfile(filePath, correspondLetterPath)
+            #
+            if self._verbose:
+                self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - Entry Id:              %s\n" % depDataSetId)
+                self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - PDBx file path:        %s\n" % pdbxPath)
+                self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - XML report file path:  %s\n" % xmlReportPath)
+                self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - Cor letter file path:  %s\n" % correspondLetterPath)
+            #
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
