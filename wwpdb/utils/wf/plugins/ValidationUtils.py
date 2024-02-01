@@ -29,7 +29,10 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os, sys, shutil, traceback
+import os
+import sys
+import shutil
+import traceback
 
 from wwpdb.io.file.DataExchange import DataExchange
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
@@ -39,7 +42,11 @@ from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 
-from wwpdb.apps.ann_tasks_v2.correspnd.CorresPNDTemplate import CorresPNDTemplate
+try:
+    # We will have present on annotation system - but allow testing without
+    from wwpdb.apps.ann_tasks_v2.correspnd.CorresPNDTemplate import CorresPNDTemplate
+except ImportError:
+    pass
 
 # For remediation of legacy CS files in annotation.
 # Not a requirements for wwpdb.utils.wf - but if running validation, it will have pulled in wwpdb.utils.nmr
@@ -526,7 +533,7 @@ class ValidationUtils(UtilsBase):
         """Create the correspondence letter
         """
         try:
-            (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
             if not os.access(pdbxPath, os.R_OK):
                 return False
@@ -545,28 +552,28 @@ class ValidationUtils(UtilsBase):
             topPath = cI.get("SITE_WEB_APPS_TOP_PATH")
             templatePath = os.path.join(topPath, "htdocs", "validation_tasks_v2")
             #
-            self.__reqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
-            self.__reqObj.setValue("TopSessionPath", dirPath)
-            self.__reqObj.setValue("TopPath", topPath)
-            self.__reqObj.setValue("TemplatePath", templatePath)
-            self.__reqObj.setValue("WWPDB_SITE_ID", siteId)
-            self.__reqObj.setValue("entryid", depDataSetId)
-            self.__reqObj.setValue("entryfilename", depDataSetId + "_model_P1.cif")
+            reqObj = InputRequest({}, verbose=self._verbose, log=self._lfh)
+            reqObj.setValue("TopSessionPath", dirPath)
+            reqObj.setValue("TopPath", topPath)
+            reqObj.setValue("TemplatePath", templatePath)
+            reqObj.setValue("WWPDB_SITE_ID", siteId)
+            reqObj.setValue("entryid", depDataSetId)
+            reqObj.setValue("entryfilename", depDataSetId + "_model_P1.cif")
             #
-            self.__sessionObj = self.__reqObj.newSessionObj()
-            self.__sessionPath = self.__sessionObj.getPath()
+            sessionObj = reqObj.newSessionObj()
+            sessionPath = sessionObj.getPath()
             #
-            de = DataExchange(reqObj=self.__reqObj, depDataSetId=depDataSetId, wfInstanceId=instanceId, fileSource=fileSource, verbose=self._verbose, log=self._lfh)
+            de = DataExchange(reqObj=reqObj, depDataSetId=depDataSetId, wfInstanceId=instanceId, fileSource=fileSource, verbose=self._verbose, log=self._lfh)
             pth = de.copyToSession(contentType="model", formatType="pdbx", version="latest", partitionNumber=1)
             if pth is None:
                 return False
             #
             pth = de.copyToSession(contentType="validation-data", formatType="xml", version="latest", partitionNumber=1)
             #
-            CorresPNDTObj = CorresPNDTemplate(reqObj=self.__reqObj, verbose=self._verbose, log=self._lfh)
-            _content = CorresPNDTObj.get()
+            CorresPNDTObj = CorresPNDTemplate(reqObj=reqObj, verbose=self._verbose, log=self._lfh)
+            _content = CorresPNDTObj.get()  # noqa: F841
             #
-            filePath = os.path.join(self.__sessionPath, depDataSetId + "_correspondence-to-depositor_P1.txt")
+            filePath = os.path.join(sessionPath, depDataSetId + "_correspondence-to-depositor_P1.txt")
             if os.access(filePath, os.R_OK):
                 shutil.copyfile(filePath, correspondLetterPath)
             #
