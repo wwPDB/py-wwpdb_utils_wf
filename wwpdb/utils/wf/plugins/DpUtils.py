@@ -44,7 +44,7 @@ class DpUtils(UtilsBase):
 
     def __init__(self, verbose=False, log=sys.stderr):
         super(DpUtils, self).__init__(verbose, log)
-        self.__cleanUp = False
+        self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
         #
@@ -95,6 +95,33 @@ class DpUtils(UtilsBase):
                 dp.cleanup()
             if self._verbose:
                 self._lfh.write("+DpUtils.centreOfMassCalculation() - PDBx     file path: %s\n" % pdbxPath)
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def generateComplexityOp(self, **kwargs):
+        """Generates complexity report"""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            pdbxOutputPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            logPath = os.path.join(dirPath, "generate-complexity.log")
+
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.op("annot-complexity")
+            dp.expLog(logPath)
+            dp.exp(pdbxOutputPath)
+
+            if self.__cleanUp:
+                dp.cleanup()
+            if self._verbose:
+                self._lfh.write("+DpUtils.generatComplexityOp() - PDBx     file path: %s\n" % pdbxPath)
             return True
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
