@@ -4,6 +4,7 @@
 #
 # Updates:
 # 24-April-2010  jdw statusOp method to return a dictionary of common status items.
+#  9-May-2024    zf  add fetchAnnAutoOp
 #
 ##
 """
@@ -19,6 +20,7 @@ __version__ = "V0.01"
 import sys
 import traceback
 
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
@@ -78,7 +80,6 @@ class PdbxUtils(UtilsBase):
         self.__targetBlockName = None
         self.__targetBlockIndex = 0
         self.__cifFile = None
-        self.__blockList = []
         self._lfh = log
 
     def __getBlock(self, pdbxPath):
@@ -204,6 +205,65 @@ class PdbxUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
+    def __templateFetchAnnAuto(self, kwD):
+        """Template fetch column method.
+
+        This method supports recovering the values of an attribute (or column of attributes).
+
+        Selector defines the following selector parameters:
+        - targetCategoryName  name of the target category
+        - targetAttributeName name of the target attribute
+
+        Only container types *list* and *value* are support.
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
+            pdbxPath = str(inpObjD["src"].getFilePathReference())
+            if not self.__getBlock(pdbxPath):
+                return False
+            #
+            targetCategory = str(inpObjD["src"].getSelectCategoryName())
+            if not self.__block.IsTablePresent(targetCategory):
+                return False
+
+            attributeList = inpObjD["src"].getSelectAttributeList()
+            targetAttribute = str(attributeList[0])
+
+            myTable = self.__block.GetTable(targetCategory)
+            cL = []
+            # colNames = list(myTable.GetColumnNames())
+            rList = list(myTable.GetColumn(cL, targetAttribute))
+
+            if outObjD["dst1"].getContainerTypeName() == "value":
+                outObjD["dst1"].setValue(rList[0])
+            elif outObjD["dst1"].getContainerTypeName() == "list":
+                outObjD["dst1"].setValue(rList)
+            else:
+                return False
+            #
+            yes_no_value = self.__getAnnModAutoCompleteFlag()
+            if outObjD["dst2"].getContainerTypeName() == "value":
+                outObjD["dst2"].setValue(yes_no_value)
+            elif outObjD["dst2"].getContainerTypeName() == "list":
+                outObjD["dst2"].setValue([ yes_no_value ])
+            else:
+                return False
+            #
+            cI = ConfigInfo()
+            siteName = cI.get("SITE_NAME")
+            if outObjD["dst3"].getContainerTypeName() == "value":
+                outObjD["dst3"].setValue(siteName)
+            elif outObjD["dst3"].getContainerTypeName() == "list":
+                outObjD["dst3"].setValue([ siteName ])
+            else:
+                return False
+            #
+            return True
+        except Exception as _e:  # noqa: F841
+            if self._verbose:
+                traceback.print_exc(file=self._lfh)
+            return False
+
     def __getCategoryRowCount(self, kwD):
         """Template method to count category size/test for existence .
 
@@ -250,6 +310,9 @@ class PdbxUtils(UtilsBase):
 
     def fetchOp(self, **kwArgs):
         return self.__templateFetchAttribute(kwArgs)
+
+    def fetchAnnAutoOp(self, **kwArgs):
+        return self.__templateFetchAnnAuto(kwArgs)
 
     def statusOp(self, **kwArgs):
         return self.__fetchStatusDictionary(kwArgs)
@@ -384,3 +447,62 @@ class PdbxUtils(UtilsBase):
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
+        #
+
+    def __getAnnModAutoCompleteFlag(self):
+        """
+        """
+        try:
+            ret = "NO"
+            if self.__block.IsTablePresent("exptl"):
+                table = self.__block.GetTable("exptl")
+                if table and (table.GetNumRows() > 0):
+                    if table.IsColumnPresent("method"):
+                        val = table(0, "method")
+                        val = val.strip().upper()
+                        if (val == "ELECTRON MICROSCOPY") or (val == "SOLID-STATE NMR") or (val == "SOLUTION NMR"):
+                            ret = "YES"
+                        #
+                    #
+                #
+            #
+            if ret == "NO":
+                return ret
+            #
+            assemblyCategories = { "pdbx_struct_assembly": [ "id", "details" ], \
+                                   "pdbx_struct_assembly_gen": [ "assembly_id", "oper_expression", "asym_id_list" ], \
+                                   "pdbx_struct_oper_list": [ "id", "matrix[1][1]", "matrix[1][2]", "matrix[1][3]", \
+                                   "vector[1]", "matrix[2][1]", "matrix[2][2]", "matrix[2][3]", "vector[2]", "matrix[3][1]", \
+                                   "matrix[3][2]", "matrix[3][3]", "vector[3]" ] }
+            #
+            for cate,items in assemblyCategories.items():
+                if self.__block.IsTablePresent(cate):
+                    table = self.__block.GetTable(cate)
+                    if table and (table.GetNumRows() > 0):
+                        valList = []
+                        for item in items:
+                            if table.IsColumnPresent(item):
+                                val = table(0, item)
+                                if val and (val != ".") and (val != "?"):
+                                    valList.append(val)
+                                #
+                            #
+                        #
+                        if len(valList) != len(items):
+                            ret = "NO"
+                        #
+                    else:
+                        ret = "NO"
+                    #
+                else:
+                    ret = "NO"
+                #
+                if ret == "NO":
+                    return ret
+                #
+            #
+            return ret
+        except Exception as _e:
+            traceback.print_exc(file=sys.stderr)
+            return "NO"
+        #
