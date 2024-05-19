@@ -245,7 +245,7 @@ class PdbxUtils(UtilsBase):
             if outObjD["dst2"].getContainerTypeName() == "value":
                 outObjD["dst2"].setValue(yes_no_value)
             elif outObjD["dst2"].getContainerTypeName() == "list":
-                outObjD["dst2"].setValue([ yes_no_value ])
+                outObjD["dst2"].setValue([yes_no_value])
             else:
                 return False
             #
@@ -254,7 +254,7 @@ class PdbxUtils(UtilsBase):
             if outObjD["dst3"].getContainerTypeName() == "value":
                 outObjD["dst3"].setValue(siteName)
             elif outObjD["dst3"].getContainerTypeName() == "list":
-                outObjD["dst3"].setValue([ siteName ])
+                outObjD["dst3"].setValue([siteName])
             else:
                 return False
             #
@@ -469,13 +469,13 @@ class PdbxUtils(UtilsBase):
             if ret == "NO":
                 return ret
             #
-            assemblyCategories = { "pdbx_struct_assembly": [ "id", "details" ], \
-                                   "pdbx_struct_assembly_gen": [ "assembly_id", "oper_expression", "asym_id_list" ], \
-                                   "pdbx_struct_oper_list": [ "id", "matrix[1][1]", "matrix[1][2]", "matrix[1][3]", \
-                                   "vector[1]", "matrix[2][1]", "matrix[2][2]", "matrix[2][3]", "vector[2]", "matrix[3][1]", \
-                                   "matrix[3][2]", "matrix[3][3]", "vector[3]" ] }
+            assemblyCategories = {"pdbx_struct_assembly": ["id", "details"],
+                                  "pdbx_struct_assembly_gen": ["assembly_id", "oper_expression", "asym_id_list"],
+                                  "pdbx_struct_oper_list": ["id", "matrix[1][1]", "matrix[1][2]", "matrix[1][3]",
+                                                            "vector[1]", "matrix[2][1]", "matrix[2][2]", "matrix[2][3]", "vector[2]", "matrix[3][1]",
+                                                            "matrix[3][2]", "matrix[3][3]", "vector[3]"]}
             #
-            for cate,items in assemblyCategories.items():
+            for cate, items in assemblyCategories.items():
                 if self.__block.IsTablePresent(cate):
                     table = self.__block.GetTable(cate)
                     if table and (table.GetNumRows() > 0):
@@ -502,7 +502,7 @@ class PdbxUtils(UtilsBase):
                 #
             #
             return ret
-        except Exception as _e:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=sys.stderr)
             return "NO"
         #
