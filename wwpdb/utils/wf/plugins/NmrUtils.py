@@ -487,8 +487,6 @@ class NmrUtils(UtilsBase):
                                 elif stop_pattern.match(line):
                                     has_stop = True
 
-                            ifp.close()
-
                         if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop:  # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
                         else:
@@ -590,20 +588,23 @@ class NmrUtils(UtilsBase):
                         has_loop = False
                         has_stop = False
 
-                        with open(mr_file, "r") as ifp:
-                            for line in ifp:
-                                if datablock_pattern.match(line):
-                                    has_datablock = True
-                                elif sf_anonymous_pattern.match(line):
-                                    has_anonymous_saveframe = True
-                                elif save_pattern.match(line):
-                                    has_save = True
-                                elif loop_pattern.match(line):
-                                    has_loop = True
-                                elif stop_pattern.match(line):
-                                    has_stop = True
+                        try:
 
-                            ifp.close()
+                            with open(mr_file, "r") as ifp:
+                                for line in ifp:
+                                    if datablock_pattern.match(line):
+                                        has_datablock = True
+                                    elif sf_anonymous_pattern.match(line):
+                                        has_anonymous_saveframe = True
+                                    elif save_pattern.match(line):
+                                        has_save = True
+                                    elif loop_pattern.match(line):
+                                        has_loop = True
+                                    elif stop_pattern.match(line):
+                                        has_stop = True
+
+                        except UnicodeDecodeError:  # catch exception due to binary format (DAOTHER-9425)
+                            pass
 
                         if has_datablock or has_anonymous_saveframe or has_save or has_loop or has_stop:  # NMR-STAR or NEF (DAOTHER-6830)
                             mrPathList.append(mr_file)
