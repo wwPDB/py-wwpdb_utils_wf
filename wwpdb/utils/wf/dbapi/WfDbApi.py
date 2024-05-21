@@ -602,6 +602,8 @@ class WfDbApi:
         classId = None
         instId = None
         taskId = None
+        rd = {}
+
         if len(dataObj) == 0:
             existObj = False
         else:
