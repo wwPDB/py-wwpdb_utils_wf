@@ -178,6 +178,7 @@ class EmUtils(UtilsBase):
             in_half_map_file_1 = inpObjD["src2"].getFilePathReference()
             in_half_map_file_2 = inpObjD["src3"].getFilePathReference()
             in_model_file = inpObjD["src4"].getFilePathReference()
+            input_file = inpObjD["src5"].getFilePathReference()
             output_file = outObjD["dst"].getFilePathReference()
             #
             cI = ConfigInfo()
@@ -189,6 +190,7 @@ class EmUtils(UtilsBase):
             dp.addInput(name="input_half_map_file_path_1", value=in_half_map_file_1)
             dp.addInput(name="input_half_map_file_path_2", value=in_half_map_file_2)
             dp.addInput(name="input_model_file_path", value=in_model_file)
+            dp.addInput(name="input_file_path", value=input_file)
             dp.addInput(name="output_file_path", value=output_file)
             dp.op("em-map-model-upload-check")
 
@@ -196,7 +198,8 @@ class EmUtils(UtilsBase):
                 self._lfh.write("+EmUtils.emmapcheck() - input map  file path:  %s\n" % in_map_file)
                 self._lfh.write("+EmUtils.emmapcheck() - input half map 1 file path:  %s\n" % in_half_map_file_1)
                 self._lfh.write("+EmUtils.emmapcheck() - input half map 2 file path:  %s\n" % in_half_map_file_2)
-                self._lfh.write("+EmUtils.emmapcheck() - input model  file path:  %s\n" % in_model_file)
+                self._lfh.write("+EmUtils.emmapcheck() - input model file path:  %s\n" % in_model_file)
+                self._lfh.write("+EmUtils.emmapcheck() - input json file path:  %s\n" % input_file)
                 self._lfh.write("+EmUtils.emmapcheck() - output json file path:  %s\n" % output_file)
 
             if self.__cleanUp:
