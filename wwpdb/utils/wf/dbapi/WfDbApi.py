@@ -620,10 +620,10 @@ class WfDbApi:
             else:
                 rd = self.getObject(depId, classId, instId, taskId)
 
-            if len(rd) > 0:
-                existObj = True
-            else:
-                existObj = False
+                if len(rd) > 0:
+                    existObj = True
+                else:
+                    existObj = False
 
         return existObj
 
