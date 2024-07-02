@@ -28,7 +28,7 @@ import traceback
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
-from wwpdb.utils.wf.plugins.SFConvert import SFConvert
+# from wwpdb.utils.wf.plugins.SFConvert import SFConvert
 
 
 class FormatUtils(UtilsBase):
@@ -204,14 +204,14 @@ class FormatUtils(UtilsBase):
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
-            if sfFmt == "pdbx":
-                # See if we can handle specially
-                sfc = SFConvert()
-                if sfc.isSpecialSF(sfPath):
-                    ok = sfc.handleSpecialSF(sfPath, sfPdbxFilePath, xyzPath, sfDiagFilePath, logFilePath)
-                    self._lfh.write("Special handling of SF file returns %s\n" % ok)
-                    if ok is True:
-                        return True
+            # if sfFmt == "pdbx":
+            #     # See if we can handle specially
+            #     sfc = SFConvert()
+            #     if sfc.isSpecialSF(sfPath):
+            #         ok = sfc.handleSpecialSF(sfPath, sfPdbxFilePath, xyzPath, sfDiagFilePath, logFilePath)
+            #         self._lfh.write("Special handling of SF file returns %s\n" % ok)
+            #         if ok is True:
+            #             return True
                     # Else fall through
 
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
