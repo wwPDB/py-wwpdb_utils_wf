@@ -187,7 +187,7 @@ class FormatUtils(UtilsBase):
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             sfPath = inpObjD["src1"].getFilePathReference()
-            sfFmt = inpObjD["src1"].getFileFormat()
+            # sfFmt = inpObjD["src1"].getFileFormat()
             xyzPath = inpObjD["src2"].getFilePathReference()
             #
             #
@@ -212,7 +212,7 @@ class FormatUtils(UtilsBase):
             #         self._lfh.write("Special handling of SF file returns %s\n" % ok)
             #         if ok is True:
             #             return True
-                    # Else fall through
+            #        # Else fall through
 
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(sfPath)
