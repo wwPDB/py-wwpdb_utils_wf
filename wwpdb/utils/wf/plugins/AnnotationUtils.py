@@ -15,6 +15,7 @@
 #  14-May-2015 jdw add status load method
 #  20-Jan-2017 ep  add assemblyUpdateDepInfoOp()
 #  15-Feb-2017 ep  add combineCifFilesOp()
+#  26-Aug-2024 zf  add linkPtmOp()
 ##
 """
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -667,6 +668,34 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-link-ssbond")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+            if self.__cleanUp:
+                dp.cleanup()
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            return True
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    def linkPtmOp(self, **kwArgs):
+        """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+
+            pdbxOutputPath = outObjD["dst1"].getFilePathReference()
+            dirPath = outObjD["dst1"].getDirPathReference()
+            csvOutputPath = outObjD["dst2"].getFilePathReference()
+            logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.op("annot-link-ssbond-with-ptm")
+            dp.expLog(logPath)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
