@@ -15,7 +15,8 @@ __email__ = "zfeng@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os,sys
+import os
+import sys
 import traceback
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -47,7 +48,7 @@ class PcmCsvUtils(UtilsBase):
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             srcPath = inpObjD["src"].getFilePathReference()
-            outPath = outObjD["dst"].getFilePathReference()
+            # outPath = outObjD["dst"].getFilePathReference()
             #
             yes_no_value = "NO"
             if os.access(srcPath, os.R_OK):
