@@ -56,7 +56,7 @@ class ReportUtils(UtilsBase):
     def __init__(self, verbose=False, log=sys.stderr):
         super(ReportUtils, self).__init__(verbose, log)
         #  Flag to remove any temporary directories created by this class.
-        #  self.__cleanUp = False
+        #  self.__cleanUp = True
         #
 
     def combineLigandInfoOp(self, **kwArgs):

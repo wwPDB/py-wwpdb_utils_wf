@@ -53,7 +53,7 @@ class EmUtils(UtilsBase):
 
     def __init__(self, verbose=True, log=sys.stderr):
         super(EmUtils, self).__init__(verbose, log)
-        self.__cleanUp = False
+        self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
 

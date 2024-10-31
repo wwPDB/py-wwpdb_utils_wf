@@ -109,7 +109,7 @@ class ValidationUtils(UtilsBase):
 
     def __init__(self, verbose=False, log=sys.stderr):
         super(ValidationUtils, self).__init__(verbose, log)
-        self.__cleanUp = False
+        self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
 
