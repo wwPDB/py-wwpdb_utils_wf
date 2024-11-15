@@ -42,6 +42,7 @@ class PrdSearchUtils(UtilsBase):
 
     def __init__(self, verbose=False, log=sys.stderr):
         super(PrdSearchUtils, self).__init__(verbose, log)
+        # Be careful before setting self.__cleanUp, WorkingDirPath is in use - and cleanup removes that
         self.__cleanUp = False
         """Flag to remove any temporary directories created by this class.
         """
