@@ -51,7 +51,10 @@ class ChemCompUtils(UtilsBase):
 
     def __init__(self, verbose=False, log=sys.stderr):
         super(ChemCompUtils, self).__init__(verbose, log)
+        # DO NOT SET TO TRUE - RcsbDpUtility removes setWorkingDir - breaks image generation ligand lite as directories removed!!
+        # Cannot cleanup after chemCompAssignOp
         self.__cleanUp = False
+        self.__cleanUpSafe = True
         """Flag to remove any temporary directories created by this class.
         """
         #
@@ -70,9 +73,10 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-link")
             dp.exp(ccLinkPath)
-            if self.__cleanUp:
+            if self.__cleanUpSafe:
                 dp.cleanup()
             if self._verbose:
+                self._lfh.write("+ChemCompUtils.chemCompLinkOp() - PDBx XXXXX:    %s\n" % self.__cleanUpSafe)
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - CC link file path: %s\n" % ccLinkPath)
             return True
