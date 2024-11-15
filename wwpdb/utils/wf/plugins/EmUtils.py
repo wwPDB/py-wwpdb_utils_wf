@@ -176,10 +176,11 @@ class EmUtils(UtilsBase):
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             input_file = inpObjD["src"].getFilePathReference()
             output_file = outObjD["dst"].getFilePathReference()
+            output_dir = outObjD["dst"].getDirPathReference()
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
-            dp = RcsbDpUtility(tmpPath=output_file, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp = RcsbDpUtility(tmpPath=output_dir, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.setDebugMode(flag=True)
 
             dp.addInput(name="input_file_path", value=input_file)
