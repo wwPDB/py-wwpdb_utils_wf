@@ -66,8 +66,7 @@ class NmrUtils(UtilsBase):
 
     def __init__(self, verbose=False, log=sys.stderr):
         super(NmrUtils, self).__init__(verbose, log)
-        # Be careful before setting self.__cleanUp, WorkingDirPath is in use - and cleanup removes that - which might not be appropriate
-        self.__cleanUp = False
+        self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
         #
