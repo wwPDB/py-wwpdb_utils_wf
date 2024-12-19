@@ -5,6 +5,7 @@
 # Updates:
 # 12-Sep-2014 jdw    added formatCheckCsXyzOp() and atomNameCheckCsXyzOp()
 #  4-Aug-2015 jdw    added atomNameCheckCsXyzAltOp() and uploadChemicalShiftAltOp()
+# 19-Dec-2024 my     added mergeNmrIfDepositOp() (DAOTHER-8905)
 ##
 """
 Module of NMR utilities.
@@ -914,6 +915,55 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR output file path:         %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR in CIF output file path:  %s\n" % s2cOutPath)
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - JSON output file path:             %s\n" % logOutPath)
+            return stat
+        except Exception as _e:  # noqa: F841
+            traceback.print_exc(file=self._lfh)
+            return False
+
+    # DepUI for NMRIF + NMR-STAR V3.2 -> CIF file conversion and deposition
+    #   action: nmr-merge-nmrif-deposit
+    #   src0.content: nmr-data-config, src0.format: json
+    #   src1.content: nmr-data-str,    src1.format: pdbx
+    #   src2.content: model,           src2.format: pdbx
+    #   src3.content: nmrif,           src3.format: pdbx
+    #   dst1.content: nmr-data-str,    dst1.format: pdbx
+    def mergeNmrIfDepositOp(self, **kwArgs):
+        """Merge NMRIF to NMR data
+
+        Returns True for success or False for warnings/errors.
+
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            strInpPath = inpObjD["src1"].getFilePathReference()
+            cifInpPath = inpObjD["src2"].getFilePathReference()
+            nifInpPath = inpObjD["src3"].getFilePathReference()
+            s2cOutPath = outObjD["dst1"].getFilePathReference()
+            #
+            dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
+            dp.setSource(strInpPath, originalFileName)
+            dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
+            dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")
+
+            if os.path.exists(cnfInpPath):
+
+                with open(cnfInpPath, "r") as file:
+                    conf = json.loads(file.read())
+
+                for item in conf.keys():
+                    dp.addInput(name=item, value=conf[item], type="param")
+
+            dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
+            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
+            dp.addOutput(name="leave_intl_note", value=False, type="param")
+            stat = dp.op("nmr-merge-nmrif-deposit")
+            #
+            if self._verbose:
+                self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
+                self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - mmCIF input file path:             %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMRIF input file path:             %s\n" % nifInpPath)
+                self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMR-STAR in CIF output file path:  %s\n" % s2cOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
