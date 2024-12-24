@@ -697,7 +697,6 @@ class NmrUtils(UtilsBase):
             dp.setDestination(nefOutPath)
             dp.addOutput(name="nmr-star_file_path", value=strOutPath, type="file")
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-nef2str-deposit")
@@ -774,7 +773,6 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmr-star_file_path", value=strOutPath, type="file")
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-nef2cif-deposit")
@@ -834,7 +832,6 @@ class NmrUtils(UtilsBase):
                     dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setDestination(strOutPath)
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2str-deposit")
@@ -903,7 +900,6 @@ class NmrUtils(UtilsBase):
 
             dp.setDestination(strOutPath)
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath)
             stat = dp.op("nmr-str2cif-deposit")
@@ -921,14 +917,14 @@ class NmrUtils(UtilsBase):
             return False
 
     # DepUI for NMRIF + NMR-STAR V3.2 -> CIF file conversion and deposition
-    #   action: nmr-merge-nmrif-deposit
+    #   action: nmr-if-merge-deposit
     #   src0.content: nmr-data-config, src0.format: json
     #   src1.content: nmr-data-str,    src1.format: pdbx
     #   src2.content: model,           src2.format: pdbx
     #   src3.content: nmrif,           src3.format: pdbx
     #   dst1.content: nmr-data-str,    dst1.format: pdbx
-    def mergeNmrIfDepositOp(self, **kwArgs):
-        """Merge NMRIF to NMR data
+    def nmrIfMergeDepositOp(self, **kwArgs):
+        """Merge NMRIF to NMR data on submission
 
         Returns True for success or False for warnings/errors.
 
@@ -942,7 +938,7 @@ class NmrUtils(UtilsBase):
             s2cOutPath = outObjD["dst1"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
-            dp.setSource(strInpPath, originalFileName)
+            dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
             dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")
 
@@ -955,9 +951,7 @@ class NmrUtils(UtilsBase):
                     dp.addInput(name=item, value=conf[item], type="param")
 
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
-            dp.addOutput(name="leave_intl_note", value=False, type="param")
-            stat = dp.op("nmr-merge-nmrif-deposit")
+            stat = dp.op("nmr-if-merge-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
@@ -1010,7 +1004,6 @@ class NmrUtils(UtilsBase):
             dp.setDestination(strOutPath)
             dp.addOutput(name="nef_file_path", value=nefOutPath, type="file")
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
-            dp.addOutput(name="insert_entry_id_to_loops", value=True, type="param")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
             stat = dp.op("nmr-str2nef-release")
