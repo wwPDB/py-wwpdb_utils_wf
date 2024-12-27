@@ -362,6 +362,7 @@ class NmrUtils(UtilsBase):
                     dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-nef-consistency-check")
             #
             if self._verbose:
@@ -409,6 +410,7 @@ class NmrUtils(UtilsBase):
                     dp.addInput(name=item, value=conf[item], type="param")
 
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-str-consistency-check")
             #
             if self._verbose:
@@ -512,6 +514,7 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="check_mandatory_tag", value=False, type="param")
 
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-cs-str-consistency-check")
             #
             if self._verbose:
@@ -535,7 +538,8 @@ class NmrUtils(UtilsBase):
     #   src4.content: model,                      src4.format: pdbx
     #   prc4.content: model (deposit),            prc4.format: pdbx
     #   dst1.content: nmr-data-str,               dst1.format: nmr-star
-    #   dst2.content:  nmr-data-str-report,       dst2.format: json
+    #   dst2.content: nmr-data-str-report,        dst2.format: json
+    #   dst3.content: nmrif,                      dst3.format: pdbx
     def csMrMergeOp(self, **kwArgs):
         """Performs consistency check on input chemical shifts/restraints with the coordinates,
            then outputs a combined NMR-STAR v3.2 file and a JSON report file, which provides diagnostic information to depositor.
@@ -616,6 +620,7 @@ class NmrUtils(UtilsBase):
             prcInpPath = inpObjD["prc4"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
+            nifOutPath = outObjD["dst3"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.addInput(name="chem_shift_file_path_list", value=csPathList, type="file_dict_list")
@@ -633,7 +638,9 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="merge_any_pk_as_is", value=True, type="param")  # DAOTHER-7407 enabled until Phase 2 release
 
             dp.setDestination(strOutPath)
+            dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-cs-mr-merge")
             #
             if self._verbose:
@@ -645,6 +652,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.csMrMergeOp() - mmCIF input file path:      %s\n" % cifInpPath)
                 self._lfh.write("+NmrUtils.csMrMergeOp() - NMR-STAR output file path:  %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.csMrMergeOp() - JSON output file path:      %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.csMrMergeOp() - NMRIF output file path:     %s\n" % nifOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -699,6 +707,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
+
             stat = dp.op("nmr-nef2str-deposit")
             #
             if self._verbose:
@@ -775,6 +784,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
+
             stat = dp.op("nmr-nef2cif-deposit")
             #
             if self._verbose:
@@ -800,6 +810,7 @@ class NmrUtils(UtilsBase):
     #   src3.content: nmr-data-str-report,  src3.format: json
     #   dst1.content: nmr-data-str,         dst1.format: nmr-star
     #   dst2.content: nmr-data-str-report,  dst2.format: json
+    #   dst3.content: nmrif,                dst3.format: pdbx
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 file conversion
         @deprecated: Please use str2cifDepositOp() for initial file upload since V5.18 (DAOTHER-7407)
@@ -816,6 +827,7 @@ class NmrUtils(UtilsBase):
             logInpPath = inpObjD["src3"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
+            nifOutPath = outObjD["dst3"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setSource(strInpPath)
@@ -833,7 +845,9 @@ class NmrUtils(UtilsBase):
 
             dp.setDestination(strOutPath)
             dp.addOutput(name="leave_intl_note", value=False, type="param")
+            dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-str2str-deposit")
             #
             if self._verbose:
@@ -842,6 +856,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON input file path:       %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR output file path:  %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON output file path:      %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.str2strDepositOp() - NMRIF output file path:     %s\n" % logOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -858,6 +873,7 @@ class NmrUtils(UtilsBase):
     #   dst1.content: nmr-data-str,               dst1.format: nmr-star
     #   dst2.content: nmr-data-str,               dst2.format: pdbx
     #   dst3.content: nmr-data-str-report,        dst3.format: json
+    #   dst4.content: nmrif,                      dst4.format: pdbx
     def str2cifDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 to CIF file conversion
 
@@ -875,6 +891,7 @@ class NmrUtils(UtilsBase):
             strOutPath = outObjD["dst1"].getFilePathReference()
             s2cOutPath = outObjD["dst2"].getFilePathReference()
             logOutPath = outObjD["dst3"].getFilePathReference()
+            nifOutPath = outObjD["dst4"].getFilePathReferenec()
             #
             originalFileName = None
             with open(authFileNamePath, "r") as ifh:
@@ -901,7 +918,9 @@ class NmrUtils(UtilsBase):
             dp.setDestination(strOutPath)
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
+            dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-str2cif-deposit")
             #
             if self._verbose:
@@ -911,6 +930,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR output file path:         %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR in CIF output file path:  %s\n" % s2cOutPath)
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - JSON output file path:             %s\n" % logOutPath)
+                self._lfh.write("+NmrUtils.str2cifDepositOp() - NMRIF output file path:            %s\n" % nifOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -940,7 +960,6 @@ class NmrUtils(UtilsBase):
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
-            dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")
 
             if os.path.exists(cnfInpPath):
 
@@ -951,6 +970,8 @@ class NmrUtils(UtilsBase):
                     dp.addInput(name=item, value=conf[item], type="param")
 
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
+            dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")  # DAOTHER-1728, 9846
+
             stat = dp.op("nmr-if-merge-deposit")
             #
             if self._verbose:
@@ -996,6 +1017,7 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="resolve_conflict", value=True, type="param")
             dp.addInput(name="check_mandatory_tag", value=True, type="param")
             dp.setLog(logOutPath)
+
             stat = dp.op("nmr-str-consistency-check")
             #
             dp.setSource(strInpPath)
@@ -1006,6 +1028,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
+
             stat = dp.op("nmr-str2nef-release")
             #
             if self._verbose:
