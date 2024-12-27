@@ -810,7 +810,6 @@ class NmrUtils(UtilsBase):
     #   src3.content: nmr-data-str-report,  src3.format: json
     #   dst1.content: nmr-data-str,         dst1.format: nmr-star
     #   dst2.content: nmr-data-str-report,  dst2.format: json
-    #   dst3.content: nmrif,                dst3.format: pdbx
     def str2strDepositOp(self, **kwArgs):
         """Perform NMR-STAR V3.2 file conversion
         @deprecated: Please use str2cifDepositOp() for initial file upload since V5.18 (DAOTHER-7407)
@@ -827,7 +826,6 @@ class NmrUtils(UtilsBase):
             logInpPath = inpObjD["src3"].getFilePathReference()
             strOutPath = outObjD["dst1"].getFilePathReference()
             logOutPath = outObjD["dst2"].getFilePathReference()
-            nifOutPath = outObjD["dst3"].getFilePathReference()
             #
             dp = NmrDpUtility(verbose=self._verbose, log=self._lfh)
             dp.setSource(strInpPath)
@@ -845,7 +843,6 @@ class NmrUtils(UtilsBase):
 
             dp.setDestination(strOutPath)
             dp.addOutput(name="leave_intl_note", value=False, type="param")
-            dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-str2str-deposit")
@@ -856,7 +853,6 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON input file path:       %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR output file path:  %s\n" % strOutPath)
                 self._lfh.write("+NmrUtils.str2strDepositOp() - JSON output file path:      %s\n" % logOutPath)
-                self._lfh.write("+NmrUtils.str2strDepositOp() - NMRIF output file path:     %s\n" % logOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
@@ -891,7 +887,7 @@ class NmrUtils(UtilsBase):
             strOutPath = outObjD["dst1"].getFilePathReference()
             s2cOutPath = outObjD["dst2"].getFilePathReference()
             logOutPath = outObjD["dst3"].getFilePathReference()
-            nifOutPath = outObjD["dst4"].getFilePathReferenec()
+            nifOutPath = outObjD["dst4"].getFilePathReference()
             #
             originalFileName = None
             with open(authFileNamePath, "r") as ifh:
