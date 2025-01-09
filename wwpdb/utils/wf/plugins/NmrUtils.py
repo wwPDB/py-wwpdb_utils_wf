@@ -736,6 +736,7 @@ class NmrUtils(UtilsBase):
     #   dst3.content: nmr-data-str,               dst3.format: pdbx
     #   dst4.content: nmr-data-nef-report,        dst4.format: json
     #   dst5.content: nmr-data-str-report,        dst5.format: json
+    #   dst6.content: nmrif,                      dst6.format: pdbx
     def nef2cifDepositOp(self, **kwArgs):
         """Perform NEF to CIF formated NMR-STAR V3.2 file conversion
 
@@ -755,6 +756,7 @@ class NmrUtils(UtilsBase):
             s2cOutPath = outObjD["dst3"].getFilePathReference()
             logOutPath1 = outObjD["dst4"].getFilePathReference()
             logOutPath2 = outObjD["dst5"].getFilePathReference()
+            nifOutPath = outObjD["dst6"].getFilePathReference()
             #
             originalFileName = None
             with open(authFileNamePath, "r") as ifh:
@@ -783,6 +785,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
             dp.addOutput(name="report_file_path", value=logOutPath2, type="file")
             dp.addOutput(name="leave_intl_note", value=False, type="param")
+            dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath1)
 
             stat = dp.op("nmr-nef2cif-deposit")
@@ -796,6 +799,7 @@ class NmrUtils(UtilsBase):
                 self._lfh.write("+NmrUtils.nef2cifDepositOp() - NMR-STAR in CIF output file path:  %s\n" % s2cOutPath)
                 self._lfh.write("+NmrUtils.nef2cifDepositOp() - JSON output file path 1:           %s\n" % logOutPath1)
                 self._lfh.write("+NmrUtils.nef2cifDepositOp() - JSON output file path 2:           %s\n" % logOutPath2)
+                self._lfh.write("+NmrUtils.nef2cifDepositOp() - NMRIF output file path:            %s\n" % nifOutPath)
             return stat
         except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self._lfh)
