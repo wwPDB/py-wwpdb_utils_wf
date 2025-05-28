@@ -467,6 +467,7 @@ class NmrUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - mmCIF input file path:            %s\n" % cifInpPath)
+                self._lfh.write("+NmrUtils.strConsistencyCheckOp() - JSON input file path:             %s\n" % logInpPath)
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - JSON output file path:            %s\n" % logOutPath)
             return stat
         except Exception as _e:  # noqa: F841
