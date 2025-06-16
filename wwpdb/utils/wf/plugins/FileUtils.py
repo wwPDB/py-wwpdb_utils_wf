@@ -24,7 +24,7 @@ import difflib
 import json
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.wf.dbapi.WfDataObject import WfDataObject
+from wwpdb.utils.wf.WfDataObject import WfDataObject
 #
 
 
