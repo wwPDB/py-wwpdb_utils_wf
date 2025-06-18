@@ -25,7 +25,6 @@ import json
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.wf.WfDataObject import WfDataObject
-from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 #
 
 
@@ -182,7 +181,7 @@ class FileUtils(UtilsBase):
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
-    
+
     def batchCopyOp(self, **kwargs):
         """
         Perform batch copy operations as specified in a config file.
@@ -190,13 +189,13 @@ class FileUtils(UtilsBase):
             - inputObjectD["src"]: file object for the config file (JSON)
             - userParameterD["depID"]: deposition ID
         """
-        try:    
+        try:
             (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
             config_file_obj = inpObjD["src"].getFilePathReference()
-    
+
             if self._verbose:
                 self._lfh.write(f"+FileUtils.batchCopyOp Config file: {config_file_obj}\n")
-    
+
             with open(config_file_obj, "r", encoding="utf-8") as fIn:
                 config = json.load(fIn)
                 if self._verbose:
@@ -205,14 +204,14 @@ class FileUtils(UtilsBase):
                 pending_archive_copy_instructions = config.get("copy-instructions", [])
                 if self._verbose:
                     self._lfh.write(f"+FileUtils.batchCopyOp Instructions: {pending_archive_copy_instructions}\n")
-    
+
             for op, spec in pending_archive_copy_instructions:
                 if op != "copy":
                     continue
                 try:
                     src = spec["src"]
                     dst = spec["dst"]
-    
+
                     fin = WfDataObject()
                     fin.setDepositionDataSetId(depID)
                     fin.setWorkflowInstanceId("W_001")
@@ -223,7 +222,7 @@ class FileUtils(UtilsBase):
                         fin.setContentTypeAndFormat(src["content"], src["format"])
                     fin.setVersionId(src["version"])
                     fin.setPartitionNumber(src["partno"])
-    
+
                     fout = WfDataObject()
                     fout.setDepositionDataSetId(depID)
                     fout.setWorkflowInstanceId("W_001")
@@ -234,23 +233,23 @@ class FileUtils(UtilsBase):
                         fout.setContentTypeAndFormat(dst["content"], dst["format"])
                     fout.setVersionId(dst["version"])
                     fout.setPartitionNumber(dst["partno"])
-    
-                    pR = ProcessRunner(verbose=self._verbose, log=self._lfh)
-                    pR.setInput("src", fin)
-                    pR.setOutput("dst", fout)
-                    ok = pR.setAction(op)
+
+                    src_path = fin.getFilePathReference()
+                    dst_path = fout.getFilePathReference()
+
+                    dst_dir = os.path.dirname(dst_path)
+                    if not os.path.exists(dst_dir):
+                        os.makedirs(dst_dir)
+                        if self._verbose:
+                            self._lfh.write(f"+FileUtils.batchCopyOp Created directory: {dst_dir}\n")
+
+                    shutil.copyfile(src_path, dst_path)
                     if self._verbose:
-                        self._lfh.write(f"+FileUtils.batchCopyOp setAction() for {op_name} returns status {ok}\n")
-                    ok = pR.preCheck()
-                    if self._verbose:
-                        self._lfh.write(f"+FileUtils.batchCopyOp preCheck() for {op_name} returns status {ok}\n")
-                    ok = pR.run()
-                    if self._verbose:
-                        self._lfh.write(f"+FileUtils.batchCopyOp run() for {op_name} returns status {ok}\n")
-    
+                        self._lfh.write(f"+FileUtils.batchCopyOp Copied: {src_path} -> {dst_path}\n")
+
                 except Exception as e:
                     if self._verbose:
-                        self._lfh.write(f"+FileUtils.batchCopyOp Failed copy operation for spec: {spec}\n")
+                        self._lfh.write(f"+FileUtils.batchCopyOp Failed copy: {src_path} -> {dst_path}\n")
                         traceback.print_exc(file=self._lfh)
             return True
         except Exception as _e:
