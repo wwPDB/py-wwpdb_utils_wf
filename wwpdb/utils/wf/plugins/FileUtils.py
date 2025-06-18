@@ -21,9 +21,10 @@ import traceback
 import shutil
 import datetime
 import difflib
+import json
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-
+from wwpdb.utils.wf.WfDataObject import WfDataObject
 #
 
 
@@ -177,6 +178,81 @@ class FileUtils(UtilsBase):
             outObjD["dst"].setValue(oL)
             return True
         except Exception as _e:  # noqa: F841
+            if self._verbose:
+                traceback.print_exc(file=self._lfh)
+            return False
+
+    def batchCopyOp(self, **kwargs):
+        """
+        Perform batch copy operations as specified in a config file.
+        Expects:
+            - inputObjectD["src"]: file object for the config file (JSON)
+            - userParameterD["depID"]: deposition ID
+        """
+        try:
+            (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
+            config_file_obj = inpObjD["src"].getFilePathReference()
+
+            if self._verbose:
+                self._lfh.write(f"+FileUtils.batchCopyOp Config file: {config_file_obj}\n")
+
+            with open(config_file_obj, "r", encoding="utf-8") as fIn:
+                config = json.load(fIn)
+                if self._verbose:
+                    self._lfh.write(f"+FileUtils.batchCopyOp Loaded config: {config}\n")
+                depID = config.get("deposition-id")
+                pending_archive_copy_instructions = config.get("copy-instructions", [])
+                if self._verbose:
+                    self._lfh.write(f"+FileUtils.batchCopyOp Instructions: {pending_archive_copy_instructions}\n")
+
+            for op, spec in pending_archive_copy_instructions:
+                if op != "copy":
+                    continue
+                try:
+                    src = spec["src"]
+                    dst = spec["dst"]
+
+                    fin = WfDataObject()
+                    fin.setDepositionDataSetId(depID)
+                    fin.setWorkflowInstanceId("W_001")
+                    fin.setStorageType(src["location"])
+                    if src.get("milestone"):
+                        fin.setContentTypeAndFormat(src["content"] + '-' + src["milestone"], src["format"])
+                    else:
+                        fin.setContentTypeAndFormat(src["content"], src["format"])
+                    fin.setVersionId(src["version"])
+                    fin.setPartitionNumber(src["partno"])
+
+                    fout = WfDataObject()
+                    fout.setDepositionDataSetId(depID)
+                    fout.setWorkflowInstanceId("W_001")
+                    fout.setStorageType(dst["location"])
+                    if dst.get("milestone"):
+                        fout.setContentTypeAndFormat(dst["content"] + '-' + dst["milestone"], dst["format"])
+                    else:
+                        fout.setContentTypeAndFormat(dst["content"], dst["format"])
+                    fout.setVersionId(dst["version"])
+                    fout.setPartitionNumber(dst["partno"])
+
+                    src_path = fin.getFilePathReference()
+                    dst_path = fout.getFilePathReference()
+
+                    dst_dir = os.path.dirname(dst_path)
+                    if not os.path.exists(dst_dir):
+                        os.makedirs(dst_dir)
+                        if self._verbose:
+                            self._lfh.write(f"+FileUtils.batchCopyOp Created directory: {dst_dir}\n")
+
+                    shutil.copyfile(src_path, dst_path)
+                    if self._verbose:
+                        self._lfh.write(f"+FileUtils.batchCopyOp Copied: {src_path} -> {dst_path}\n")
+
+                except Exception as e:
+                    if self._verbose:
+                        self._lfh.write(f"+FileUtils.batchCopyOp Failed copy: {src_path} -> {dst_path}\n")
+                        traceback.print_exc(file=self._lfh)
+            return True
+        except Exception as _e:
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
