@@ -190,7 +190,7 @@ class FileUtils(UtilsBase):
             - userParameterD["depID"]: deposition ID
         """
         try:
-            (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
+            (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwargs)
             config_file_obj = inpObjD["src"].getFilePathReference()
 
             if self._verbose:
@@ -247,12 +247,12 @@ class FileUtils(UtilsBase):
                     if self._verbose:
                         self._lfh.write(f"+FileUtils.batchCopyOp Copied: {src_path} -> {dst_path}\n")
 
-                except Exception as e:
+                except Exception as _e:  # noqa: F841
                     if self._verbose:
                         self._lfh.write(f"+FileUtils.batchCopyOp Failed copy: {src_path} -> {dst_path}\n")
                         traceback.print_exc(file=self._lfh)
             return True
-        except Exception as _e:
+        except Exception as _e:  # noqa: F841
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
