@@ -25,6 +25,8 @@ import json
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.wf.WfDataObject import WfDataObject
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.io.misc.DepositDataSync import DepositDataSync, SyncDirection, print_sync_result
 #
 
 
@@ -253,6 +255,32 @@ class FileUtils(UtilsBase):
                         traceback.print_exc(file=self._lfh)
             return True
         except Exception as _e:  # noqa: F841
+            if self._verbose:
+                traceback.print_exc(file=self._lfh)
+            return False
+
+    def syncToDepositOp(self, **kwargs):
+        try:
+            (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
+
+            dep_id = inpObjD["src"].getDepositionDataSetId()
+            config = ConfigInfo()
+
+            if not config.get("SITE_ARCHIVE_UI_STORAGE_PATH"):
+                self._lfh.write("+FileUtils.syncToDepositOp No archive UI storage path configured. Skipping!\n")
+                return True
+
+            self._lfh.write("+FileUtils.syncToDepositOp starting sync to deposit\n")
+
+            syncer = DepositDataSync()
+            result = syncer.sync_single(dep_id, SyncDirection.TO_DEPOSIT)
+            print_sync_result(result, self._lfh)
+
+            if not result['success']:
+                sys.exit(1)
+
+            return True
+        except Exception as _e:
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
