@@ -3,7 +3,11 @@ import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.io.misc.DataSync import DepositDataSync, SyncDirection, print_sync_result
+try:
+    # We will have present on deposition system - but allow testing without
+    from wwpdb.io.misc.DataSync import DepositDataSync, SyncDirection, print_sync_result
+except ImportError:
+    pass
 
 
 class DepositUtils(UtilsBase):
@@ -12,7 +16,7 @@ class DepositUtils(UtilsBase):
 
     def syncToDepositOp(self, **kwargs):
         try:
-            (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
+            (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwargs)
 
             dep_id = inpObjD["src"].getDepositionDataSetId()
             config = ConfigInfo()
@@ -31,7 +35,7 @@ class DepositUtils(UtilsBase):
                 sys.exit(1)
 
             return True
-        except Exception as _e:
+        except Exception as _e:  # noqa: F841
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
