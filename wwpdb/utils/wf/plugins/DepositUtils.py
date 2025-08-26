@@ -3,7 +3,7 @@ import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.io.misc.DataSync import DepositDataSync, SyncDirection, print_sync_result
+from wwpdb.apps.deposit.depui.depositDataSync import DepositDataSync, SyncDirection, print_sync_result
 
 
 class DepositUtils(UtilsBase):
