@@ -3,7 +3,11 @@ import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.apps.deposit.depui.depositDataSync import DepositDataSync, SyncDirection, print_sync_result
+try:
+    # We will have present on annotation system - but allow testing without
+    from wwpdb.apps.deposit.depui.depositDataSync import DepositDataSync, SyncDirection, print_sync_result
+except ImportError:
+    pass
 
 
 class DepositUtils(UtilsBase):
