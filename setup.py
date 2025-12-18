@@ -41,7 +41,7 @@ setup(
     ],
     #
     install_requires=["mysqlclient", "wwpdb.utils.config >= 0.42", "wwpdb.io", "mmcif", "wwpdb.utils.dp ~= 0.52", "wwpdb.utils.session"],
-    packages=find_packages(exclude=["wwpdb.utils.tests_wf", "mock-data", "tests.*"]),
+    packages=find_packages(exclude=["tests", "mock-data", "tests.*"]),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
         "": ["*.md", "*.rst", "*.txt", "*.cfg"],
