@@ -4,8 +4,8 @@
 #
 # #
 
-import sys
 import logging
+import sys
 
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 
@@ -17,7 +17,7 @@ Grab bag of methods to execute SQL commands on various WF status tables -
 """
 
 
-class dbAPI(object):
+class dbAPI:
     def __init__(self, depID, connection=None, verbose=True):
 
         if connection:
@@ -86,10 +86,8 @@ class dbAPI(object):
                 if run:
                     ret = self.con.runSelectSQL(sql)
                     return ret
-                else:
-                    return sql
-            else:
-                return []
+                return sql
+            return []
         except Exception as e:
             logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
             return []
@@ -127,8 +125,7 @@ class dbAPI(object):
                 if not ok:
                     logger.info("WFE.dbAPI.runSelect :False to update/insert data %s", str(sql))
                 return ok
-            else:
-                return sql
+            return sql
         except Exception as e:
             logger.info("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False
@@ -177,8 +174,7 @@ class dbAPI(object):
 
             if run:
                 return self.con.runInsertSQL(sql)
-            else:
-                return sql
+            return sql
         except Exception as e:
             logger.exception("WFE.dbAPI.runInsert :Exception %s", str(e))
             return False
@@ -197,8 +193,7 @@ class dbAPI(object):
 
             if run:
                 return self.con.runUpdateSQL(sql)
-            else:
-                return sql
+            return sql
 
         except Exception as e:
             logger.exception("WFE.dbAPI.runUpdate :Exception %s", str(e))
@@ -238,14 +233,13 @@ class dbAPI(object):
             if self.con.exist(depDB):
                 rowExists = True
 
+        elif where:
+            sql = "select ordinal from " + str(table) + " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
+            rows = self.con.runSelectSQL(sql)
+            if rows and len(rows) > 0:
+                rowExists = True
         else:
-            if where:
-                sql = "select ordinal from " + str(table) + " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
-                rows = self.con.runSelectSQL(sql)
-                if rows and len(rows) > 0:
-                    rowExists = True
-            else:
-                logger.info("WFE.dbAPI.runUpdate: Undefined key ")
+            logger.info("WFE.dbAPI.runUpdate: Undefined key ")
 
         ok = True
         try:
@@ -261,8 +255,7 @@ class dbAPI(object):
             if not ok:
                 logger.info("WFE.dbAPI.runSelect :False to update/insert data ")
                 return ok
-            else:
-                return ok
+            return ok
         except Exception as e:
             logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False

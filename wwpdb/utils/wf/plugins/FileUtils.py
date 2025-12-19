@@ -15,16 +15,17 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import os
-import sys
-import traceback
-import shutil
 import datetime
 import difflib
 import json
+import os
+import shutil
+import sys
+import traceback
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.wf.WfDataObject import WfDataObject
+
 #
 
 
@@ -130,9 +131,8 @@ class FileUtils(UtilsBase):
                 nBytes = os.path.getsize(newPth)
                 outObjD["dst"].setValue(nBytes)
                 return True
-            else:
-                outObjD["dst"].setValue(0)
-                return False
+            outObjD["dst"].setValue(0)
+            return False
         except Exception as _e:  # noqa: F841
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
@@ -148,8 +148,7 @@ class FileUtils(UtilsBase):
                 dt = datetime.datetime.fromtimestamp(tSec)
                 outObjD["dst"].setValue(dt)
                 return True
-            else:
-                return False
+            return False
         except Exception as _e:  # noqa: F841
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
@@ -167,11 +166,11 @@ class FileUtils(UtilsBase):
                 self._lfh.write("+FileUtils.diffOp Input  path 1 %s\n" % iPth1)
                 self._lfh.write("+FileUtils.diffOp Input  path 2 %s\n" % iPth2)
 
-            ifh = open(iPth1, "r")
+            ifh = open(iPth1)
             aL1 = ifh.readlines()
             ifh.close()
 
-            ifh = open(iPth2, "r")
+            ifh = open(iPth2)
             aL2 = ifh.readlines()
             ifh.close()
             oL = difflib.context_diff(aL1, aL2, "src1", "src2")
@@ -196,7 +195,7 @@ class FileUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write(f"+FileUtils.batchCopyOp Config file: {config_file_obj}\n")
 
-            with open(config_file_obj, "r", encoding="utf-8") as fIn:
+            with open(config_file_obj, encoding="utf-8") as fIn:
                 config = json.load(fIn)
                 if self._verbose:
                     self._lfh.write(f"+FileUtils.batchCopyOp Loaded config: {config}\n")

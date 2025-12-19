@@ -17,17 +17,17 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+import json
 import os
+import re
 import sys
 import traceback
-import json
-import re
+
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
-
-from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
-from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 
 try:
     # We will have present on annotation system - but allow testing of DepUI merge without
@@ -157,12 +157,12 @@ class NmrUtils(UtilsBase):
             nameList = []
             nameListFilePath = inpObjD["src2"].getFilePathReference()
             #
-            with open(csPathListFilePath, "r") as ifh:
+            with open(csPathListFilePath) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append(txt)
             #
-            with open(nameListFilePath, "r") as ifh:
+            with open(nameListFilePath) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     nameList.append(txt)
@@ -355,7 +355,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -403,7 +403,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -454,7 +454,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -494,7 +494,7 @@ class NmrUtils(UtilsBase):
             csPathList = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             #
-            with open(csPathListFilePath, "r") as ifh:
+            with open(csPathListFilePath) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append(txt)
@@ -505,7 +505,7 @@ class NmrUtils(UtilsBase):
             #
             if os.path.exists(mrInpPath):
 
-                with open(mrInpPath, "r") as file:
+                with open(mrInpPath) as file:
                     mr_list = json.loads(file.read())
 
                 datablock_pattern = re.compile(r"\s*data_\S+\s*")
@@ -529,7 +529,7 @@ class NmrUtils(UtilsBase):
                         has_loop = False
                         has_stop = False
 
-                        with open(mr_file, "r") as ifp:
+                        with open(mr_file) as ifp:
                             for line in ifp:
                                 if datablock_pattern.match(line):
                                     has_datablock = True
@@ -605,11 +605,11 @@ class NmrUtils(UtilsBase):
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             csAuthFileNamePath = inpObjD["src2"].getFilePathReference()
             #
-            with open(csPathListFilePath, "r") as ifh:
+            with open(csPathListFilePath) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append({"file_name": txt, "file_type": "nmr-star"})
-            with open(csAuthFileNamePath, "r") as ifh:
+            with open(csAuthFileNamePath) as ifh:
                 for fid, tline in enumerate(ifh):
                     txt = str(tline[:-1]).strip()
                     if fid < len(csPathList) and len(txt) > 0:
@@ -621,7 +621,7 @@ class NmrUtils(UtilsBase):
             #
             if os.path.exists(mrInpPath):
 
-                with open(mrInpPath, "r") as file:
+                with open(mrInpPath) as file:
                     mr_list = json.loads(file.read())
 
                 datablock_pattern = re.compile(r"\s*data_\S+\s*")
@@ -647,7 +647,7 @@ class NmrUtils(UtilsBase):
 
                         try:
 
-                            with open(mr_file, "r") as ifp:
+                            with open(mr_file) as ifp:
                                 for line in ifp:
                                     if datablock_pattern.match(line):
                                         has_datablock = True
@@ -748,7 +748,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -811,7 +811,7 @@ class NmrUtils(UtilsBase):
             nifOutPath = outObjD["dst6"].getFilePathReference()
             #
             originalFileName = None
-            with open(authFileNamePath, "r") as ifh:
+            with open(authFileNamePath) as ifh:
                 for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
                     if len(originalFileName) == 0:
@@ -826,7 +826,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -891,7 +891,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -946,7 +946,7 @@ class NmrUtils(UtilsBase):
             nifOutPath = outObjD["dst4"].getFilePathReference()
             #
             originalFileName = None
-            with open(authFileNamePath, "r") as ifh:
+            with open(authFileNamePath) as ifh:
                 for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
                     if len(originalFileName) == 0:
@@ -961,7 +961,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():
@@ -1015,7 +1015,7 @@ class NmrUtils(UtilsBase):
 
             if os.path.exists(cnfInpPath):
 
-                with open(cnfInpPath, "r") as file:
+                with open(cnfInpPath) as file:
                     conf = json.loads(file.read())
 
                 for item in conf.keys():

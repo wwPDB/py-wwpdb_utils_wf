@@ -14,8 +14,8 @@ __version__ = "V0.01"
 
 # pylint: disable=unused-import
 
-import unittest
 import datetime
+import unittest
 
 if __package__ is None or __package__ == "":
     import sys
@@ -26,11 +26,18 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import MyNoop  # noqa: F401
 
-from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi  # noqa: F401
-from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 from wwpdb.utils.wf.dbapi.DbCommand import DbCommand
+from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
+from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi  # noqa: F401
+from wwpdb.utils.wf.dbapi.WFEtime import (  # noqa: F401
+    getTimeFromEpoc,
+    getTimeNow,
+    getTimeReadable,
+    getTimeSeconds,
+    getTimeString,
+    getTimeZero,
+)
 from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
-from wwpdb.utils.wf.dbapi.WFEtime import getTimeZero, getTimeNow, getTimeSeconds, getTimeString, getTimeFromEpoc, getTimeReadable  # noqa: F401
 
 
 class ImportTests(unittest.TestCase):

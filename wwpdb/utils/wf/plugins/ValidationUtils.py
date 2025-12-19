@@ -30,17 +30,17 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 import os
-import sys
 import shutil
+import sys
 import traceback
 
 from wwpdb.io.file.DataExchange import DataExchange
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.session.WebRequest import InputRequest
-
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
+from wwpdb.utils.session.WebRequest import InputRequest
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 try:
     # We will have present on annotation system - but allow testing without
@@ -52,9 +52,10 @@ except ImportError:
 # Not a requirements for wwpdb.utils.wf - but if running validation, it will have pulled in wwpdb.utils.nmr
 # into the virtual environment
 try:
-    from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar
-    from mmcif.io.IoAdapterPy import IoAdapterPy
     import tempfile
+
+    from mmcif.io.IoAdapterPy import IoAdapterPy
+    from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar
 except ImportError:
     pass
 

@@ -13,13 +13,14 @@
 """
 
 import sys
+
 import MySQLdb
 
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
-class LocalDbApi(object):
+class LocalDbApi:
     """ """
 
     def __init__(self, log=sys.stderr, verbose=False):

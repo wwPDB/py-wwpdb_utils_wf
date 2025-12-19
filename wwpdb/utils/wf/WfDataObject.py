@@ -22,8 +22,9 @@ try:
 except ImportError:
     import io as StringIO
 
-from wwpdb.utils.wf.DataSelector import DataSelector
 from wwpdb.io.locator.DataReference import DataFileReference
+
+from wwpdb.utils.wf.DataSelector import DataSelector
 from wwpdb.utils.wf.DataValueContainer import DataValueContainer
 
 

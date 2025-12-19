@@ -44,19 +44,19 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 try:
     # We will have present on annotation system - but allow testing without
     from wwpdb.apps.ann_tasks_v2.check.EmMapCheck import EmMapCheckTask
-    from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
     from wwpdb.apps.ann_tasks_v2.em3d.EmAutoFix import EmAutoFix
-    from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
     from wwpdb.apps.ann_tasks_v2.em3d.EmHeaderUtils import EmHeaderUtils
-    from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
+    from wwpdb.apps.ann_tasks_v2.em3d.EmMapAutoFixVers import EmMapAutoFixVers
     from wwpdb.apps.ann_tasks_v2.expIoUtils.PdbxExpUpdate import PdbxExpUpdate
-    from wwpdb.utils.session.WebRequest import InputRequest
+    from wwpdb.apps.ann_tasks_v2.io.PisaReader import PisaAssemblyReader
+    from wwpdb.apps.ann_tasks_v2.related.UpdateRelated import UpdateRelated
     from wwpdb.io.locator.PathInfo import PathInfo
+    from wwpdb.utils.session.WebRequest import InputRequest
 except ImportError:
     pass
 
-from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
 from mmcif.io.IoAdapterCore import IoAdapterCore
+from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
 
 logger = logging.getLogger(__name__)
 
@@ -342,7 +342,7 @@ class AnnotationUtils(UtilsBase):
             dp.expList(outputList)
             #
             if os.access(inReportPath, os.R_OK):
-                ith = open(inReportPath, "r")
+                ith = open(inReportPath)
                 data = ith.read()
                 ith.close()
                 if len(data) > 0:
@@ -351,7 +351,7 @@ class AnnotationUtils(UtilsBase):
                         strip_line = line.strip()
                         if (strip_line == "") or (strip_line == "input_file_1 validates") or strip_line.startswith("stdin:"):
                             continue
-                        elif strip_line.startswith("input_file_1:") or strip_line.startswith("input_file_1 "):
+                        if strip_line.startswith("input_file_1:") or strip_line.startswith("input_file_1 "):
                             oth.write("%s\n" % strip_line[13:])
                         else:
                             oth.write("%s\n" % strip_line)
@@ -1195,7 +1195,7 @@ class AnnotationUtils(UtilsBase):
         # if the first line is not 'finished!' then there is a failure -
         status = "error"
         if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath, "r")
+            ifh = open(logFilePath)
             for line in ifh:
                 if str(line).upper().startswith("FINISHED"):
                     status = "ok"
@@ -1457,7 +1457,7 @@ class AnnotationUtils(UtilsBase):
             dirPath = inpObjD["src"].getDirPathReference()
             if not os.path.exists(modelPath):
                 # no model
-                raise IOError("Missing model file")
+                raise OSError("Missing model file")
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             dIn = ioObj.readFile(inputFilePath=modelPath, selectList=["em_map"])
@@ -1474,7 +1474,7 @@ class AnnotationUtils(UtilsBase):
             pi = PathInfo(siteId=siteId)
 
             # loop through all the map file names in the mmcif file and convert to Bcif files
-            for mapNumber in range(0, len(cObj)):
+            for mapNumber in range(len(cObj)):
                 mapName = cObj.getValue("file", mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
                 mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
@@ -1504,9 +1504,8 @@ class AnnotationUtils(UtilsBase):
             if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
                 dw = DensityWrapper()
                 return dw.convert_xray_density_map(coord_file=coordinates, in_2fofc_cif=twofofcmap, in_fofc_cif=fofcmap, out_binary_volume=mapBcifPath, working_dir=dirPath)
-            else:
-                # no x-ray mmCIF map files
-                return True
+            # no x-ray mmCIF map files
+            return True
 
         except Exception as _e:  # noqa: F841
             logging.error(_e)

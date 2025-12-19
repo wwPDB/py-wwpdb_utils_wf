@@ -21,17 +21,18 @@ __email__ = "zfeng@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
+import datetime
 import os
 import sys
 import time
-import datetime
+
 import MySQLdb
 
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
-class DbApiUtil(object):
+class DbApiUtil:
     def __init__(self, dbServer=None, dbHost=None, dbName=None, dbUser=None, dbPw=None, dbSocket=None, dbPort=None, verbose=False, log=sys.stderr):
         """ """
         self.__debug = False

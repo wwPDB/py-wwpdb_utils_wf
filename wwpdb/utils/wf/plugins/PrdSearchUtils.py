@@ -19,9 +19,10 @@ import os
 import sys
 import traceback
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class PrdSearchUtils(UtilsBase):

@@ -18,9 +18,10 @@ __version__ = "V0.01"
 import sys
 import traceback
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppEm
 from mmcif_utils.trans.InstanceMapper import InstanceMapper
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppEm
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class DictUtils(UtilsBase):

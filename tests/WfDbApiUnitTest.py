@@ -23,8 +23,9 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import TESTOUTPUT  # noqa: F401
 
-from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.testing.Features import Features
+
+from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 
 
 @unittest.skipUnless(Features().haveMySqlTestServer(), "Needs MySql test server for testing")

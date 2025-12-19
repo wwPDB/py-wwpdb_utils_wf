@@ -28,8 +28,10 @@ __version__ = "V0.01"
 
 import sys
 import traceback
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+
 from wwpdb.utils.dp.PdbxMergeCategory import PdbxMergeCategory
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class ReportUtils(UtilsBase):

@@ -18,10 +18,11 @@ __version__ = "V0.01"
 import sys
 import traceback
 from xml.dom import minidom
+
 from wwpdb.io.misc.FormatOut import FormatOut
 
 
-class ActionRegistryIo(object):
+class ActionRegistryIo:
 
     """I/O manager class action definitions for the action registry.
 
@@ -118,7 +119,7 @@ class ActionRegistryIo(object):
                 dId = child.getAttributeNode("name").nodeValue
                 tD = {"dataReferenceType": None, "contentType": None, "fileFormat": None, "containerType": None, "valueType": None, "selectorType": None}
                 for tch in child.childNodes:
-                    if tch.nodeName in tD.keys():
+                    if tch.nodeName in tD:
                         if len(tch.childNodes) > 0:
                             tD[tch.nodeName] = tch.childNodes[0].nodeValue
                 oD[dId] = tD

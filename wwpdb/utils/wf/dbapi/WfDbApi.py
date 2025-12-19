@@ -19,18 +19,20 @@
 
 """
 
+import datetime
 import os
 import sys
 import time
-import datetime
+
 import MySQLdb
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+
+from wwpdb.utils.wf.dbapi.DbCommand import DbCommand
 
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
-from wwpdb.utils.wf.dbapi.DbCommand import DbCommand
-from wwpdb.utils.wf.schema.WfSchemaMap import WfSchemaMap
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
+from wwpdb.utils.wf.schema.WfSchemaMap import WfSchemaMap
 
 
 class WfDbApi:
@@ -335,9 +337,8 @@ class WfDbApi:
             # retry limit - all gone bad
             return None
 
-        else:
-            self.__lfh.write("WfDbApi::saveObject(): The data object is not the one of deposition, class, instance, task\nNothing is done.\n")
-            return "bad-code"
+        self.__lfh.write("WfDbApi::saveObject(): The data object is not the one of deposition, class, instance, task\nNothing is done.\n")
+        return "bad-code"
 
     def getStatus(self, dataObj):
         """
@@ -359,21 +360,18 @@ class WfDbApi:
             if self.__idList[3] in returnObj.keys() and self.__idList[2] in returnObj.keys() and self.__idList[1] in returnObj.keys() and self.__idList[0] in returnObj.keys():
                 return returnObj[self.__statusList[2]]
             # a instance
-            elif (
+            if (
                 self.__idList[3] not in returnObj.keys() and self.__idList[2] in returnObj.keys() and self.__idList[1] in returnObj.keys() and self.__idList[0] in returnObj.keys()
             ):
                 return returnObj[self.__statusList[1]]
             # a deposition
-            elif (
+            if (
                 self.__idList[0] in returnObj.keys()
                 and self.__idList[1] not in returnObj.keys()
                 and self.__idList[2] not in returnObj.keys()
                 and self.__idList[3] not in returnObj.keys()
             ):
                 return returnObj[self.__statusList[0]]
-
-            else:
-                pass
 
         return ""
 
@@ -425,9 +423,8 @@ class WfDbApi:
             # retried - all gone bad
             return None
 
-        else:
-            self.__lfh.write("+WfDbApi::updateStatus(): The data object is not the one of deposition, instance, task. Nothing is updated.\n")
-            return "code-bad"
+        self.__lfh.write("+WfDbApi::updateStatus(): The data object is not the one of deposition, instance, task. Nothing is updated.\n")
+        return "code-bad"
 
     def processStatus(self, depID, instID, classID):
         """
@@ -587,8 +584,7 @@ class WfDbApi:
         """
         if str == "":
             return None
-        else:
-            return str
+        return str
 
     def exist(self, dataObj):
         """
@@ -1068,9 +1064,8 @@ class WfDbApi:
         if len(rDict) == 0:
             # no instance
             return 1
-        else:
-            returnId = rDict[self.__idList[2]]
-            return int("%s" % returnId[2:]) + 1
+        returnId = rDict[self.__idList[2]]
+        return int("%s" % returnId[2:]) + 1
 
     def referenceExist(self, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):
         """
@@ -1124,11 +1119,10 @@ class WfDbApi:
                 else:
                     # unhandle DB error
                     return None
+            elif len(results) > 0:
+                return True
             else:
-                if len(results) > 0:
-                    return True
-                else:
-                    return False
+                return False
 
         # all gone bad
         return None
@@ -1228,11 +1222,10 @@ class WfDbApi:
                 else:
                     # unhandled DB error
                     return None
+            elif str(type(rDict)).find("list") > 0:
+                return rDict[0]
             else:
-                if str(type(rDict)).find("list") > 0:
-                    return rDict[0]
-                else:
-                    return rDict
+                return rDict
 
         # all gone bad
         return None

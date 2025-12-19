@@ -16,7 +16,7 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 
-class DataSelector(object):
+class DataSelector:
 
     """A container for data selection criteria.
 

@@ -20,13 +20,13 @@ __version__ = "V0.01"
 import sys
 import traceback
 
+from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 
-
-class CifFile(object):
+class CifFile:
 
     """
     CifFile
@@ -419,7 +419,7 @@ class PdbxUtils(UtilsBase):
                     indexList = myTable.Search((dbId,), ("database_id",))
                     if len(indexList) > 0:
                         tList = []
-                        for idx in range(0, len(indexList)):
+                        for idx in range(len(indexList)):
                             tList.append(myTable(indexList[idx], "database_code"))
                         accessionD[dbId] = tList
                     else:

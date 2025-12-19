@@ -24,7 +24,7 @@ import traceback
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
 
-class ProcessRunner(object):
+class ProcessRunner:
 
     """Provide access to action/process definitions, assign data inputs and outputs,
     and manage invocation/execution of processes.
@@ -79,8 +79,7 @@ class ProcessRunner(object):
         if self.__aReg.isDefinedAction(self.__actionId):
             self.__setParameterDictDefault()
             return True
-        else:
-            return False
+        return False
 
     def __setParameterDictDefault(self):
         """Copy the default user adjustable parameters from the action definition
@@ -266,8 +265,7 @@ class ProcessRunner(object):
                     internalParameterD=self.__aReg.getInternalParameterDict(self.__actionId),
                 )
                 return ok
-            else:
-                return False
+            return False
         except Exception as _e:  # noqa: F841
             if self.__verbose:
                 traceback.print_exc(file=self.__lfh)

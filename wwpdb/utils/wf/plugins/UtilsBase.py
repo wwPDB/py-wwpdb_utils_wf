@@ -20,7 +20,7 @@ __version__ = "V0.01"
 import sys
 
 
-class UtilsBase(object):
+class UtilsBase:
 
     """Base class implementing the method calling interface of the
     `ProcessRunner()` class.   This interface provides the keyword arguments:

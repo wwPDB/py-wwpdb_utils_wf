@@ -24,10 +24,11 @@ __version__ = "V0.07"
 import sys
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+
 from wwpdb.utils.wf.dbapi.DbApiUtil import DbApiUtil
 
 
-class StatusDbApi(object):
+class StatusDbApi:
     """ """
 
     __schemaMap = {  # pylint: disable=unused-private-member
@@ -86,7 +87,7 @@ class StatusDbApi(object):
         #
         retList = self.__dbApi.selectData(key="GET_DEP_ID", parameter=(groupId))
         for retDir in retList:
-            if "dep_set_id" in retDir and retDir["dep_set_id"]:
+            if retDir.get("dep_set_id"):
                 entryList.append(str(retDir["dep_set_id"]))
             #
         #

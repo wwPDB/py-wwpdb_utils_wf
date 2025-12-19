@@ -10,10 +10,10 @@
 Test cases for process manager class.  Simple file system tests are included in this module.
 
 """
-import sys
-import unittest
-import traceback
 import logging
+import sys
+import traceback
+import unittest
 
 if __package__ is None or __package__ == "":
     from os import path
@@ -23,9 +23,10 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401
 
+from wwpdb.utils.config.ConfigInfo import getSiteId
+
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.utils.wf.WfDataObject import WfDataObject
-from wwpdb.utils.config.ConfigInfo import getSiteId
 
 # Create logger
 logger = logging.getLogger()

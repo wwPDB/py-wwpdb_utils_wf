@@ -19,11 +19,13 @@ __version__ = "V0.01"
 
 import sys
 import traceback
-from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
+
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
+from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
 
-class ActionRegistry(object):
+
+class ActionRegistry:
 
     """Container and manager class for the registry of supported process actions.
 
@@ -71,8 +73,7 @@ class ActionRegistry(object):
         """
         if actionId in self.__D:
             return True
-        else:
-            return False
+        return False
 
     def getMethodName(self, actionId):
         """Returns:

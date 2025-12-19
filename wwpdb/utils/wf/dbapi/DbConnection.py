@@ -13,8 +13,9 @@
      07-Feb-2014  jdw  -  Add socket support --
      23-Mar-2016  jdw  -  make ports ints.
 """
-import sys
 import os
+import sys
+
 import MySQLdb
 
 

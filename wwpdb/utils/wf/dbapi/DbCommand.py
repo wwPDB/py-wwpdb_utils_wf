@@ -18,6 +18,7 @@ Updates :
 """
 
 import sys
+
 import MySQLdb
 
 
@@ -61,9 +62,8 @@ class DbCommand:
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
                     ld.append(c)
-                else:
-                    if self.__verbose:
-                        self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
+                elif self.__verbose:
+                    self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
                 if len(ld) > 0:
                     changingVal = " SET " + ld[0]
                     for c in ld[1:]:
@@ -90,9 +90,8 @@ class DbCommand:
                 else:
                     c = " %s = '%s' " % (constraintList[k], v)
                 ld.append(c)
-            else:
-                if self.__verbose:
-                    self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
+            elif self.__verbose:
+                self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
 
             if len(ld) > 0:
                 constraint = " WHERE " + ld[0]
@@ -129,9 +128,8 @@ class DbCommand:
                     # like " column in (select column from another table)"
                     c = "  %s " % (v)
                     ld.append(c)
-                else:
-                    if self.__verbose:
-                        self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
+                elif self.__verbose:
+                    self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
                 if len(ld) > 0:
                     constraint = " WHERE " + ld[0]
                     for c in ld[1:]:
@@ -163,9 +161,8 @@ class DbCommand:
                             constraint += ")"
                     elif len(c) == 2 and str(c[0]).upper() == "LOGOP" and str(c[1]).upper() in self.__logOps:  # noqa: W504
                         constraint += " %s " % str(c[1]).upper()
-                    else:
-                        if self.__lfh:
-                            self.__lfh.write("Constraint error: %s\n" % str(c))
+                    elif self.__lfh:
+                        self.__lfh.write("Constraint error: %s\n" % str(c))
 
         else:
             #           Just ignore if constraints are entered as None
@@ -329,8 +326,7 @@ class DbCommand:
 
         if len(returnList) > 1:
             return returnList
-        else:
-            return row
+        return row
 
     def update(self, type, tableDef, updateVal, constraintDef=None):  # pylint: disable=redefined-builtin
         """

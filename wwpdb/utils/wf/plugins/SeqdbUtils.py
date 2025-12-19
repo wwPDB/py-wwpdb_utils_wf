@@ -22,7 +22,9 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+
 from wwpdb.utils.config.ConfigInfo import getSiteId
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 try:

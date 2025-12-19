@@ -18,6 +18,7 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
@@ -52,7 +53,7 @@ class PcmCsvUtils(UtilsBase):
             #
             yes_no_value = "NO"
             if os.access(srcPath, os.R_OK):
-                ifh = open(srcPath, "r")
+                ifh = open(srcPath)
                 data = ifh.read()
                 ifh.close()
                 #

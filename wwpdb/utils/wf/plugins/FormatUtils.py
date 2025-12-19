@@ -25,9 +25,10 @@ import os
 import sys
 import traceback
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class FormatUtils(UtilsBase):
@@ -285,7 +286,7 @@ class FormatUtils(UtilsBase):
     def __checkMergeStatus(self, logFilePath):
         status = "ok"
         if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath, "r")
+            ifh = open(logFilePath)
             for line in ifh:
                 if str(line).upper().startswith("++ERROR") or str(line).upper().startswith("ERROR:"):
                     return "error"

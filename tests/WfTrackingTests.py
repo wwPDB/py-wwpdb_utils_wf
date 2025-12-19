@@ -16,8 +16,8 @@ __version__ = "V0.07"
 
 
 import sys
-import unittest
 import traceback
+import unittest
 
 if __package__ is None or __package__ == "":
     from os import path
@@ -27,8 +27,9 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import MyNoop  # noqa: F401
 
-from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 from wwpdb.utils.testing.Features import Features
+
+from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 
 
 @unittest.skipUnless(Features().haveMySqlTestServer(), "Needs MySql test server for testing")

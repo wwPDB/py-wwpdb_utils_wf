@@ -15,13 +15,12 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-from datetime import datetime, date
-
 # For python 2/3 compatible comparison with isinstace
 from builtins import str
+from datetime import date, datetime
 
 
-class DataValueContainer(object):
+class DataValueContainer:
 
     """Container for data values.
 
@@ -74,19 +73,15 @@ class DataValueContainer(object):
                     if not isinstance(v, self.__valueType):
                         return False
                 return True
-            else:
-                return False
-        elif self.__containerTypeName == "dict":
+            return False
+        if self.__containerTypeName == "dict":
             if isinstance(self.__value, dict):
                 return True
-            else:
-                return False
+            return False
 
-        else:
-            if isinstance(self.__value, self.__valueType):
-                return True
-            else:
-                return False
+        if isinstance(self.__value, self.__valueType):
+            return True
+        return False
 
     def isValueSet(self):
         """Performs a check if the current data value has been set.
@@ -123,9 +118,7 @@ class DataValueContainer(object):
             self.__valueTypeName = str(typeName)
             if typeName == "bool" or typeName == "boolean":
                 self.__valueType = bool
-            elif typeName == "integer" or typeName == "int":
-                self.__valueType = int
-            elif typeName == "float" or typeName == "double":
+            elif typeName == "integer" or typeName == "int" or typeName == "float" or typeName == "double":
                 self.__valueType = int
             elif typeName == "string":
                 self.__valueType = str
@@ -138,8 +131,7 @@ class DataValueContainer(object):
             else:
                 return False
             return True
-        else:
-            return False
+        return False
 
     def setContainerTypeName(self, containerName):
         """Set the container type name.
@@ -157,8 +149,7 @@ class DataValueContainer(object):
         if containerName in ["value", "list", "dict"]:
             self.__containerTypeName = containerName
             return True
-        else:
-            return False
+        return False
 
     def getContainerTypeName(self):
         return self.__containerTypeName
