@@ -50,7 +50,7 @@ class ImportTests(unittest.TestCase):
         _vC = DbCommand(dbcon=None)  # noqa: F841
         _vC = WfTracking()  # noqa: F841
 
-        self.assertEqual(getTimeZero(), datetime.datetime(2000, 1, 1, 0, 0, 0))
+        self.assertEqual(getTimeZero(), datetime.datetime(2000, 1, 1, 0, 0, 0))  # noqa: PT009,DTZ001
 
 
 if __name__ == "__main__":

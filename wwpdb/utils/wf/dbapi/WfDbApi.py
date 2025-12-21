@@ -1,21 +1,21 @@
 """
 
-    File:    WfDbApi.py
+   File:    WfDbApi.py
 
-    Providing APIs for workflow engine and workflow manager in D&A tool
+   Providing APIs for workflow engine and workflow manager in D&A tool
 
-   __author__    = "Li Chen"
-   __email__     = "lchen@rcsb.rutgers.edu"
-   __version__   = "V0.01"
-   __Date__      = "April 21, 2010"
+  __author__    = "Li Chen"
+  __email__     = "lchen@rcsb.rutgers.edu"
+  __version__   = "V0.01"
+  __Date__      = "April 21, 2010"
 
- Updates:
-  07-Feb-2014  to  add processStatus()
-  07-Feb-2014  jdw add socket support
-   4-Aug-2014  jdw add debug flag to minimize connection tracking logging
-  26-sep-2017  ep  runInsertSQL/runUpdateSQL allow for parameterized arguments
-                   to pass to db execute to handle quoting
-  15-Jul-2019  ep  add siteId as optional argument to __init__
+Updates:
+ 07-Feb-2014  to  add processStatus()
+ 07-Feb-2014  jdw add socket support
+  4-Aug-2014  jdw add debug flag to minimize connection tracking logging
+ 26-sep-2017  ep  runInsertSQL/runUpdateSQL allow for parameterized arguments
+                  to pass to db execute to handle quoting
+ 15-Jul-2019  ep  add siteId as optional argument to __init__
 
 """
 
@@ -54,18 +54,18 @@ class WfDbApi:
 
     # This could be rewritten wih inheritance - later
     # pylint is picking up on shared data among instances and thinks unused
-    __schemaWf = WfSchemaMap._schemaMap  # pylint: disable=protected-access,unused-private-member
-    __selectList = WfSchemaMap._selectColumns  # pylint: disable=protected-access,unused-private-member
-    __constraintList = WfSchemaMap._constraintList  # pylint: disable=protected-access,unused-private-member
+    __schemaWf = WfSchemaMap._schemaMap  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __selectList = WfSchemaMap._selectColumns  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __constraintList = WfSchemaMap._constraintList  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
     # __statusList = WfSchemaMap._columnForStatus
-    __statusList = WfSchemaMap._usefulItems[0:3]  # pylint: disable=protected-access,unused-private-member
-    __columnList = WfSchemaMap._usefulItems  # pylint: disable=protected-access,unused-private-member
-    __tableList = WfSchemaMap._tables  # pylint: disable=protected-access,unused-private-member
-    __idList = WfSchemaMap._objIds  # pylint: disable=protected-access,unused-private-member
-    __refList = WfSchemaMap._referencePairs  # pylint: disable=protected-access,unused-private-member
-    __sqlJoinStr = WfSchemaMap._tableJoinSyntext  # pylint: disable=protected-access,unused-private-member
-    __orderBy = WfSchemaMap._orderBy  # pylint: disable=protected-access,unused-private-member
-    __userInfo = WfSchemaMap._userInfo  # pylint: disable=protected-access,unused-private-member
+    __statusList = WfSchemaMap._usefulItems[0:3]  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __columnList = WfSchemaMap._usefulItems  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __tableList = WfSchemaMap._tables  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __idList = WfSchemaMap._objIds  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __refList = WfSchemaMap._referencePairs  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __sqlJoinStr = WfSchemaMap._tableJoinSyntext  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __orderBy = WfSchemaMap._orderBy  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
+    __userInfo = WfSchemaMap._userInfo  # noqa: SLF001 pylint: disable=protected-access,unused-private-member
 
     def __init__(self, log=sys.stderr, verbose=False, siteId=None):
         """
@@ -92,7 +92,13 @@ class WfDbApi:
             self.__lfh.write("+WfDbApi.__init__() using socket environment reference %r\n" % os.getenv("SITE_DB_SOCKET", None))
 
         self.__myDb = DbConnection(
-            dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort, dbSocket=self.__dbSocket
+            dbServer=self.__dbServer,
+            dbHost=self.__dbHost,
+            dbName=self.__dbName,
+            dbUser=self.__dbUser,
+            dbPw=self.__dbPw,
+            dbPort=self.__dbPort,
+            dbSocket=self.__dbSocket,
         )
 
         self.__dbcon = self.__myDb.connect()
@@ -107,7 +113,7 @@ class WfDbApi:
         except MySQLdb.Error:
             self.__lfh.write("+WfDbApi.reConnect() DB connection lost - cannot close\n")
             self.__lfh.write("+WfDbApi.reConnect() Re-connecting to the database ..\n")
-            self.__lfh.write("+WfDbApi.reConnect() UTC time = %s\n" % datetime.datetime.utcnow())
+            self.__lfh.write("+WfDbApi.reConnect() UTC time = %s\n" % datetime.datetime.utcnow())  # noqa: DTZ003
 
         for i in range(1, 5):
             try:
@@ -126,7 +132,6 @@ class WfDbApi:
         """
 
         if str(self.__dbcon).find("closed") > 0:
-
             self.__lfh.write("+WfDbApi::testConnection(): Re-connecting to the database.\n")
             self.__dbcon = self.__myDb.connect()
             self.__db = DbCommand(self.__dbcon, self.__lfh, self.__verbose)
@@ -136,7 +141,7 @@ class WfDbApi:
         try:
             if str(self.__dbcon).find("open") > 0:
                 return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001,S110
             pass
         return False
 
@@ -170,6 +175,7 @@ class WfDbApi:
                     return None
             else:
                 return ret
+        return None
 
     def runUpdateSQL(self, sql, args=None):
         """
@@ -276,7 +282,6 @@ class WfDbApi:
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             if len(orderList) > 0:
                 rDict = self.__db.selectRows(tableDef, constraintDict, orderList)
             else:
@@ -299,7 +304,7 @@ class WfDbApi:
         # Retried loop all gone bad
         return None
 
-    def saveObject(self, dataObj, type="insert", constraintDict=None):  # pylint: disable=redefined-builtin
+    def saveObject(self, dataObj, type="insert", constraintDict=None):  # noqa: A002 pylint: disable=redefined-builtin
         """
         insert/update a new record in the database
         This method currently is for save one of objects in following list
@@ -307,17 +312,15 @@ class WfDbApi:
         """
 
         for i in [3, 2, 1, 0]:
-            if self.__idList[i] in dataObj.keys():
+            if self.__idList[i] in dataObj:
                 dataObj[self.__idList[i]] = self.checkId(dataObj[self.__idList[i]])
                 if dataObj[self.__idList[i]] is None:
                     self.__lfh.write("WfDbApi::saveObject(): %s can not be None or empty string." % self.__idList[i])
-                    exit(1)
+                    sys.exit(1)
 
         tableDef = self.getTableDef(dataObj)
         if len(tableDef) > 0:
-
             for retry in range(1, self.__Nretry):
-
                 ret = self.__db.update(type, tableDef, dataObj, constraintDict)
 
                 if ret is None:
@@ -357,20 +360,13 @@ class WfDbApi:
 
         for _k, _v in returnObj.items():  # Not clear why for loop
             # a task
-            if self.__idList[3] in returnObj.keys() and self.__idList[2] in returnObj.keys() and self.__idList[1] in returnObj.keys() and self.__idList[0] in returnObj.keys():
+            if self.__idList[3] in returnObj and self.__idList[2] in returnObj and self.__idList[1] in returnObj and self.__idList[0] in returnObj:
                 return returnObj[self.__statusList[2]]
             # a instance
-            if (
-                self.__idList[3] not in returnObj.keys() and self.__idList[2] in returnObj.keys() and self.__idList[1] in returnObj.keys() and self.__idList[0] in returnObj.keys()
-            ):
+            if self.__idList[3] not in returnObj and self.__idList[2] in returnObj and self.__idList[1] in returnObj and self.__idList[0] in returnObj:
                 return returnObj[self.__statusList[1]]
             # a deposition
-            if (
-                self.__idList[0] in returnObj.keys()
-                and self.__idList[1] not in returnObj.keys()
-                and self.__idList[2] not in returnObj.keys()
-                and self.__idList[3] not in returnObj.keys()
-            ):
+            if self.__idList[0] in returnObj and self.__idList[1] not in returnObj and self.__idList[2] not in returnObj and self.__idList[3] not in returnObj:
                 return returnObj[self.__statusList[0]]
 
         return ""
@@ -383,7 +379,7 @@ class WfDbApi:
         stype = "update"
         if status is None or status == "":
             self.__lfh.write("WfDbApi::updateStatus(): Failing - no status code given\n")
-            exit(1)
+            sys.exit(1)
 
         tableDef = self.getTableDef(dataObj)
         if len(tableDef) > 0:
@@ -392,18 +388,17 @@ class WfDbApi:
 
             rDict = {}
             constraintDict = {}
-            if self.__idList[0] in dataObj.keys() and dataObj[self.__idList[0]] is not None and dataObj[self.__idList[0]] != "":
+            if self.__idList[0] in dataObj and dataObj[self.__idList[0]] is not None and dataObj[self.__idList[0]] != "":
                 constraintDict[self.__idList[0]] = dataObj[self.__idList[0]]
-            if self.__idList[1] in dataObj.keys() and dataObj[self.__idList[1]] is not None and dataObj[self.__idList[1]] != "":
+            if self.__idList[1] in dataObj and dataObj[self.__idList[1]] is not None and dataObj[self.__idList[1]] != "":
                 constraintDict[self.__idList[1]] = dataObj[self.__idList[1]]
-            if self.__idList[2] in dataObj.keys() and dataObj[self.__idList[2]] is not None and dataObj[self.__idList[2]] != "":
+            if self.__idList[2] in dataObj and dataObj[self.__idList[2]] is not None and dataObj[self.__idList[2]] != "":
                 constraintDict[self.__idList[2]] = dataObj[self.__idList[2]]
-            if self.__idList[3] in dataObj.keys() and dataObj[self.__idList[3]] is not None and dataObj[self.__idList[3]] != "":
+            if self.__idList[3] in dataObj and dataObj[self.__idList[3]] is not None and dataObj[self.__idList[3]] != "":
                 constraintDict[self.__idList[3]] = dataObj[self.__idList[3]]
 
             # self.testConnection()
             for retry in range(1, self.__Nretry):
-
                 rDict = self.__db.update(stype, tableDef, updateVal, constraintDict)
 
                 if rDict is None:
@@ -434,16 +429,24 @@ class WfDbApi:
         """
 
         try:
-            sql = "select inst_status from dep_last_instance where dep_set_id = '" + str(depID) + "' AND inst_id = '" + str(instID) + "' AND class_id = '" + str(classID) + "'"
-            print(sql)
+            sql = (
+                "select inst_status from dep_last_instance where dep_set_id = '"  # noqa: S608
+                + str(depID)
+                + "' AND inst_id = '"
+                + str(instID)
+                + "' AND class_id = '"
+                + str(classID)
+                + "'"
+            )  # noqa: S608
+            self.__lfh.write("%s\n" % sql)
             rows = self.runSelectSQL(sql)
             self.close()
             for row in rows:
                 return row[0]
 
             return None
-        except Exception as e:
-            print("Exception in processOwner " + str(e))
+        except Exception as e:  # noqa: BLE001
+            self.__lfh.write("Exception in processOwner " + str(e) + "\n")
             return None
 
     def getReference(self, depId=None, classId=None, instId=None, taskId=None):
@@ -479,7 +482,6 @@ class WfDbApi:
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             results = self.__db.selectRows(tableDef, constraintDict)
 
             if results is None:
@@ -499,7 +501,7 @@ class WfDbApi:
         # retried all gone bad
         return None
 
-    def addReference(self, type, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):  # pylint: disable=redefined-builtin
+    def addReference(self, type, depId=None, classId=None, instId=None, taskId=None, hashId=None, hashVal=None):  # noqa: A002 pylint: disable=redefined-builtin
         """
         Add or update reference record in the table wf_reference
 
@@ -520,7 +522,7 @@ class WfDbApi:
         instId = self.checkId(instId)
         taskId = self.checkId(taskId)
 
-        type = type.lower()
+        type = type.lower()  # noqa: A001
         if type == "update":
             if depId is not None:
                 constraintDict[self.__idList[0]] = depId
@@ -538,7 +540,7 @@ class WfDbApi:
                 constraintDict[self.__idList[3]] = taskId
             else:
                 constraintDict[self.__idList[3]] = "None"
-            if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"].keys():
+            if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"]:
                 constraintDict[self.__refList[0]] = hashId
         else:
             if depId is not None:
@@ -550,15 +552,14 @@ class WfDbApi:
             if taskId is not None:
                 updateVal[self.__idList[3]] = taskId
 
-            if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"].keys():
+            if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"]:
                 updateVal[self.__refList[0]] = hashId
 
-        if hashVal is not None and self.__refList[1] in tableDef["ATTRIBUTES"].keys():
+        if hashVal is not None and self.__refList[1] in tableDef["ATTRIBUTES"]:
             updateVal[self.__refList[1]] = hashVal
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             ret = self.__db.update(type, tableDef, updateVal, constraintDict)
 
             if ret is None:
@@ -577,7 +578,7 @@ class WfDbApi:
         # all bad
         return None
 
-    def checkId(self, str):  # pylint: disable=redefined-builtin
+    def checkId(self, str):  # noqa: A002  pylint: disable=redefined-builtin
         """
         Test if an object id is empty.
         If yes return None, else return str.
@@ -603,13 +604,13 @@ class WfDbApi:
         if len(dataObj) == 0:
             existObj = False
         else:
-            if self.__idList[3] in dataObj.keys():
+            if self.__idList[3] in dataObj:
                 taskId = dataObj[self.__idList[3]]
-            if self.__idList[2] in dataObj.keys():
+            if self.__idList[2] in dataObj:
                 instId = dataObj[self.__idList[2]]
-            if self.__idList[1] in dataObj.keys():
+            if self.__idList[1] in dataObj:
                 classId = dataObj[self.__idList[1]]
-            if self.__idList[0] in dataObj.keys():
+            if self.__idList[0] in dataObj:
                 depId = dataObj[self.__idList[0]]
             if depId is None and classId is None and instId is None and taskId is None:
                 existObj = False
@@ -635,13 +636,13 @@ class WfDbApi:
         """
 
         tableDef = {}
-        if self.__idList[3] in dataObj.keys() and self.__idList[2] in dataObj.keys() and self.__idList[1] in dataObj.keys() and self.__idList[0] in dataObj.keys():
+        if self.__idList[3] in dataObj and self.__idList[2] in dataObj and self.__idList[1] in dataObj and self.__idList[0] in dataObj:
             tableDef = self.__schemaWf[self.__tableList[3]]
-        if self.__idList[3] not in dataObj.keys() and self.__idList[2] in dataObj.keys() and self.__idList[1] in dataObj.keys() and self.__idList[0] in dataObj.keys():
+        if self.__idList[3] not in dataObj and self.__idList[2] in dataObj and self.__idList[1] in dataObj and self.__idList[0] in dataObj:
             tableDef = self.__schemaWf[self.__tableList[2]]
-        if self.__idList[3] not in dataObj.keys() and self.__idList[2] not in dataObj.keys() and self.__idList[1] in dataObj.keys() and self.__idList[0] not in dataObj.keys():
+        if self.__idList[3] not in dataObj and self.__idList[2] not in dataObj and self.__idList[1] in dataObj and self.__idList[0] not in dataObj:
             tableDef = self.__schemaWf[self.__tableList[1]]
-        if self.__idList[3] not in dataObj.keys() and self.__idList[2] not in dataObj.keys() and self.__idList[1] not in dataObj.keys() and self.__idList[0] in dataObj.keys():
+        if self.__idList[3] not in dataObj and self.__idList[2] not in dataObj and self.__idList[1] not in dataObj and self.__idList[0] in dataObj:
             tableDef = self.__schemaWf[self.__tableList[0]]
 
         return tableDef
@@ -657,7 +658,7 @@ class WfDbApi:
         attribDict = tableDef["ATTRIBUTES"]
         updateDict = {}
         for k in range(len(self.__statusList)):
-            if self.__statusList[k] in attribDict.keys():
+            if self.__statusList[k] in attribDict:
                 updateDict[self.__statusList[k]] = status
                 # Tom : added change to timestamp when we make a status change
                 # Tom : only valid for task and instance : check schema.usefulItems ending in status
@@ -680,8 +681,8 @@ class WfDbApi:
 
         if objType.find("dict") > 0:
             for k, v in dataObj.items():
-                if k in attribDict.keys():
-                    dataDict[k] = v
+                if k in attribDict:
+                    dataDict[k] = v  # noqa: PERF403
         else:
             self.__lfh.write("WfDbApi::makeDataDict(): Failing, input data object is not a dictionary.\n")
 
@@ -725,10 +726,10 @@ class WfDbApi:
 
         if depId is None and (classId is not None or instId is not None):
             self.__lfh.write("+WfDbApi::getAll(): Failing, no deposition id provided\n")
-            exit(1)
+            sys.exit(1)
         if depId is not None and classId is None and instId is not None:
             self.__lfh.write("+WfDbApi::getAll(): Failing, no class id provided\n")
-            exit(1)
+            sys.exit(1)
 
         if depId is not None:
             constraintDef[self.__idList[0]] = depId
@@ -739,7 +740,6 @@ class WfDbApi:
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             results = self.__db.selectCrossTables(self.__selectList[2], self.__sqlJoinStr, self.__orderBy[2], self.__constraintList, constraintDef)
 
             if results is None:
@@ -819,21 +819,21 @@ class WfDbApi:
 
         tableDef = ""
         rList = []
-        if level == 2:
+        if level == 2:  # noqa: PLR2004
             # Multiple tables selected
             # The selectList and query are fixed
             if otherOpt is not None:
                 self.__lfh.write("+WfDbApi::doQuery(): Failing, otherOpt is only for level 1\n")
-                exit(1)
-            for k, _v in parameterDict.items():
-                if k not in self.__constraintList.keys():
+                sys.exit(1)
+            for k in parameterDict:
+                if k not in self.__constraintList:
                     self.__lfh.write("+WfDbApi::doQuery(): Failing, no matched columns in the database for %s\n" % k)
-                    exit(1)
+                    sys.exit(1)
             if len(orderList) > 0:
                 for k in orderList:
-                    if k not in self.__constraintList.keys():
+                    if k not in self.__constraintList:
                         self.__lfh.write("+WfDbApi::doQuery(): Failing, no matched columns in the database for %s\n" % k)
-                        exit(1)
+                        sys.exit(1)
                 orderBy = self.__db.makeOrderStr(orderList)
             else:
                 # use default
@@ -842,7 +842,6 @@ class WfDbApi:
             # self.testConnection()
             ok = False
             for retry in range(1, self.__Nretry):
-
                 rList = self.__db.selectCrossTables(self.__selectList[2], self.__sqlJoinStr, orderBy, self.__constraintList, parameterDict)
 
                 if rList is None:
@@ -867,27 +866,33 @@ class WfDbApi:
             # level 1, query single tables,
             # first get data from the table "DEPOSITION"
             tableDef = self.__schemaWf[self.__tableList[0]]
-            for k in parameterDict.keys():
+            for k in parameterDict:
                 if k not in tableDef["ATTRIBUTES"]:
                     self.__lfh.write("+WfDbApi::doQuery(): Failing, no matched columns in the database for %s\n" % (k))
-                    exit(1)
+                    sys.exit(1)
             if otherOpt is None:
                 if otherOpt in (self.__tableList[9], self.__tableList[10], self.__tableList[11]):
-                    sqlStr = self.__idList[0] + " in (select " + self.__idList[0] + " from " + self.__schemaWf[otherOpt]["TABLE_NAME"] + ")"
+                    sqlStr = (
+                        self.__idList[0]  # noqa: S608
+                        + " in (select "
+                        + self.__idList[0]
+                        + " from "
+                        + self.__schemaWf[otherOpt]["TABLE_NAME"]
+                        + ")"
+                    )  # noqa: S608
                     parameterDict["EXTERNAL_TABLE"] = sqlStr
                     #  EXTERNAL_TABLE is for special SQL syntext
                 else:
                     self.__lfh.write(
                         "+WfDbApi::doQuery(): Failing, otherOpt should be in the list [%s,%s,%s]\n" % (self.__tableList[9], self.__tableList[10], self.__tableList[11])
                     )
-                    exit(1)
+                    sys.exit(1)
 
             orderList = self.__orderBy[3]
             # self.testConnection()
 
             ok = False
             for retry in range(1, self.__Nretry):
-
                 results = self.__db.selectRows(tableDef, parameterDict, orderList, self.__selectList[1])
 
                 if results is None:
@@ -1016,7 +1021,6 @@ class WfDbApi:
         # self.testConnection()
         ok = False
         for retry in range(1, self.__Nretry):
-
             results = self.__db.selectRows(tableDef, constDict, [], selectList)
 
             if results is None:
@@ -1038,12 +1042,12 @@ class WfDbApi:
 
         if str(type(results)).find("dict") > 0:
             for checkItem in checkList:
-                if checkItem in results.keys():
+                if checkItem in results:
                     returnString = results[checkItem]
         else:
             for k in results:
                 for checkItem in checkList:
-                    if checkItem in k.keys():
+                    if checkItem in k:
                         if returnString == "":
                             returnString = k[checkItem]
                         else:
@@ -1099,14 +1103,13 @@ class WfDbApi:
         else:
             constraintDict[self.__idList[3]] = "None"
 
-        if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"].keys():
+        if hashId is not None and self.__refList[0] in tableDef["ATTRIBUTES"]:
             constraintDict[self.__refList[0]] = hashId
-        if hashVal is not None and self.__refList[1] in tableDef["ATTRIBUTES"].keys():
+        if hashVal is not None and self.__refList[1] in tableDef["ATTRIBUTES"]:
             selectList[self.__refList[1]] = hashVal
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             results = self.__db.selectRows(tableDef, constraintDict, orderList, selectList)
 
             if results is None:
@@ -1209,7 +1212,6 @@ class WfDbApi:
 
         # self.testConnection()
         for retry in range(1, self.__Nretry):
-
             rDict = self.__db.selectRows(tableDef, constraintDict, orderList)
 
             if rDict is None:

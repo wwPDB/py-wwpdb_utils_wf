@@ -3,17 +3,15 @@ import time
 from decimal import Decimal
 
 # zeroDate is arbitarily 1st Jan 2000 : gives 60 year
-zeroDate = datetime.datetime(2000, 1, 1, 0, 0, 0)
+zeroDate = datetime.datetime(2000, 1, 1, 0, 0, 0)  # noqa: DTZ001
 
 
 def getTimeZero():
-
     return zeroDate
 
 
 def getTimeNow():
-
-    tNow = datetime.datetime.utcnow()
+    tNow = datetime.datetime.utcnow()  # noqa: DTZ003
 
     c = tNow - zeroDate
     microSec = ((c.days * 24 * 60 * 60 + c.seconds) * 1000000 + c.microseconds) / 1000000.0
@@ -23,7 +21,6 @@ def getTimeNow():
 
 
 def getTimeSeconds(timestamp):
-
     zero = time.mktime(zeroDate.timetuple())
 
     d = float(zero) + float(timestamp)
@@ -31,25 +28,22 @@ def getTimeSeconds(timestamp):
 
 
 def getTimeString(timestamp):
-
     zero = time.mktime(zeroDate.timetuple())
 
     fmt = "%Y-%m-%d %H:%M:%S %Z"
 
     d = float(zero) + float(timestamp)
-    return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)
+    return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)  # noqa: DTZ006
 
 
 def getTimeFromEpoc(timestamp):
-
     fmt = "%Y-%m-%d %H:%M:%S %Z"
 
     d = float(timestamp)
-    return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)
+    return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)  # noqa: DTZ006
 
 
 def getTimeReadable(timestamp):
-
     one = ((zeroDate.days * 24 * 60 * 60 + zeroDate.seconds) * 1000000 + zeroDate.microseconds) / 1000000.0  # pylint: disable=no-member
     two = float(str(timestamp))
-    return datetime.datetime.utcfromtimestamp(one + two)
+    return datetime.datetime.utcfromtimestamp(one + two)  # noqa: DTZ004

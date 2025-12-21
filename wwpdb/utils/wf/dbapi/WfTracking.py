@@ -12,6 +12,7 @@ Classes in this module manage the update of the progress and tracking
 database for sequence editing operations.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -55,7 +56,7 @@ class WfTracking:
         #
         #
         sql = (
-            "update wf_instance_last set status_timestamp="
+            "update wf_instance_last set status_timestamp="  # noqa: S608
             + str(now)
             + ", inst_status='"
             + str(status)

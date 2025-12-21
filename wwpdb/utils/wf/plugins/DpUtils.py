@@ -9,6 +9,7 @@
 Module of data processing utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -71,12 +72,11 @@ class DpUtils(UtilsBase):
                 self._lfh.write("+DpUtils.polymerLinkageDistanceOp() - PDBx     file path: %s\n" % pdbxPath)
                 self._lfh.write("+DpUtils.polymerLinkageDistanceOp() - Distance file path: %s\n" % distPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
     def centreOfMassCalculation(self, **kwargs):
-
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -98,7 +98,7 @@ class DpUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write("+DpUtils.centreOfMassCalculation() - PDBx     file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -125,6 +125,6 @@ class DpUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write("+DpUtils.generatComplexityOp() - PDBx     file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

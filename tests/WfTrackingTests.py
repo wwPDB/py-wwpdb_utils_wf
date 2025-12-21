@@ -8,6 +8,7 @@
 Test cases inserting tracking information in the workflow tracking database.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -58,7 +59,7 @@ class WfTrackingTests(unittest.TestCase):
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
             wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="open")
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -71,7 +72,7 @@ class WfTrackingTests(unittest.TestCase):
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
             wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="closed(0)")
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 

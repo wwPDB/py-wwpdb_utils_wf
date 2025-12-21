@@ -12,6 +12,7 @@
 Module of chemical component utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -81,7 +82,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompLinkOp() - CC link file path: %s\n" % ccLinkPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -116,7 +117,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -150,7 +151,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -185,7 +186,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactOp() - CC assign file path: %s\n" % ccAssignFilePath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -218,7 +219,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactNLOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignExactNLOp() - CC assign file path: %s\n" % ccAssignPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -256,6 +257,6 @@ class ChemCompUtils(UtilsBase):
                 # self._lfh.write("+ChemCompUtils.chemCompInstanceUpdateOp() - CC select file path:     %s\n" % ccSelectFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompInstanceUpdateOp() - PDBx output file path:   %s\n" % outputModelPdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

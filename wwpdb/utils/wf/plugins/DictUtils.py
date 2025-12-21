@@ -9,6 +9,7 @@
 Module of extension dictionary translation operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -25,7 +26,6 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class DictUtils(UtilsBase):
-
     """Utility class to perform extension dictionary content conversions.
 
     Current supported operations include:
@@ -70,7 +70,7 @@ class DictUtils(UtilsBase):
                 self._lfh.write("+DictUtils.em2emdOp() - Output result path: %s\n" % dstPath)
             #
             return ok
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -96,6 +96,6 @@ class DictUtils(UtilsBase):
                 self._lfh.write("+DictUtils.emd2emOp() - Output result path: %s\n" % dstPath)
             #
             return ok
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

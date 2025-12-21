@@ -13,12 +13,14 @@
 Module of sequence database search utilities.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+import contextlib
 import os
 import sys
 import traceback
@@ -27,17 +29,13 @@ from wwpdb.utils.config.ConfigInfo import getSiteId
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-try:
+with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing
-    from wwpdb.apps.seqmodule.webapp.SeqModWebRequest import SeqModInputRequest
-except ImportError:
-    pass
+    from wwpdb.apps.seqmodule.webapp.SeqModWebRequest import SeqModInputRequest  # pylint: disable=no-name-in-module
 
-try:
+with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing
-    from wwpdb.apps.seqmodule.control.DataImporter import DataImporter
-except ImportError:
-    pass
+    from wwpdb.apps.seqmodule.control.DataImporter import DataImporter  # pylint: disable=no-name-in-module
 
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
@@ -101,7 +99,7 @@ class SeqdbUtils(UtilsBase):
             self.__includeSeqAssignFileFlag = False
             self.__runMatchAllOp(kwArgs, "matchAllOp")
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -113,7 +111,7 @@ class SeqdbUtils(UtilsBase):
             self.__includeSeqAssignFileFlag = True
             self.__runMatchAllOp(kwArgs, "matchAllAutoOp")
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -137,7 +135,13 @@ class SeqdbUtils(UtilsBase):
             self.__reqObj.setValue("identifier", depDataSetId)
             self.__reqObj.setValue("instance", instanceId)
             #
-            dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
+            dI = DataImporter(
+                reqObj=self.__reqObj,
+                fileSource=fileSource,
+                maxRefAlign=self.__maxRefAlign,
+                verbose=self._verbose,
+                log=self._lfh,
+            )
             dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId)
             dI.copyFiles(messageHead="SeqdbUtils.matchAllOp(OnStart)")
             entityIdList, ok = dI.loadSeqDataAssemble(selectedEntityIdList=[entityId], doRefSearch=True)
@@ -165,7 +169,7 @@ class SeqdbUtils(UtilsBase):
                 pass
             #
             return ok
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -204,7 +208,13 @@ class SeqdbUtils(UtilsBase):
             #
             # Copy files back to archive
             #
-            dI = DataImporter(reqObj=self.__reqObj, fileSource=fileSource, maxRefAlign=self.__maxRefAlign, verbose=self._verbose, log=self._lfh)
+            dI = DataImporter(
+                reqObj=self.__reqObj,
+                fileSource=fileSource,
+                maxRefAlign=self.__maxRefAlign,
+                verbose=self._verbose,
+                log=self._lfh,
+            )
             dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId, outputFileSource="archive", versionIndex=4)
             dI.copyFiles(
                 inputFileSource=fileSource,
@@ -217,7 +227,7 @@ class SeqdbUtils(UtilsBase):
             )
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #

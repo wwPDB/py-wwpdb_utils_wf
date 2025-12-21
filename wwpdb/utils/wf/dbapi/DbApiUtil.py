@@ -15,6 +15,7 @@ This software is provided under a Creative Commons Attribution 3.0 Unported
 License described at http://creativecommons.org/licenses/by/3.0/.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "Zukang Feng"
 __email__ = "zfeng@rcsb.rutgers.edu"
@@ -33,7 +34,18 @@ from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
 class DbApiUtil:
-    def __init__(self, dbServer=None, dbHost=None, dbName=None, dbUser=None, dbPw=None, dbSocket=None, dbPort=None, verbose=False, log=sys.stderr):
+    def __init__(
+        self,
+        dbServer=None,
+        dbHost=None,
+        dbName=None,
+        dbUser=None,
+        dbPw=None,
+        dbSocket=None,
+        dbPort=None,
+        verbose=False,
+        log=sys.stderr,
+    ):
         """ """
         self.__debug = False
         self.__Nretry = 5
@@ -54,7 +66,13 @@ class DbApiUtil:
             self.__lfh.write("+DbApiUtil.__init__() using socket environment reference %r\n" % os.getenv("SITE_DB_SOCKET", None))
 
         self.__myDb = DbConnection(
-            dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort, dbSocket=self.__dbSocket
+            dbServer=self.__dbServer,
+            dbHost=self.__dbHost,
+            dbName=self.__dbName,
+            dbUser=self.__dbUser,
+            dbPw=self.__dbPw,
+            dbPort=self.__dbPort,
+            dbSocket=self.__dbSocket,
         )
 
         self.__dbcon = self.__myDb.connect()
@@ -66,7 +84,7 @@ class DbApiUtil:
         except MySQLdb.Error:
             self.__lfh.write("+DbApiUtil.reConnect() DB connection lost - cannot close\n")
             self.__lfh.write("+DbApiUtil.reConnect() Re-connecting to the database ..\n")
-            self.__lfh.write("+DbApiUtil.reConnect() UTC time = %s\n" % datetime.datetime.utcnow())
+            self.__lfh.write("+DbApiUtil.reConnect() UTC time = %s\n" % datetime.datetime.utcnow())  # noqa: DTZ003
 
         for i in range(1, self.__Nretry):
             try:
@@ -159,7 +177,12 @@ class DbApiUtil:
         #
         rowExists = False
         if where:
-            sql = "select * from " + str(table) + " where " + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
+            sql = (
+                "select * from "  # noqa: S608
+                + str(table)
+                + " where "
+                + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
+            )  # noqa: S608
             rows = self.runSelectSQL(sql)
             if rows and len(rows) > 0:
                 rowExists = True
@@ -169,7 +192,12 @@ class DbApiUtil:
             return "OK"
         #
         if rowExists:
-            sql = "update " + str(table) + " set " + ",".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in data.items()])
+            sql = (
+                "update "  # noqa: S608
+                + str(table)
+                + " set "
+                + ",".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in data.items()])
+            )  # noqa: S608
             if where:
                 sql += " where " + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
             #

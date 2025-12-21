@@ -9,6 +9,7 @@
 Container for data selection criteria.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -17,7 +18,6 @@ __version__ = "V0.01"
 
 
 class DataSelector:
-
     """A container for data selection criteria.
 
     A selector defines the following parameters:

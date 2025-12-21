@@ -9,6 +9,7 @@
 Container for data values.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -16,12 +17,11 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 # For python 2/3 compatible comparison with isinstace
-from builtins import str
+from builtins import str  # noqa: UP029,A004
 from datetime import date, datetime
 
 
 class DataValueContainer:
-
     """Container for data values.
 
     Supported container types include:
@@ -69,7 +69,7 @@ class DataValueContainer:
         """
         if self.__containerTypeName == "list":
             if isinstance(self.__value, list):
-                for v in self.__value:
+                for v in self.__value:  # noqa: SIM110
                     if not isinstance(v, self.__valueType):
                         return False
                 return True
@@ -108,7 +108,7 @@ class DataValueContainer:
         - float or double
         - string
         - date
-        - datetime
+        - datetime -- no TZ aware form -- might need an update
 
         Returns:
 
@@ -116,9 +116,9 @@ class DataValueContainer:
         """
         if str(typeName) in ["boolean", "int", "integer", "float", "double", "string", "date", "datetime"]:
             self.__valueTypeName = str(typeName)
-            if typeName == "bool" or typeName == "boolean":
+            if typeName in ("bool", "boolean"):
                 self.__valueType = bool
-            elif typeName == "integer" or typeName == "int" or typeName == "float" or typeName == "double":
+            elif typeName in ("integer", "int", "float", "double"):
                 self.__valueType = int
             elif typeName == "string":
                 self.__valueType = str
@@ -126,7 +126,7 @@ class DataValueContainer:
                 tt = date(2010, 1, 1)
                 self.__valueType = tt.__class__
             elif typeName == "datetime":
-                tt = datetime(2010, 1, 1)
+                tt = datetime(2010, 1, 1)  # noqa: DTZ001
                 self.__valueType = tt.__class__
             else:
                 return False

@@ -21,6 +21,7 @@
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -113,7 +114,7 @@ class AnnotationUtils(UtilsBase):
             ok = dbLd.doLoadStatus(pdbxPath, dirPath)
             self._lfh.write("+AnnotationUtils.statusLoadOp() - returns   %r\n" % ok)
             return ok
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -142,7 +143,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.specialPositionCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.specialPositionCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -175,7 +176,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.formatCheckPdbxOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.formatCheckPdbxOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -209,7 +210,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.formatCheckPdbOp() - PDB input  file path:  %s\n" % pdbPath)
                 self._lfh.write("+AnnotationUtils.formatCheckPdbOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -238,13 +239,12 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
     def xmlCheckOp(self, **kwArgs):
-        """ Performs PDBML XML check on PDBx format input file and returns a text check report.
-        """
+        """Performs PDBML XML check on PDBx format input file and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
@@ -284,14 +284,13 @@ class AnnotationUtils(UtilsBase):
                 #
             #
             return False
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
 
     def __generateXMLFile(self, siteId, pdbxPath, dirPath):
-        """ Generate noatom xml file
-        """
+        """Generate noatom xml file"""
         try:
             xmlPath = pdbxPath + ".xml-noatom"
             outputList = []
@@ -320,12 +319,12 @@ class AnnotationUtils(UtilsBase):
         return None
 
     def __checkXMLFile(self, siteId, xmlPath, dirPath, reportPath, op):
-        """ Check noatom xml file
-        """
+        """Check noatom xml file"""
+        MAX_SIZE_CHECK = 100000000
         try:
             if op == "annot-check-xml-xmllint":
                 statinfo = os.stat(xmlPath)
-                if statinfo.st_size > 100000000:
+                if statinfo.st_size > MAX_SIZE_CHECK:
                     return
                 #
             #
@@ -342,16 +341,15 @@ class AnnotationUtils(UtilsBase):
             dp.expList(outputList)
             #
             if os.access(inReportPath, os.R_OK):
-                ith = open(inReportPath)
-                data = ith.read()
-                ith.close()
+                with open(inReportPath) as ith:
+                    data = ith.read()
                 if len(data) > 0:
-                    oth = open(reportPath, "a")
+                    oth = open(reportPath, "a")  # noqa: SIM115
                     for line in data.split("\n"):
                         strip_line = line.strip()
-                        if (strip_line == "") or (strip_line == "input_file_1 validates") or strip_line.startswith("stdin:"):
+                        if strip_line in {"", "input_file_1 validates"} or strip_line.startswith("stdin:"):
                             continue
-                        if strip_line.startswith("input_file_1:") or strip_line.startswith("input_file_1 "):
+                        if strip_line.startswith(("input_file_1:", "input_file_1 ")):
                             oth.write("%s\n" % strip_line[13:])
                         else:
                             oth.write("%s\n" % strip_line)
@@ -397,7 +395,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.dictCheckFirstOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.dictCheckFirstOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -426,7 +424,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.dictR4CheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.dictR4CheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -455,7 +453,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.geometryCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.geometryCheckOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -484,7 +482,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.miscCheckReportOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.miscCheckReportOp() - Report file path:       %s\n" % reportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -518,7 +516,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - LOG output file path:          %s\n" % logFilePath)
                 self._lfh.write("+FormatUtils.dccCheckReportOp() - REPORT/PDBx output file path:  %s\n" % reportFilePath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -547,7 +545,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.nucleicAcidGeometryOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -584,7 +582,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -616,7 +614,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -647,7 +645,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.solventPositionAnalysis() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -674,7 +672,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -702,7 +700,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -728,7 +726,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.cisPeptideOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.cidPeptideOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -754,7 +752,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.updateGeometryValidationOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -780,7 +778,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.getCorresInfo() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.getCorresInfo() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -809,7 +807,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -844,7 +842,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -879,7 +877,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - Topology input file path:  %s\n" % topFilePath)
                 self._lfh.write("+AnnotationUtils.secondaryStructureOp() - PDBx output file path:     %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -920,7 +918,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.siteEnvironmentOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
                 self._lfh.write("+AnnotationUtils.siteEnvironmentOp() - Site anal file path:    %s\n" % resultPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -953,7 +951,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.chemCompLinkOp() - PDBx file path:    %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.chemCompLinkOp() - Assembly report file path: %s\n" % assemblyReportPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1016,7 +1014,7 @@ class AnnotationUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1094,7 +1092,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.assemblyUpdateDepInfoOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1186,7 +1184,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.mergeXyzOp() - return status:          %r\n" % myStatus)
 
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1195,12 +1193,10 @@ class AnnotationUtils(UtilsBase):
         # if the first line is not 'finished!' then there is a failure -
         status = "error"
         if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath)
-            for line in ifh:
-                if str(line).upper().startswith("FINISHED"):
-                    status = "ok"
-
-            ifh.close()
+            with open(logFilePath) as ifh:
+                for line in ifh:
+                    if str(line).upper().startswith("FINISHED"):
+                        status = "ok"
         else:
             status = "error"
         return status
@@ -1257,7 +1253,7 @@ class AnnotationUtils(UtilsBase):
             # Write out
             ret = ioObj.writeFile(outputFilePath=outPath, containerList=dIn)
             return ret
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1277,7 +1273,7 @@ class AnnotationUtils(UtilsBase):
             _ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)  # noqa: F841
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1304,7 +1300,7 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1327,7 +1323,7 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1360,7 +1356,7 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1394,7 +1390,7 @@ class AnnotationUtils(UtilsBase):
             else:
                 suffix = "-dir"
             wrkPath = tempfile.mkdtemp(suffix, "rcsb-", dirPath)
-            os.chmod(wrkPath, 0o750)
+            os.chmod(wrkPath, 0o750)  # noqa: S103
 
             emdXmlPath = os.path.join(wrkPath, depDataSetId + "-emd.xml")
 
@@ -1418,7 +1414,7 @@ class AnnotationUtils(UtilsBase):
 
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1439,7 +1435,7 @@ class AnnotationUtils(UtilsBase):
             checkTask.run(depDataSetId, pdbxPath, reportPath)
             # Always return true - even if no work done
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1457,7 +1453,8 @@ class AnnotationUtils(UtilsBase):
             dirPath = inpObjD["src"].getDirPathReference()
             if not os.path.exists(modelPath):
                 # no model
-                raise OSError("Missing model file")
+                msg = "Missing model file"
+                raise OSError(msg)  # noqa: TRY301
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
             dIn = ioObj.readFile(inputFilePath=modelPath, selectList=["em_map"])
@@ -1482,7 +1479,7 @@ class AnnotationUtils(UtilsBase):
                 dw = DensityWrapper()
                 dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -1503,11 +1500,17 @@ class AnnotationUtils(UtilsBase):
             dirPath = outObjD["dst"].getDirPathReference()
             if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
                 dw = DensityWrapper()
-                return dw.convert_xray_density_map(coord_file=coordinates, in_2fofc_cif=twofofcmap, in_fofc_cif=fofcmap, out_binary_volume=mapBcifPath, working_dir=dirPath)
+                return dw.convert_xray_density_map(
+                    coord_file=coordinates,
+                    in_2fofc_cif=twofofcmap,
+                    in_fofc_cif=fofcmap,
+                    out_binary_volume=mapBcifPath,
+                    working_dir=dirPath,
+                )
             # no x-ray mmCIF map files
             return True
 
-        except Exception as _e:  # noqa: F841
-            logging.error(_e)
+        except Exception as _e:  # noqa: F841,BLE001
+            logger.error(_e)
             traceback.print_exc(file=self._lfh)
             return False

@@ -11,6 +11,7 @@ File:    WfDbApiUnitTest.py
      __Date__      = "April 21, 2010"
 
 """
+
 import sys
 import unittest
 
@@ -81,7 +82,7 @@ class WfDbApiUnitTest(unittest.TestCase):
             else:
                 self.__lfh.write("No result\n")
         else:
-            for k in range(len(rd)):
+            for k in range(len(rd)):  # noqa: B007
                 self.__lfh.write("Key: %s, Value: %s\n" % (rd["HASH_ID"], rd["VALUE"]))
 
         # self.__lfh.write("### test addReference()\n")

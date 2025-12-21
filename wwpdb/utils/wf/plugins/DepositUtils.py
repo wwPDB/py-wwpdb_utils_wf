@@ -1,3 +1,4 @@
+import contextlib
 import sys
 import traceback
 
@@ -5,11 +6,13 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-try:
+with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing without
-    from wwpdb.apps.deposit.depui.depositDataSync import DepositDataSync, SyncDirection, print_sync_result
-except ImportError:
-    pass
+    from wwpdb.apps.deposit.depui.depositDataSync import (  # pylint: disable=no-name-in-module
+        DepositDataSync,
+        SyncDirection,
+        print_sync_result,
+    )
 
 
 class DepositUtils(UtilsBase):
@@ -33,11 +36,11 @@ class DepositUtils(UtilsBase):
             result = syncer.sync_single(dep_id, SyncDirection.TO_DEPOSIT)
             print_sync_result(result, self._lfh)
 
-            if not result['success']:
+            if not result["success"]:
                 sys.exit(1)
 
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False

@@ -19,7 +19,6 @@ Grab bag of methods to execute SQL commands on various WF status tables -
 
 class dbAPI:
     def __init__(self, depID, connection=None, verbose=True):
-
         if connection:
             self.con = connection
         else:
@@ -28,15 +27,23 @@ class dbAPI:
         self.verbose = verbose
 
     def close(self):
-
         self.con.close()
 
     def runSelectNQ(self, table=None, join=None, select=None, where=None, order=None, reverse=False, ordinal=0, run=True, limit=0):
-
         if where:
             for k, v in where.items():
                 where[k] = "'" + v + "'"
-        return self.runSelect(table=table, join=join, select=select, where=where, order=order, reverse=reverse, ordinal=ordinal, run=run, limit=limit)
+        return self.runSelect(
+            table=table,
+            join=join,
+            select=select,
+            where=where,
+            order=order,
+            reverse=reverse,
+            ordinal=ordinal,
+            run=run,
+            limit=limit,
+        )
 
     def runSelect(self, table=None, join=None, select=None, where=None, order=None, reverse=False, ordinal=0, run=True, limit=0):
         """
@@ -68,7 +75,7 @@ class dbAPI:
         try:
             if self.con.exist(depDB):
                 #       if True:
-                sql = "select " + ",".join(select) + " from " + str(table) + " "
+                sql = "select " + ",".join(select) + " from " + str(table) + " "  # noqa: S608
                 if where:
                     sql += " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
                 if join:
@@ -88,8 +95,8 @@ class dbAPI:
                     return ret
                 return sql
             return []
-        except Exception as e:
-            logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
+        except Exception:
+            logger.exception("WFE.dbAPI.runSelect :Exception")
             return []
 
     def runUpdateOnOrdinal(self, table=None, ordinal=None, data=None, run=True):
@@ -115,7 +122,7 @@ class dbAPI:
             return False
 
         try:
-            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])
+            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # noqa: S608
             sql = sql + " where ordinal = " + str(ordinal)
             if self.verbose:
                 logger.info("WFE.dbAPI.runInsertUpdate(update) > %s", str(sql))
@@ -126,7 +133,7 @@ class dbAPI:
                     logger.info("WFE.dbAPI.runSelect :False to update/insert data %s", str(sql))
                 return ok
             return sql
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.info("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False
 
@@ -144,7 +151,6 @@ class dbAPI:
         return self.runInsertUpdate(table, depID, where, data, run)
 
     def runInsertNQ(self, table=None, depID=None, where=None, data=None, run=True):
-
         if where:
             for k, v in where.items():
                 where[k] = "'" + v + "'"
@@ -154,7 +160,6 @@ class dbAPI:
         return self.runInsert(table, depID, where, data, run)
 
     def runInsert(self, table=None, depID=None, where=None, data=None, run=True):
-
         try:
             if depID:
                 sql = "insert into " + str(table) + " (dep_set_id," + ",".join(["%s" % (k) for k, v in data.items()])
@@ -175,14 +180,14 @@ class dbAPI:
             if run:
                 return self.con.runInsertSQL(sql)
             return sql
-        except Exception as e:
-            logger.exception("WFE.dbAPI.runInsert :Exception %s", str(e))
+        except Exception:
+            logger.exception("WFE.dbAPI.runInsert :Exception")
             return False
 
     def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
         logger.debug("Beginning run update")
         try:
-            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])
+            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # noqa: S608
             if depID:
                 sql += " where dep_set_id = '" + str(depID) + "'"
             if where:
@@ -195,8 +200,8 @@ class dbAPI:
                 return self.con.runUpdateSQL(sql)
             return sql
 
-        except Exception as e:
-            logger.exception("WFE.dbAPI.runUpdate :Exception %s", str(e))
+        except Exception:
+            logger.exception("WFE.dbAPI.runUpdate :Exception")
             return False
 
     def runInsertUpdate(self, table=None, depID=None, where=None, data=None, run=True):
@@ -234,7 +239,12 @@ class dbAPI:
                 rowExists = True
 
         elif where:
-            sql = "select ordinal from " + str(table) + " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
+            sql = (
+                "select ordinal from "  # noqa: S608
+                + str(table)
+                + " where "
+                + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
+            )  # noqa: S608
             rows = self.con.runSelectSQL(sql)
             if rows and len(rows) > 0:
                 rowExists = True
@@ -256,14 +266,13 @@ class dbAPI:
                 logger.info("WFE.dbAPI.runSelect :False to update/insert data ")
                 return ok
             return ok
-        except Exception as e:
-            logger.exception("WFE.dbAPI.runSelect :Exception %s", str(e))
+        except Exception:  # noqa: F841,BLE001
+            logger.exception("WFE.dbAPI.runSelect")
             return False
 
 
 def main(_argv):
-
-    print("starting DBAPI test")
+    print("starting DBAPI test")  # noqa: T201
 
     depid = "D_1100201819"
     ss = dbAPI(depid, verbose=True)
@@ -272,41 +281,48 @@ def main(_argv):
     ret = ss.runSelect(
         table="deposition,wf_instance",
         select=["deposition.dep_set_id", "wf_instance.wf_inst_id"],
-        where={"deposition.dep_set_id": "wf_instance.dep_set_id", "wf_instance.dep_set_id": "'" + depid + "'", "wf_instance.wf_inst_id": "'W_001'"},
+        where={
+            "deposition.dep_set_id": "wf_instance.dep_set_id",
+            "wf_instance.dep_set_id": "'" + depid + "'",
+            "wf_instance.wf_inst_id": "'W_001'",
+        },
         run=True,
     )
-    print(str(ret))
+    print(str(ret))  # noqa: T201
 
     ret = ss.runSelectNQ(table="deposition", select=["ordinal", "dep_set_id", "depPW", "annotator_initials"], where={"dep_set_id": depid})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
 
     # test the orinal updates
     ret = ss.runSelectNQ(table="deposition", select=["ordinal", "dep_set_id", "depPW"], where={"dep_set_id": depid})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     #   ret = ss.runUpdateOnOrdinal(table='deposition',ordinal='17823',data={"depPW":"'abcdef'"},run=True)
     #   print str(ret)
     ret = ss.runSelectNQ(table="deposition", select=["ordinal", "dep_set_id", "depPW"], where={"dep_set_id": depid})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     #   ret = ss.runUpdateOnOrdinal(table='deposition',ordinal='17823',data={"depPW":"'123456'"},run=True)
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     ret = ss.runSelectNQ(table="deposition", select=["ordinal", "dep_set_id", "depPW"], where={"dep_set_id": depid})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
 
     ret = ss.runSelectNQ(
-        table="deposition,user_data", select=["last_name", "role", "user_data.country"], join="deposition.dep_set_id=user_data.dep_set_id", where={"deposition.dep_set_id": depid}
+        table="deposition,user_data",
+        select=["last_name", "role", "user_data.country"],
+        join="deposition.dep_set_id=user_data.dep_set_id",
+        where={"deposition.dep_set_id": depid},
     )
 
     # test the dep_set_id updates
     #   ret = ss.runInsertUpdate(table='deposition',depID='D_1000200025',data={"depPW":"'abcdef'"},run=True)
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     ret = ss.runSelect(table="deposition", select=["dep_set_id", "depPW"], where={"dep_set_id": "'" + depid + "'"})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     #   ret = ss.runInsertUpdate(table='deposition',depID='D_1000200025',data={"depPW":"'123456'"},run=True)
-    print(str(ret))
+    print(str(ret))  # noqa: T201
     ret = ss.runSelect(table="deposition", select=["dep_set_id", "depPW"], where={"dep_set_id": "'" + depid + "'"})
-    print(str(ret))
+    print(str(ret))  # noqa: T201
 
-    print("finished")
+    print("finished")  # noqa: T201
 
 
 if __name__ == "__main__":

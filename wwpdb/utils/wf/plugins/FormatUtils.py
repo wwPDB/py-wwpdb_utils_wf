@@ -15,6 +15,7 @@
 Module of format translation utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -32,7 +33,6 @@ from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class FormatUtils(UtilsBase):
-
     """Utility class to perform file format conversions.
 
     Current supported operations include:
@@ -82,7 +82,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -106,7 +106,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -130,7 +130,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDB  file path: %s\n" % pdbPath)
                 self._lfh.write("+FormatUtils.pdb2pdbxDepositOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -154,7 +154,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.cif2cifOp() - RCSB cif file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.cif2cifOp() - PDBx file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -178,7 +178,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx input  file path: %s\n" % rcsbPath)
                 self._lfh.write("+FormatUtils.pdbx2pdbxDepositOp() - PDBx output file path: %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -227,7 +227,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - PDBx SF output file path:  %s\n" % sfPdbxFilePath)
                 self._lfh.write("+FormatUtils.mtz2pdbxOp() - Log file path:             %s\n" % logFilePath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -253,7 +253,7 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.nmrstar2pdbxOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -279,20 +279,19 @@ class FormatUtils(UtilsBase):
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - NMRSTAR  file path: %s\n" % strPath)
                 self._lfh.write("+FormatUtils.pdbx2nmrstarAnnotOp() - PDBx file path:     %s\n" % pdbxPath)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
     def __checkMergeStatus(self, logFilePath):
         status = "ok"
         if os.access(logFilePath, os.R_OK):
-            ifh = open(logFilePath)
-            for line in ifh:
-                if str(line).upper().startswith("++ERROR") or str(line).upper().startswith("ERROR:"):
-                    return "error"
-                if str(line).upper().startswith("++WARN") or str(line).upper().startswith("WARN:"):
-                    return "warn"
-            ifh.close()
+            with open(logFilePath) as ifh:
+                for line in ifh:
+                    if str(line).upper().startswith("++ERROR") or str(line).upper().startswith("ERROR:"):
+                        return "error"
+                    if str(line).upper().startswith("++WARN") or str(line).upper().startswith("WARN:"):
+                        return "warn"
         else:
             return "error"
         return status

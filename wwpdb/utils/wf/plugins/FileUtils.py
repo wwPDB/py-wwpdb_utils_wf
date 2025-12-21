@@ -9,6 +9,7 @@
 Module of file utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -30,7 +31,6 @@ from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 
 class FileUtils(UtilsBase):
-
     """Utility class of simple file operations.
 
     Current supported operations include:
@@ -69,7 +69,7 @@ class FileUtils(UtilsBase):
                 self._lfh.write("+FileUtils.copyOp Output path %s\n" % oPth)
             shutil.copyfile(iPth, oPth)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -90,7 +90,7 @@ class FileUtils(UtilsBase):
             if os.access(iPth, os.R_OK):
                 shutil.copyfile(iPth, oPth)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             # if (self._verbose): traceback.print_exc(file=self._lfh)
             return True
 
@@ -111,7 +111,7 @@ class FileUtils(UtilsBase):
                 modeO = int(modeS, 8)
                 os.makedirs(newPth, modeO)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -133,7 +133,7 @@ class FileUtils(UtilsBase):
                 return True
             outObjD["dst"].setValue(0)
             return False
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -145,11 +145,12 @@ class FileUtils(UtilsBase):
             newPth = inpObjD["src"].getFilePathReference()
             if os.path.exists(newPth):
                 tSec = os.path.getmtime(newPth)
-                dt = datetime.datetime.fromtimestamp(tSec)
+                # This op is not used - but EP decided should be UTC
+                dt = datetime.datetime.fromtimestamp(tSec, tz=datetime.timezone.utc)  # noqa: DTZ006
                 outObjD["dst"].setValue(dt)
                 return True
             return False
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -166,17 +167,15 @@ class FileUtils(UtilsBase):
                 self._lfh.write("+FileUtils.diffOp Input  path 1 %s\n" % iPth1)
                 self._lfh.write("+FileUtils.diffOp Input  path 2 %s\n" % iPth2)
 
-            ifh = open(iPth1)
-            aL1 = ifh.readlines()
-            ifh.close()
+            with open(iPth1) as ifh:
+                aL1 = ifh.readlines()
 
-            ifh = open(iPth2)
-            aL2 = ifh.readlines()
-            ifh.close()
+            with open(iPth2) as ifh:
+                aL2 = ifh.readlines()
             oL = difflib.context_diff(aL1, aL2, "src1", "src2")
             outObjD["dst"].setValue(oL)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -216,7 +215,7 @@ class FileUtils(UtilsBase):
                     fin.setWorkflowInstanceId("W_001")
                     fin.setStorageType(src["location"])
                     if src.get("milestone"):
-                        fin.setContentTypeAndFormat(src["content"] + '-' + src["milestone"], src["format"])
+                        fin.setContentTypeAndFormat(src["content"] + "-" + src["milestone"], src["format"])
                     else:
                         fin.setContentTypeAndFormat(src["content"], src["format"])
                     fin.setVersionId(src["version"])
@@ -227,7 +226,7 @@ class FileUtils(UtilsBase):
                     fout.setWorkflowInstanceId("W_001")
                     fout.setStorageType(dst["location"])
                     if dst.get("milestone"):
-                        fout.setContentTypeAndFormat(dst["content"] + '-' + dst["milestone"], dst["format"])
+                        fout.setContentTypeAndFormat(dst["content"] + "-" + dst["milestone"], dst["format"])
                     else:
                         fout.setContentTypeAndFormat(dst["content"], dst["format"])
                     fout.setVersionId(dst["version"])
@@ -246,12 +245,12 @@ class FileUtils(UtilsBase):
                     if self._verbose:
                         self._lfh.write(f"+FileUtils.batchCopyOp Copied: {src_path} -> {dst_path}\n")
 
-                except Exception as _e:  # noqa: F841
+                except Exception as _e:  # noqa: F841,BLE001
                     if self._verbose:
                         self._lfh.write(f"+FileUtils.batchCopyOp Failed copy: {src_path} -> {dst_path}\n")
                         traceback.print_exc(file=self._lfh)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False

@@ -5,6 +5,7 @@ File:    LocalDbApiTest.py
      Some test cases ..
 
 """
+
 import sys
 
 #
