@@ -1,3 +1,4 @@
 wwpdb.utils.testing
 wwpdb.utils.db
+types-mysqlclient
 # mock

@@ -19,7 +19,7 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 try:
-    import cStringIO as StringIO
+    import cStringIO as StringIO  # type: ignore[import-not-found]
 except ImportError:
     import io as StringIO  # noqa: N812
 

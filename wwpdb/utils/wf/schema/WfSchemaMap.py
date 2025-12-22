@@ -15,7 +15,7 @@ from typing import ClassVar
 
 
 class WfSchemaMap:
-    _schemaMap: ClassVar[dict[str, dict[str, str] | str]] = {
+    _schemaMap: ClassVar[dict[str, dict[str, str | dict[str, str]]]] = {
         "DEPOSITION": {
             "ATTRIBUTES": {
                 "DEP_SET_ID": "dep_set_id",
@@ -292,7 +292,7 @@ class WfSchemaMap:
     _referencePairs: ClassVar[list[str]] = ["HASH_ID", "VALUE"]
     _userInfo: ClassVar[list[str]] = ["USER_NAME", "PASSWORD", "GROUPNAME", "EMAIL", "INITIALS"]
 
-    _selectColumns: ClassVar[dict[int, str]] = {
+    _selectColumns: ClassVar[dict[int, str | list[str]]] = {
         2: [
             "deposition.dep_set_id",
             "deposition.pdb_id",
@@ -356,7 +356,7 @@ class WfSchemaMap:
         + "wf_task.dep_set_id=deposition.dep_set_id)"
     )
 
-    _orderBy: ClassVar[dict[int, str]] = {
+    _orderBy: ClassVar[dict[int, str | list[str]]] = {
         1: "order by dep_set_id",
         2: " order by deposition.dep_set_id, wf_instance.wf_inst_id desc," + "wf_instance.ordinal desc,wf_task.ordinal desc",
         3: ["author_release_status_code", "initial_deposition_date"],

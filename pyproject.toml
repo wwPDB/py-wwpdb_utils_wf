@@ -22,6 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "mmcif",
+    "mmcif_utils",
     "mysqlclient",
     "wwpdb.io",
     "wwpdb.utils.config >= 0.42",
@@ -60,6 +61,7 @@ exclude = [ "/wwpdb/mock-data",
 target-version = "py38"
 output-format = "concise"
 line-length = 180 # 120 is hatch's default via 'hatch init'
+
 include = [
   "*.py",           # Source
   "pyproject.toml", # This file (RUF rules only)
@@ -95,3 +97,55 @@ ignore = [
   "UP008",    # Use `super()` instead of `super(__class__, self)`
   "UP031"     # Use format specifiers instead of percent format
 ]
+
+
+# -------------------- default environment scripts ------------------
+[tool.hatch.envs.default]
+skip-install = true
+dependencies = ["mypy", "ruff >=0.6.9", "wwpdb.utils.testing", "mmcif_utils", "mmcif", "types-mysqlclient"]
+
+
+[tool.hatch.envs.default.scripts]
+
+# 'format' formats and fixes issues but does not complain
+format = [
+  "ruff format",
+  "ruff check --fix-only",
+]
+
+# 'format-python' just excludes Prettier
+format-python = ["ruff format", "ruff check --fix-only"]
+
+# 'check' only checks but never fixes
+check = ["ruff check --no-fix .", "mypy --non-interactive --install-types -p wwpdb -p tests"]
+
+# only checks with ruff (mypy has a lot of false positives)
+check-ruff = "ruff check --no-fix . {args}"
+
+# to complement 'check-ruff'
+check-mypy = "mypy --non-interactive --install-types wwpdb tests {args}"
+
+# only check security via Bandit; we require these rules to pass
+check-security = "ruff check --select S --no-fix ."
+
+# -----------------------  testing environment ----------------
+[tool.hatch.envs.hatch-test]
+dependencies = ["tox"]
+
+[tool.hatch.envs.hatch-test.scripts]
+run = ["tox"]
+
+
+# -------------------------  Mypy disable ---------
+[[tool.mypy.overrides]]
+module = ["mmcif.*", "wwpdb.*", "tests.*", "commonsetup", "mmcif_utils.*"]
+ignore_missing_imports = true
+
+[tool.mypy]
+exclude = [
+	"test-output",
+]
+
+# ------------------------ ruff disable until typing added
+#[tool.ruff.lint.per-file-ignores]
+
