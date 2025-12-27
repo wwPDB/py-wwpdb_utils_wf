@@ -110,4 +110,4 @@ venv.bak/
 .vscode
 
 #
-wwpdb/utils/tests_wf/test-output
+tests/test-output

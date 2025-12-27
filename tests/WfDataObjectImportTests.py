@@ -34,7 +34,7 @@ class ImportTests(unittest.TestCase):
         # vT = WfDbApi()
         dO = WfDataObject()
         # __repr__ should not crash if not fixed
-        print(dO)
+        print(dO)  # noqa: T201
 
 
 if __name__ == "__main__":

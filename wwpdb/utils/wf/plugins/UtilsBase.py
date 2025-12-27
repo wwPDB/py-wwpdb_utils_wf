@@ -10,6 +10,7 @@ Module containing the base class describing the call interface for methods calla
 from the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -20,8 +21,7 @@ __version__ = "V0.01"
 import sys
 
 
-class UtilsBase(object):
-
+class UtilsBase:
     """Base class implementing the method calling interface of the
     `ProcessRunner()` class.   This interface provides the keyword arguments:
 

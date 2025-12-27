@@ -13,25 +13,25 @@
 Module of EM utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-import sys
 import json
+import sys
 import traceback
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
-
-from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.io.locator.PathInfo import PathInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class EmUtils(UtilsBase):
-
     """Utility class to run validation operations.
 
     Current supported operations include:
@@ -91,7 +91,7 @@ class EmUtils(UtilsBase):
                 dp.cleanup()
 
             return ret
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return -100
 
@@ -125,7 +125,7 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -166,7 +166,7 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -196,7 +196,7 @@ class EmUtils(UtilsBase):
 
             return True
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -236,7 +236,7 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -263,11 +263,10 @@ class EmUtils(UtilsBase):
             #  add any extra command line options
             options = None
             try:
-                ifh = open(inpArgsPath, "r")
-                options = ifh.read()
-                ifh.close()
+                with open(inpArgsPath) as ifh:
+                    options = ifh.read()
                 dp.addInput(name="options", value=options)
-            except Exception as _e:  # noqa: F841
+            except Exception as _e:  # noqa: F841,BLE001,S110
                 pass
             dp.addInput(name="input_map_file_path", value=inpMapPath)
             dp.addInput(name="output_map_file_path", value=outMapPath)
@@ -286,7 +285,7 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -311,14 +310,14 @@ class EmUtils(UtilsBase):
             arg = None
             cTupL = []
             try:
-                cD = json.load(open(inpCfgPath, "r"))
+                cD = json.load(open(inpCfgPath))  # noqa: SIM115
                 pL = cD["part-list"]
                 inpMileStone = cD["map-content-milestone"] if "map-content-milestone" in cD else None
                 mapContentType = cD["map-content-type"]
                 cmdLineArgList = cD["cmd-line-arg-list"]
                 for p, arg in zip(pL, cmdLineArgList):
                     cTupL.append((p, mapContentType, arg))
-            except Exception as _e:  # noqa: F841
+            except Exception as _e:  # noqa: F841,BLE001
                 self._lfh.write("+EmUtils.mapFixInPlaceCfgOp() - failed processing configuration file  %s\n" % inpCfgPath)
                 traceback.print_exc(file=self._lfh)
 
@@ -327,10 +326,42 @@ class EmUtils(UtilsBase):
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
 
             for p, mT, arg in cTupL:
-                inpMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType="map", fileSource=storageType, versionId="latest", partNumber=p, mileStone=inpMileStone)
-                outMapPath = pI.getFilePath(dataSetId, contentType=mT, formatType="map", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
-                rptPath = pI.getFilePath(dataSetId, contentType="mapfix-header-report", formatType="json", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
-                logPath = pI.getFilePath(dataSetId, contentType="mapfix-report", formatType="txt", fileSource=storageType, versionId="next", partNumber=p, mileStone=None)
+                inpMapPath = pI.getFilePath(
+                    dataSetId,
+                    contentType=mT,
+                    formatType="map",
+                    fileSource=storageType,
+                    versionId="latest",
+                    partNumber=p,
+                    mileStone=inpMileStone,
+                )
+                outMapPath = pI.getFilePath(
+                    dataSetId,
+                    contentType=mT,
+                    formatType="map",
+                    fileSource=storageType,
+                    versionId="next",
+                    partNumber=p,
+                    mileStone=None,
+                )
+                rptPath = pI.getFilePath(
+                    dataSetId,
+                    contentType="mapfix-header-report",
+                    formatType="json",
+                    fileSource=storageType,
+                    versionId="next",
+                    partNumber=p,
+                    mileStone=None,
+                )
+                logPath = pI.getFilePath(
+                    dataSetId,
+                    contentType="mapfix-report",
+                    formatType="txt",
+                    fileSource=storageType,
+                    versionId="next",
+                    partNumber=p,
+                    mileStone=None,
+                )
 
                 dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
                 dp.setDebugMode(flag=True)
@@ -352,7 +383,7 @@ class EmUtils(UtilsBase):
                 if self.__cleanUp:
                     dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -391,6 +422,6 @@ class EmUtils(UtilsBase):
                 dp.cleanup()
 
             return ret
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return -100

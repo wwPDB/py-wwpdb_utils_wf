@@ -11,6 +11,7 @@
 Module of data access utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -20,14 +21,13 @@ __version__ = "V0.01"
 import sys
 import traceback
 
+from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
-from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
 
-
-class CifFile(object):
-
+class CifFile:
     """
     CifFile
     """
@@ -52,7 +52,6 @@ class CifFile(object):
 
 
 class PdbxUtils(UtilsBase):
-
     """Utility class of methods to access data within PDBx files.
 
     Current supported operations include:
@@ -104,7 +103,7 @@ class PdbxUtils(UtilsBase):
                 self.__block = self.__cifFile.GetBlock(self.__blockList[self.__targetBlockIndex])
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -156,7 +155,7 @@ class PdbxUtils(UtilsBase):
                         rV.append(myTable(indices[0], str(atN)))
                     outObjD["dst"].setValue(rV)
                     return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -200,7 +199,7 @@ class PdbxUtils(UtilsBase):
                 return False
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -259,7 +258,7 @@ class PdbxUtils(UtilsBase):
                 return False
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -295,7 +294,7 @@ class PdbxUtils(UtilsBase):
             outObjD["dst"].setValue(myTable.GetNumRows())
 
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
@@ -419,7 +418,7 @@ class PdbxUtils(UtilsBase):
                     indexList = myTable.Search((dbId,), ("database_id",))
                     if len(indexList) > 0:
                         tList = []
-                        for idx in range(0, len(indexList)):
+                        for idx in range(len(indexList)):
                             tList.append(myTable(indexList[idx], "database_code"))
                         accessionD[dbId] = tList
                     else:
@@ -443,15 +442,14 @@ class PdbxUtils(UtilsBase):
 
             outObjD["dst"].setValue(d)
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             if self._verbose:
                 traceback.print_exc(file=self._lfh)
             return False
         #
 
     def __getAnnModAutoCompleteFlag(self):
-        """
-        """
+        """ """
         try:
             ret = "NO"
             if self.__block.IsTablePresent("exptl"):
@@ -460,7 +458,7 @@ class PdbxUtils(UtilsBase):
                     if table.IsColumnPresent("method"):
                         val = table(0, "method")
                         val = val.strip().upper()
-                        if (val == "ELECTRON MICROSCOPY") or (val == "SOLID-STATE NMR") or (val == "SOLUTION NMR"):
+                        if val in ("ELECTRON MICROSCOPY", "SOLID-STATE NMR", "SOLUTION NMR"):
                             ret = "YES"
                         #
                     #
@@ -469,11 +467,25 @@ class PdbxUtils(UtilsBase):
             if ret == "NO":
                 return ret
             #
-            assemblyCategories = {"pdbx_struct_assembly": ["id", "details"],
-                                  "pdbx_struct_assembly_gen": ["assembly_id", "oper_expression", "asym_id_list"],
-                                  "pdbx_struct_oper_list": ["id", "matrix[1][1]", "matrix[1][2]", "matrix[1][3]",
-                                                            "vector[1]", "matrix[2][1]", "matrix[2][2]", "matrix[2][3]", "vector[2]", "matrix[3][1]",
-                                                            "matrix[3][2]", "matrix[3][3]", "vector[3]"]}
+            assemblyCategories = {
+                "pdbx_struct_assembly": ["id", "details"],
+                "pdbx_struct_assembly_gen": ["assembly_id", "oper_expression", "asym_id_list"],
+                "pdbx_struct_oper_list": [
+                    "id",
+                    "matrix[1][1]",
+                    "matrix[1][2]",
+                    "matrix[1][3]",
+                    "vector[1]",
+                    "matrix[2][1]",
+                    "matrix[2][2]",
+                    "matrix[2][3]",
+                    "vector[2]",
+                    "matrix[3][1]",
+                    "matrix[3][2]",
+                    "matrix[3][3]",
+                    "vector[3]",
+                ],
+            }
             #
             for cate, items in assemblyCategories.items():
                 if self.__block.IsTablePresent(cate):
@@ -483,7 +495,7 @@ class PdbxUtils(UtilsBase):
                         for item in items:
                             if table.IsColumnPresent(item):
                                 val = table(0, item)
-                                if val and (val != ".") and (val != "?"):
+                                if val and val not in (".", "?"):
                                     valList.append(val)
                                 #
                             #
@@ -502,7 +514,7 @@ class PdbxUtils(UtilsBase):
                 #
             #
             return ret
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=sys.stderr)
             return "NO"
         #

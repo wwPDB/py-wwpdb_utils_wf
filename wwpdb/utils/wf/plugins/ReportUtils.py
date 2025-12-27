@@ -20,6 +20,7 @@
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -28,12 +29,13 @@ __version__ = "V0.01"
 
 import sys
 import traceback
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+
 from wwpdb.utils.dp.PdbxMergeCategory import PdbxMergeCategory
+
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class ReportUtils(UtilsBase):
-
     """Utility class to perform annotation utility operations.
 
     Current supported operations include:
@@ -76,12 +78,18 @@ class ReportUtils(UtilsBase):
 
             pm = PdbxMergeCategory()
             # srcin, src2in, dstoit, mergelist replacelist
-            ret = pm.merge(srcPath, mrgPath, outPath, ["pdbx_entry_details"], ["pdbx_binding_assay", "pdbx_entity_instance_feature"])
+            ret = pm.merge(
+                srcPath,
+                mrgPath,
+                outPath,
+                ["pdbx_entry_details"],
+                ["pdbx_binding_assay", "pdbx_entity_instance_feature"],
+            )
 
             if self._verbose:
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - return: %s\n" % ret)
 
             return ret
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

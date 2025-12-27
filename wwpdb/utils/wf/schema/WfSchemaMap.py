@@ -1,17 +1,21 @@
 """
-   File:    WfSchemaMap.py
-   A data class containing schema definitions for WF Database.
+File:    WfSchemaMap.py
+A data class containing schema definitions for WF Database.
 
-   __author__    = "Li Chen"
-   __email__     = "lchen@rcsb.rutgers.edu"
-   __version__   = "V0.01"
-   __Date__      = "April 21, 2010"
+__author__    = "Li Chen"
+__email__     = "lchen@rcsb.rutgers.edu"
+__version__   = "V0.01"
+__Date__      = "April 21, 2010"
 
 """
 
+from __future__ import annotations
 
-class WfSchemaMap(object):
-    _schemaMap = {
+from typing import ClassVar
+
+
+class WfSchemaMap:
+    _schemaMap: ClassVar[dict[str, dict[str, str | dict[str, str]]]] = {
         "DEPOSITION": {
             "ATTRIBUTES": {
                 "DEP_SET_ID": "dep_set_id",
@@ -49,7 +53,14 @@ class WfSchemaMap(object):
             },
             "TABLE_NAME": "deposition",
         },
-        "DATABASE_REF": {"ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "DATABASE_NAME": "database_name", "DATABASE_CODE": "database_code"}, "TABLE_NAME": "database_ref"},
+        "DATABASE_REF": {
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "DATABASE_NAME": "database_name",
+                "DATABASE_CODE": "database_code",
+            },
+            "TABLE_NAME": "database_ref",
+        },
         "WF_TASK": {
             "ATTRIBUTES": {
                 "ORDINAL": "ordinal",
@@ -99,28 +110,69 @@ class WfSchemaMap(object):
             "TABLE_NAME": "wf_class_dict",
         },
         "PROCESS_INFORMATION": {
-            "ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "SERIAL_NUMBER": "serial_number", "PROCESS_BEGIN": "process_begin", "PROCESS_END": "process_end", "REMARK": "remark"},
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "SERIAL_NUMBER": "serial_number",
+                "PROCESS_BEGIN": "process_begin",
+                "PROCESS_END": "process_end",
+                "REMARK": "remark",
+            },
             "TABLE_NAME": "process_information",
         },
         "DA_USERS": {
-            "ATTRIBUTES": {"USER_NAME": "user_name", "PASSWORD": "password", "GROUPNAME": "groupname", "EMAIL": "email", "INITIALS": "initials"},
+            "ATTRIBUTES": {
+                "USER_NAME": "user_name",
+                "PASSWORD": "password",
+                "GROUPNAME": "groupname",
+                "EMAIL": "email",
+                "INITIALS": "initials",
+            },
             "TABLE_NAME": "da_users",
         },
         "DATABASE_RELATED": {
-            "ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "DB_NAME": "db_name", "DETAILS": "details", "CONTENT_TYPE": "content_type", "DB_ID": "db_id"},
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "DB_NAME": "db_name",
+                "DETAILS": "details",
+                "CONTENT_TYPE": "content_type",
+                "DB_ID": "db_id",
+            },
             "TABLE_NAME": "database_related",
         },
         "DATABASE_PDB_OBS_SPR": {
-            "ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "ID": "id", "DATE": "date", "PDB_ID": "pdb_id", "REPLACE_PDB_ID": "replace_pdb_id"},
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "ID": "id",
+                "DATE": "date",
+                "PDB_ID": "pdb_id",
+                "REPLACE_PDB_ID": "replace_pdb_id",
+            },
             "TABLE_NAME": "database_PDB_obs_spr",
         },
         "AUTHOR_CORRECTIONS": {
-            "ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "CORRECTIONS": "corrections", "SENDING_DATE": "sending_date", "REMARK": "content_type"},
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "CORRECTIONS": "corrections",
+                "SENDING_DATE": "sending_date",
+                "REMARK": "content_type",
+            },
             "TABLE_NAME": "author_corrections",
         },
-        "DEP_WITH_PROBLEMS": {"ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "PROBLEM_TYPE": "problem_type", "PROBLEM_DETAILS": "problem_details"}, "TABLE_NAME": "dep_with_problems"},
+        "DEP_WITH_PROBLEMS": {
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "PROBLEM_TYPE": "problem_type",
+                "PROBLEM_DETAILS": "problem_details",
+            },
+            "TABLE_NAME": "dep_with_problems",
+        },
         "RELEASE_REQUEST": {
-            "ATTRIBUTES": {"DEP_SET_ID": "dep_set_id", "REQ_CITATION": "req_citation", "RELEASE_DATE": "release_date", "PUBMED_ID": "PubMed_id"},
+            "ATTRIBUTES": {
+                "DEP_SET_ID": "dep_set_id",
+                "REQ_CITATION": "req_citation",
+                "RELEASE_DATE": "release_date",
+                "PUBMED_ID": "PubMed_id",
+            },
             "TABLE_NAME": "release_request",
         },
         "CONTACT_AUTHOR": {
@@ -146,7 +198,10 @@ class WfSchemaMap(object):
             "TABLE_NAME": "release_request",
         },
         "SITE": {"ATTRIBUTES": {"CODE": "code", "VERBOSE_NAME": "verbose_name"}, "TABLE_NAME": "site"},
-        "DA_GROUP": {"ATTRIBUTES": {"CODE": "code", "GROUPNAME": "groupname", "SITE": "site", "MAIN_PAGE": "main_page"}, "TABLE_NAME": "da_group"},
+        "DA_GROUP": {
+            "ATTRIBUTES": {"CODE": "code", "GROUPNAME": "groupname", "SITE": "site", "MAIN_PAGE": "main_page"},
+            "TABLE_NAME": "da_group",
+        },
         "SGCENTERS": {"ATTRIBUTES": {"CODE": "code", "VERBOSE_NAME": "verbose_name"}, "TABLE_NAME": "sgcenters"},
         "COMMUNICATION": {
             "ATTRIBUTES": {
@@ -184,9 +239,16 @@ class WfSchemaMap(object):
 
     # following lists are used in the WfDbApi
 
-    _columnForStatus = ["STATUS_CODE", "INST_STATUS", "TASK_STATUS"]
-    _objectTables = ["DEPOSITION", "WF_CLASS_DICT", "WF_INSTANCE", "WF_TASK", "WF_REFERENCE", "DA_USERS"]
-    _tables = [
+    _columnForStatus: ClassVar[list[str]] = ["STATUS_CODE", "INST_STATUS", "TASK_STATUS"]
+    _objectTables: ClassVar[list[str]] = [
+        "DEPOSITION",
+        "WF_CLASS_DICT",
+        "WF_INSTANCE",
+        "WF_TASK",
+        "WF_REFERENCE",
+        "DA_USERS",
+    ]
+    _tables: ClassVar[list[str]] = [
         "DEPOSITION",
         "WF_CLASS_DICT",
         "WF_INSTANCE",
@@ -207,7 +269,7 @@ class WfSchemaMap(object):
         "COMMUNICATION",
         "ENGINE_MONITORING",
     ]
-    _usefulItems = [
+    _usefulItems: ClassVar[list[str]] = [
         "STATUS_CODE",
         "INST_STATUS",
         "TASK_STATUS",
@@ -226,11 +288,11 @@ class WfSchemaMap(object):
         "PROBLEM_DETAILS",
         "PUBMED_ID",
     ]
-    _objIds = ["DEP_SET_ID", "WF_CLASS_ID", "WF_INST_ID", "WF_TASK_ID"]
-    _referencePairs = ["HASH_ID", "VALUE"]
-    _userInfo = ["USER_NAME", "PASSWORD", "GROUPNAME", "EMAIL", "INITIALS"]
+    _objIds: ClassVar[list[str]] = ["DEP_SET_ID", "WF_CLASS_ID", "WF_INST_ID", "WF_TASK_ID"]
+    _referencePairs: ClassVar[list[str]] = ["HASH_ID", "VALUE"]
+    _userInfo: ClassVar[list[str]] = ["USER_NAME", "PASSWORD", "GROUPNAME", "EMAIL", "INITIALS"]
 
-    _selectColumns = {
+    _selectColumns: ClassVar[dict[int, str | list[str]]] = {
         2: [
             "deposition.dep_set_id",
             "deposition.pdb_id",
@@ -263,7 +325,7 @@ class WfSchemaMap(object):
             "SG_CENTER",
         ],
     }
-    _constraintList = {
+    _constraintList: ClassVar[dict[str, str]] = {
         "DEP_SET_ID": "deposition.dep_set_id",
         "WF_CLASS_ID": "wf_class_dict.wf_class_id",
         "WF_INST_ID": "wf_instance.wf_inst_id",
@@ -294,7 +356,7 @@ class WfSchemaMap(object):
         + "wf_task.dep_set_id=deposition.dep_set_id)"
     )
 
-    _orderBy = {
+    _orderBy: ClassVar[dict[int, str | list[str]]] = {
         1: "order by dep_set_id",
         2: " order by deposition.dep_set_id, wf_instance.wf_inst_id desc," + "wf_instance.ordinal desc,wf_task.ordinal desc",
         3: ["author_release_status_code", "initial_deposition_date"],

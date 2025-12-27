@@ -11,6 +11,7 @@ Classes for accessing  definition of actions/processes, the assignment of data i
 and process invocation/execution.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -24,8 +25,7 @@ import traceback
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
 
-class ProcessRunner(object):
-
+class ProcessRunner:
     """Provide access to action/process definitions, assign data inputs and outputs,
     and manage invocation/execution of processes.
 
@@ -51,7 +51,7 @@ class ProcessRunner(object):
         try:
             self.__inputD[str(name)] = wfDataObject
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def setOutput(self, name, wfDataObject):
@@ -64,7 +64,7 @@ class ProcessRunner(object):
         try:
             self.__outputD[str(name)] = wfDataObject
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def setAction(self, actionId):
@@ -79,8 +79,7 @@ class ProcessRunner(object):
         if self.__aReg.isDefinedAction(self.__actionId):
             self.__setParameterDictDefault()
             return True
-        else:
-            return False
+        return False
 
     def __setParameterDictDefault(self):
         """Copy the default user adjustable parameters from the action definition
@@ -92,7 +91,7 @@ class ProcessRunner(object):
             for k, v in dd.items():
                 self.__userParameterD[k] = v
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=sys.stderr)
             return False
 
@@ -112,7 +111,6 @@ class ProcessRunner(object):
         self.__userParameterD = {}
         try:
             for k, v in self.__aReg.getUserParameterDict(self.__actionId).items():
-
                 if k in pD:
                     if self.__verbose:
                         self.__lfh.write("+ProcessRunner.setParameterDict() setting parameter %s to %r\n" % (k, pD[k]))
@@ -126,7 +124,7 @@ class ProcessRunner(object):
                 self.__lfh.write("+ProcessRunner.setParameterDict() parameter settings:\n")
                 for k, v in self.getParameterDict().items():
                     self.__lfh.write("+ProcessRunner.setParameterDict() parameter %s = %r\n" % (k, v))
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=sys.stderr)
             return False
 
@@ -184,7 +182,12 @@ class ProcessRunner(object):
                     if self.__aReg.getInputContentType(self.__actionId, iN) != self.__inputD[iN].getContentType():
                         if self.__verbose:
                             self.__lfh.write(
-                                "Failed input content type %s - %s:%s\n" % (iN, self.__aReg.getInputContentType(self.__actionId, iN), self.__inputD[iN].getContentType())
+                                "Failed input content type %s - %s:%s\n"
+                                % (
+                                    iN,
+                                    self.__aReg.getInputContentType(self.__actionId, iN),
+                                    self.__inputD[iN].getContentType(),
+                                )
                             )
                         return False
 
@@ -266,9 +269,8 @@ class ProcessRunner(object):
                     internalParameterD=self.__aReg.getInternalParameterDict(self.__actionId),
                 )
                 return ok
-            else:
-                return False
-        except Exception as _e:  # noqa: F841
+            return False
+        except Exception as _e:  # noqa: F841,BLE001
             if self.__verbose:
                 traceback.print_exc(file=self.__lfh)
             return False

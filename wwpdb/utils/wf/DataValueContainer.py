@@ -9,20 +9,19 @@
 Container for data values.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
-from datetime import datetime, date
-
 # For python 2/3 compatible comparison with isinstace
-from builtins import str
+from builtins import str  # noqa: UP029,A004
+from datetime import date, datetime
 
 
-class DataValueContainer(object):
-
+class DataValueContainer:
     """Container for data values.
 
     Supported container types include:
@@ -70,23 +69,19 @@ class DataValueContainer(object):
         """
         if self.__containerTypeName == "list":
             if isinstance(self.__value, list):
-                for v in self.__value:
+                for v in self.__value:  # noqa: SIM110
                     if not isinstance(v, self.__valueType):
                         return False
                 return True
-            else:
-                return False
-        elif self.__containerTypeName == "dict":
+            return False
+        if self.__containerTypeName == "dict":
             if isinstance(self.__value, dict):
                 return True
-            else:
-                return False
+            return False
 
-        else:
-            if isinstance(self.__value, self.__valueType):
-                return True
-            else:
-                return False
+        if isinstance(self.__value, self.__valueType):
+            return True
+        return False
 
     def isValueSet(self):
         """Performs a check if the current data value has been set.
@@ -113,7 +108,7 @@ class DataValueContainer(object):
         - float or double
         - string
         - date
-        - datetime
+        - datetime -- no TZ aware form -- might need an update
 
         Returns:
 
@@ -121,11 +116,9 @@ class DataValueContainer(object):
         """
         if str(typeName) in ["boolean", "int", "integer", "float", "double", "string", "date", "datetime"]:
             self.__valueTypeName = str(typeName)
-            if typeName == "bool" or typeName == "boolean":
+            if typeName in ("bool", "boolean"):
                 self.__valueType = bool
-            elif typeName == "integer" or typeName == "int":
-                self.__valueType = int
-            elif typeName == "float" or typeName == "double":
+            elif typeName in ("integer", "int", "float", "double"):
                 self.__valueType = int
             elif typeName == "string":
                 self.__valueType = str
@@ -133,13 +126,12 @@ class DataValueContainer(object):
                 tt = date(2010, 1, 1)
                 self.__valueType = tt.__class__
             elif typeName == "datetime":
-                tt = datetime(2010, 1, 1)
+                tt = datetime(2010, 1, 1)  # noqa: DTZ001
                 self.__valueType = tt.__class__
             else:
                 return False
             return True
-        else:
-            return False
+        return False
 
     def setContainerTypeName(self, containerName):
         """Set the container type name.
@@ -157,8 +149,7 @@ class DataValueContainer(object):
         if containerName in ["value", "list", "dict"]:
             self.__containerTypeName = containerName
             return True
-        else:
-            return False
+        return False
 
     def getContainerTypeName(self):
         return self.__containerTypeName
