@@ -451,17 +451,40 @@ class PdbxUtils(UtilsBase):
 
     def __getAnnModAutoCompleteFlag(self):
         """
+        Determine if AnnMod should auto-complete based on:
+        1. For EM/NMR methods: Check if assembly information is present
+        2. For X-ray entries: Check if assembly_inferred = "Y" (site-specific configuration)
+        
+        Note: Missing PCM information check is handled in the workflow before this method is called.
         """
         try:
             ret = "NO"
+            method = None
             if self.__block.IsTablePresent("exptl"):
                 table = self.__block.GetTable("exptl")
                 if table and (table.GetNumRows() > 0):
                     if table.IsColumnPresent("method"):
                         val = table(0, "method")
-                        val = val.strip().upper()
-                        if (val == "ELECTRON MICROSCOPY") or (val == "SOLID-STATE NMR") or (val == "SOLUTION NMR"):
+                        method = val.strip().upper()
+                        if (method == "ELECTRON MICROSCOPY") or (method == "SOLID-STATE NMR") or (method == "SOLUTION NMR"):
                             ret = "YES"
+                        #
+                    #
+                #
+            #
+            # Check for X-ray entries with assembly_inferred = "Y" (DAOTHER-10088)
+            # This is site-specific configuration
+            if ret == "NO" and method and (method == "X-RAY DIFFRACTION" or method == "X-RAY"):
+                if self.__block.IsTablePresent("pdbx_depui_status_flags"):
+                    statusTable = self.__block.GetTable("pdbx_depui_status_flags")
+                    if statusTable and (statusTable.GetNumRows() > 0):
+                        if statusTable.IsColumnPresent("assembly_inferred"):
+                            assembly_inferred = statusTable(0, "assembly_inferred")
+                            if assembly_inferred and assembly_inferred.strip().upper() == "Y":
+                                # Site-specific configuration is handled in the workflow (task TD4)
+                                # This method returns "YES" if conditions are met, workflow handles site routing
+                                ret = "YES"
+                            #
                         #
                     #
                 #
