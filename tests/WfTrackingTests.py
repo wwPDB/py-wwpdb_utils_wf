@@ -8,6 +8,7 @@
 Test cases inserting tracking information in the workflow tracking database.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -16,8 +17,8 @@ __version__ = "V0.07"
 
 
 import sys
-import unittest
 import traceback
+import unittest
 
 if __package__ is None or __package__ == "":
     from os import path
@@ -27,8 +28,9 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import MyNoop  # noqa: F401
 
-from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 from wwpdb.utils.testing.Features import Features
+
+from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 
 
 @unittest.skipUnless(Features().haveMySqlTestServer(), "Needs MySql test server for testing")
@@ -57,7 +59,7 @@ class WfTrackingTests(unittest.TestCase):
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
             wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="open")
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -70,7 +72,7 @@ class WfTrackingTests(unittest.TestCase):
             wft = WfTracking(verbose=self.__verbose, log=self.__lfh)
             wft.setInstanceStatus(depId=self.__depDataSetId, instId=self.__wfInstanceId, classId=self.__wfClassId, status="closed(0)")
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 

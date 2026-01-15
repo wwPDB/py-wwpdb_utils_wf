@@ -23,40 +23,41 @@
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+import contextlib
 import os
-import sys
 import shutil
+import sys
 import traceback
 
 from wwpdb.io.file.DataExchange import DataExchange
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.session.WebRequest import InputRequest
-
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
+from wwpdb.utils.session.WebRequest import InputRequest
 
-try:
+from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+
+with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing without
-    from wwpdb.apps.ann_tasks_v2.correspnd.CorresPNDTemplate import CorresPNDTemplate
-except ImportError:
-    pass
+    from wwpdb.apps.ann_tasks_v2.correspnd.CorresPNDTemplate import (  # pylint: disable=no-name-in-module
+        CorresPNDTemplate,
+    )
 
 # For remediation of legacy CS files in annotation.
 # Not a requirements for wwpdb.utils.wf - but if running validation, it will have pulled in wwpdb.utils.nmr
 # into the virtual environment
-try:
-    from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar
-    from mmcif.io.IoAdapterPy import IoAdapterPy
+with contextlib.suppress(ImportError):
     import tempfile
-except ImportError:
-    pass
+
+    from mmcif.io.IoAdapterPy import IoAdapterPy
+    from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar  # pylint: disable=no-name-in-module
 
 
 def remediate_cs_file(infile, outfile):
@@ -80,14 +81,13 @@ def starToPdbx(starPath=None, pdbxPath=None, log=sys.stderr):
             # myIo.writeFile(pdbxPath, containerList=containerList[1:])
             myIo.writeFile(pdbxPath, containerList=containerList)
             return True
-    except Exception as _e:  # noqa: F841
+    except Exception as _e:  # noqa: F841,BLE001
         traceback.print_exc(file=log)
 
     return False
 
 
 class ValidationUtils(UtilsBase):
-
     """Utility class to run validation operations.
 
     Current supported operations include:
@@ -172,7 +172,7 @@ class ValidationUtils(UtilsBase):
             #
             # add parameters only if these exist --
             #
-            if depDataSetId is not None and len(depDataSetId) > 3:
+            if depDataSetId is not None and len(depDataSetId) > 3:  # noqa: PLR2004
                 dp.addInput(name="entry_id", value=depDataSetId)
 
             if sfPath is not None and os.access(sfPath, os.R_OK):
@@ -197,7 +197,17 @@ class ValidationUtils(UtilsBase):
 
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[validationReportPath, xmlReportPath, validationFullReportPath, pngReportPath, svgReportPath, imageTarPath, cifReportPath])
+            dp.expList(
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                ]
+            )
 
             if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Entry Id:                %s\n" % depDataSetId)
@@ -217,7 +227,7 @@ class ValidationUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -295,7 +305,7 @@ class ValidationUtils(UtilsBase):
             #
             # add parameters only if these exist --
             #
-            if depDataSetId is not None and len(depDataSetId) > 3:
+            if depDataSetId is not None and len(depDataSetId) > 3:  # noqa: PLR2004
                 vw.addInput(name="entry_id", value=depDataSetId)
 
             if sfPath is not None and os.access(sfPath, os.R_OK):
@@ -360,7 +370,7 @@ class ValidationUtils(UtilsBase):
             if self.__cleanUp:
                 vw.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
@@ -446,7 +456,7 @@ class ValidationUtils(UtilsBase):
             #
             # add parameters only if these exist --
             #
-            if depDataSetId is not None and len(depDataSetId) > 3:
+            if depDataSetId is not None and len(depDataSetId) > 3:  # noqa: PLR2004
                 vw.addInput(name="entry_id", value=depDataSetId)
 
             if sfPath is not None and os.access(sfPath, os.R_OK):
@@ -524,14 +534,13 @@ class ValidationUtils(UtilsBase):
             if self.__cleanUp:
                 vw.cleanup()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #
 
     def validationGetCorrespondLetterOp(self, **kwArgs):
-        """Create the correspondence letter
-        """
+        """Create the correspondence letter"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src1"].getFilePathReference()
@@ -563,7 +572,14 @@ class ValidationUtils(UtilsBase):
             sessionObj = reqObj.newSessionObj()
             sessionPath = sessionObj.getPath()
             #
-            de = DataExchange(reqObj=reqObj, depDataSetId=depDataSetId, wfInstanceId=instanceId, fileSource=fileSource, verbose=self._verbose, log=self._lfh)
+            de = DataExchange(
+                reqObj=reqObj,
+                depDataSetId=depDataSetId,
+                wfInstanceId=instanceId,
+                fileSource=fileSource,
+                verbose=self._verbose,
+                log=self._lfh,
+            )
             pth = de.copyToSession(contentType="model", formatType="pdbx", version="latest", partitionNumber=1)
             if pth is None:
                 return False
@@ -584,7 +600,7 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - Cor letter file path:  %s\n" % correspondLetterPath)
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
         #

@@ -11,6 +11,7 @@
 Repository for process action definitions.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -19,12 +20,13 @@ __version__ = "V0.01"
 
 import sys
 import traceback
-from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
+
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
+from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
 
-class ActionRegistry(object):
 
+class ActionRegistry:
     """Container and manager class for the registry of supported process actions.
 
     The action registry has the following internal data organization:
@@ -61,7 +63,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D.keys()
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return []
 
     def isDefinedAction(self, actionId):
@@ -71,8 +73,7 @@ class ActionRegistry(object):
         """
         if actionId in self.__D:
             return True
-        else:
-            return False
+        return False
 
     def getMethodName(self, actionId):
         """Returns:
@@ -82,7 +83,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["METHOD_NAME"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def getModuleName(self, actionId):
@@ -94,7 +95,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["MODULE_NAME"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def getUserParameterDict(self, actionId):
@@ -106,7 +107,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["USER_PARAMETER_DICT"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return {}
 
     def getInternalParameterDict(self, actionId):
@@ -118,7 +119,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["INTERNAL_PARAMETER_DICT"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return {}
 
     def getInputObjectCount(self, actionId):
@@ -130,7 +131,7 @@ class ActionRegistry(object):
 
         try:
             return len(self.__D[actionId]["INPUT_INFO_LIST"].keys())
-        except Exception as _e:  # noqa: F841:
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=sys.stderr)
             return 0
 
@@ -143,7 +144,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["INPUT_NAME_LIST"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=sys.stderr)
             return []
 
@@ -156,7 +157,7 @@ class ActionRegistry(object):
 
         try:
             return len(self.__D[actionId]["OUTPUT_INFO_LIST"].keys())
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return 0
 
     def getOutputObjectNames(self, actionId):
@@ -168,7 +169,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["OUTPUT_NAME_LIST"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return []
 
     def setUserParameter(self, actionId, paramKey, paramValue):
@@ -183,7 +184,7 @@ class ActionRegistry(object):
         try:
             self.__D[actionId]["USER_PARAMETER_DICT"][paramKey] = paramValue
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getUserParameter(self, actionId, paramKey):
@@ -195,7 +196,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["USER_PARAMETER_DICT"][paramKey]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputReferenceType(self, actionId, inpName="1"):
@@ -208,7 +209,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["dataReferenceType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputReferenceType(self, actionId, inpName="1"):
@@ -221,7 +222,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["dataReferenceType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputContainerType(self, actionId, inpName="1"):
@@ -235,7 +236,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputContainerType(self, actionId, inpName="1"):
@@ -248,7 +249,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputValueType(self, actionId, inpName="1"):
@@ -262,7 +263,7 @@ class ActionRegistry(object):
 
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputValueType(self, actionId, inpName="1"):
@@ -275,7 +276,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["valueType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputSelectorType(self, actionId, inpName="1"):
@@ -288,7 +289,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["selectorType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputSelectorType(self, actionId, inpName="1"):
@@ -301,7 +302,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["selectorType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputContentType(self, actionId, inpName="1"):
@@ -314,7 +315,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["contentType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputContentType(self, actionId, inpName="1"):
@@ -327,7 +328,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["contentType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetInputFileFormat(self, actionId, inpName="1"):
@@ -340,7 +341,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["fileFormat"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getInputFileFormat(self, actionId, inpName="1"):
@@ -353,7 +354,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["fileFormat"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputReferenceType(self, actionId, inpName="1"):
@@ -366,7 +367,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["dataReferenceType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputReferenceType(self, actionId, inpName="1"):
@@ -379,7 +380,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["dataReferenceType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputContainerType(self, actionId, inpName="1"):
@@ -392,7 +393,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["containerType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputContainerType(self, actionId, inpName="1"):
@@ -405,7 +406,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["containerType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputValueType(self, actionId, inpName="1"):
@@ -418,7 +419,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["valueType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputValueType(self, actionId, inpName="1"):
@@ -431,7 +432,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["valueType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputSelectorType(self, actionId, inpName="1"):
@@ -444,7 +445,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["selectorType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputSelectorType(self, actionId, inpName="1"):
@@ -457,7 +458,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["selectorType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputContentType(self, actionId, inpName="1"):
@@ -470,7 +471,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["contentType"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputContentType(self, actionId, inpName="1"):
@@ -483,7 +484,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["contentType"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None
 
     def isSetOutputFileFormat(self, actionId, inpName="1"):
@@ -496,7 +497,7 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["fileFormat"] is not None
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return False
 
     def getOutputFileFormat(self, actionId, inpName="1"):
@@ -509,5 +510,5 @@ class ActionRegistry(object):
         """
         try:
             return self.__D[actionId]["OUTPUT_INFO_LIST"][inpName]["fileFormat"]
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             return None

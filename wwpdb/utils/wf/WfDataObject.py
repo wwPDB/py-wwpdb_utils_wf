@@ -11,6 +11,7 @@
 Mixin container the workflow data object.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -18,17 +19,17 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 try:
-    import cStringIO as StringIO
+    import cStringIO as StringIO  # type: ignore[import-not-found]
 except ImportError:
-    import io as StringIO
+    import io as StringIO  # noqa: N812
+
+from wwpdb.io.locator.DataReference import DataFileReference
 
 from wwpdb.utils.wf.DataSelector import DataSelector
-from wwpdb.io.locator.DataReference import DataFileReference
 from wwpdb.utils.wf.DataValueContainer import DataValueContainer
 
 
 class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
-
     """Top-level container for workflow data object.
 
     This container includes some combination of the following:

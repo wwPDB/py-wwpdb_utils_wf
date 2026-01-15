@@ -10,6 +10,7 @@
 Module of sequence processing utilities.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -62,7 +63,7 @@ class SeqStatsUtils(UtilsBase):
             if self._verbose:
                 self._lfh.write("+SeqStatsUtils.prepareSequenceDataOp()  This module is obsolete --- \n")
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -88,7 +89,7 @@ class SeqStatsUtils(UtilsBase):
             return True
             #
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -123,7 +124,7 @@ class SeqStatsUtils(UtilsBase):
             return True
             #
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
@@ -157,6 +158,6 @@ class SeqStatsUtils(UtilsBase):
             return True
             #
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

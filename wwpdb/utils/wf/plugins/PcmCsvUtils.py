@@ -9,6 +9,7 @@
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "Zukang Feng"
 __email__ = "zfeng@rcsb.rutgers.edu"
@@ -18,11 +19,11 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
 
 class PcmCsvUtils(UtilsBase):
-
     """Utility class to check "pcm-missing-data" csv file has missing data information.
 
     Each method in this class implements the method calling interface of the
@@ -52,9 +53,8 @@ class PcmCsvUtils(UtilsBase):
             #
             yes_no_value = "NO"
             if os.access(srcPath, os.R_OK):
-                ifh = open(srcPath, "r")
-                data = ifh.read()
-                ifh.close()
+                with open(srcPath) as ifh:
+                    data = ifh.read()
                 #
                 title = "Comp_id,Link_id,Modified_residue_id,Type,Category,Position,Polypeptide_position,Comp_id_linking_atom,Modified_residue_id_linking_atom,First_instance_model_db_code"
                 if data.startswith(title):
@@ -69,6 +69,6 @@ class PcmCsvUtils(UtilsBase):
                 return False
             #
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

@@ -5,6 +5,7 @@ File:    LocalDbApiTest.py
      Some test cases ..
 
 """
+
 import sys
 
 #
@@ -18,7 +19,6 @@ else:
 
 
 from wwpdb.utils.wf.dbapi.LocalDbApi import LocalDbApi
-
 
 if __name__ == "__mainold__":
     __lfh = sys.stderr

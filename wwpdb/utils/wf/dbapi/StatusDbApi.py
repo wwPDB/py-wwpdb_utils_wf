@@ -14,23 +14,27 @@ This software is provided under a Creative Commons Attribution 3.0 Unported
 License described at http://creativecommons.org/licenses/by/3.0/.
 
 """
+
+from __future__ import annotations
+
 __docformat__ = "restructuredtext en"
 __author__ = "Zukang Feng"
 __email__ = "zfeng@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
-
 import sys
+from typing import ClassVar
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+
 from wwpdb.utils.wf.dbapi.DbApiUtil import DbApiUtil
 
 
-class StatusDbApi(object):
+class StatusDbApi:
     """ """
 
-    __schemaMap = {  # pylint: disable=unused-private-member
+    __schemaMap: ClassVar[dict[str, str]] = {
         "GET_GROUP_ID": "select group_id from group_deposition_information where dep_set_id = '%s'",
         "GET_DEP_ID": "select dep_set_id from group_deposition_information where group_id = '%s'",
     }
@@ -86,7 +90,7 @@ class StatusDbApi(object):
         #
         retList = self.__dbApi.selectData(key="GET_DEP_ID", parameter=(groupId))
         for retDir in retList:
-            if "dep_set_id" in retDir and retDir["dep_set_id"]:
+            if retDir.get("dep_set_id"):
                 entryList.append(str(retDir["dep_set_id"]))
             #
         #

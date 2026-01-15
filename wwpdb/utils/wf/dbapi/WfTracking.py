@@ -12,6 +12,7 @@ Classes in this module manage the update of the progress and tracking
 database for sequence editing operations.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -24,7 +25,7 @@ from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 
 
-class WfTracking(object):
+class WfTracking:
     """Provides methods to update progress and tracking information in the WF status database."""
 
     def __init__(self, verbose=False, log=sys.stderr):
@@ -55,7 +56,7 @@ class WfTracking(object):
         #
         #
         sql = (
-            "update wf_instance_last set status_timestamp="
+            "update wf_instance_last set status_timestamp="  # noqa: S608
             + str(now)
             + ", inst_status='"
             + str(status)
@@ -72,13 +73,12 @@ class WfTracking(object):
         if ok < 1:
             self.__lfh.write("+WfTracking.setInstanceStatus() ERROR: failed to update workflow status, current task does not control the workflow\n")
             return False
-        else:
-            # Can update existing record using  ---
-            DBstatusAPI.updateStatus(instD, status)
-            # Verify the status
-            if self.__verbose:
-                rd = DBstatusAPI.getObject(depId, classId, instId)
-                self.__lfh.write("+WfTracking.setInstanceStatus() verified new status is: %r\n" % DBstatusAPI.getStatus(rd))
+        # Can update existing record using  ---
+        DBstatusAPI.updateStatus(instD, status)
+        # Verify the status
+        if self.__verbose:
+            rd = DBstatusAPI.getObject(depId, classId, instId)
+            self.__lfh.write("+WfTracking.setInstanceStatus() verified new status is: %r\n" % DBstatusAPI.getStatus(rd))
 
         return True
 

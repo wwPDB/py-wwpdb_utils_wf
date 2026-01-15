@@ -10,10 +10,11 @@
 Test cases for process manager class.  Simple file system tests are included in this module.
 
 """
-import sys
-import unittest
-import traceback
+
 import logging
+import sys
+import traceback
+import unittest
 
 if __package__ is None or __package__ == "":
     from os import path
@@ -23,9 +24,10 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import TESTOUTPUT, mockTopPath  # noqa: F401
 
+from wwpdb.utils.config.ConfigInfo import getSiteId
+
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.utils.wf.WfDataObject import WfDataObject
-from wwpdb.utils.config.ConfigInfo import getSiteId
 
 # Create logger
 logger = logging.getLogger()
@@ -40,7 +42,7 @@ class ProcessRunnerTests(unittest.TestCase):
     def setUp(self):
         self.__verbose = True
         self.__lfh = sys.stderr
-        self.assertNotEqual(getSiteId(), "None", "Site ID is not set")
+        self.assertNotEqual(getSiteId(), "None", "Site ID is not set")  # noqa: PT009
         #
         # Load up some test data -
         #
@@ -106,7 +108,7 @@ class ProcessRunnerTests(unittest.TestCase):
             ok = pR.run()
             self.__lfh.write("run() for %s returns status %r\n" % (op, ok))
 
-        except Exception as _e:  # noqa: F84:
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -150,7 +152,7 @@ class ProcessRunnerTests(unittest.TestCase):
             #
             nBytes = wfoOut.getValue()
             self.__lfh.write("File size: %d\n" % nBytes)
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -194,7 +196,7 @@ class ProcessRunnerTests(unittest.TestCase):
 
             dt = wfoOut.getValue()
             self.__lfh.write("Modification time: %r\n" % dt)
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -258,7 +260,7 @@ class ProcessRunnerTests(unittest.TestCase):
             oL = wfoOut.getValue()
             self.__lfh.write("Difference %s\n" % "".join(oL))
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -323,7 +325,7 @@ class ProcessRunnerTests(unittest.TestCase):
             oL = wfoOut.getValue()
             self.__lfh.write("Difference %s\n" % "".join(oL))
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
@@ -387,7 +389,7 @@ class ProcessRunnerTests(unittest.TestCase):
             oL = wfoOut.getValue()
             self.__lfh.write("Difference %s\n" % "".join(oL))
 
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self.__lfh)
             self.fail()
 

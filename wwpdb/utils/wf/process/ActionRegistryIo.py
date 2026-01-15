@@ -9,6 +9,7 @@
 I/O manager for the registry of action definitions.
 
 """
+
 __docformat__ = "restructuredtext en"
 __author__ = "John Westbrook"
 __email__ = "jwest@rcsb.rutgers.edu"
@@ -18,11 +19,11 @@ __version__ = "V0.01"
 import sys
 import traceback
 from xml.dom import minidom
+
 from wwpdb.io.misc.FormatOut import FormatOut
 
 
-class ActionRegistryIo(object):
-
+class ActionRegistryIo:
     """I/O manager class action definitions for the action registry.
 
      The action registry xml encoding has the following organization::
@@ -93,10 +94,10 @@ class ActionRegistryIo(object):
 
     def __setup(self):
         try:
-            self.__dom = minidom.parse(self.__fileName)
+            self.__dom = minidom.parse(self.__fileName)  # noqa: S318
             self.__dict = self.__getActionDictionary()
             return True
-        except Exception as _e:  # noqa: F841
+        except Exception as _e:  # noqa: F841,BLE001
             self.__lfh.write("+ActionRegistryIo.__setup() - read failed for %s\n" % self.__fileName)
             traceback.print_exc(file=self.__lfh)
             return False
@@ -116,9 +117,16 @@ class ActionRegistryIo(object):
             #
             if child.nodeName == "wfDataObject":
                 dId = child.getAttributeNode("name").nodeValue
-                tD = {"dataReferenceType": None, "contentType": None, "fileFormat": None, "containerType": None, "valueType": None, "selectorType": None}
+                tD = {
+                    "dataReferenceType": None,
+                    "contentType": None,
+                    "fileFormat": None,
+                    "containerType": None,
+                    "valueType": None,
+                    "selectorType": None,
+                }
                 for tch in child.childNodes:
-                    if tch.nodeName in tD.keys():
+                    if tch.nodeName in tD:
                         if len(tch.childNodes) > 0:
                             tD[tch.nodeName] = tch.childNodes[0].nodeValue
                 oD[dId] = tD

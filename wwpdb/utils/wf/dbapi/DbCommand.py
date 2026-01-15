@@ -18,6 +18,7 @@ Updates :
 """
 
 import sys
+
 import MySQLdb
 
 
@@ -33,7 +34,15 @@ class DbCommand:
         self.__lfh = log
         self.__verbose = verbose
         self.__ops = ["EQ", "GE", "GT", "LT", "LE", "LIKE", "NOT LIKE"]
-        self.__opDict = {"EQ": "=", "GE": ">=", "GT": ">", "LT": "<", "LE": "<=", "LIKE": "LIKE", "NOT LIKE": "NOT LIKE"}
+        self.__opDict = {
+            "EQ": "=",
+            "GE": ">=",
+            "GT": ">",
+            "LT": "<",
+            "LE": "<=",
+            "LIKE": "LIKE",
+            "NOT LIKE": "NOT LIKE",
+        }
         self.__logOps = ["AND", "OR", "NOT"]
         self.__grpOps = ["BEGIN", "END"]
         self.__debug = True
@@ -55,15 +64,14 @@ class DbCommand:
         if cType.find("dict") > 0:
             ld = []
             for k, v in constraintDef.items():
-                if k in attribDict.keys():
+                if k in attribDict:
                     if v is None or v == "None":
                         c = " %s = NULL " % (attribDict[k])
                     else:
                         c = " %s = '%s' " % (attribDict[k], v)
                     ld.append(c)
-                else:
-                    if self.__verbose:
-                        self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
+                elif self.__verbose:
+                    self.__lfh.write("DbCommand::makeSqlSet(): Warning -- %s is not defined in the database.\n" % (k))
                 if len(ld) > 0:
                     changingVal = " SET " + ld[0]
                     for c in ld[1:]:
@@ -84,15 +92,14 @@ class DbCommand:
         constraint = ""
         ld = []
         for k, v in constraintDef.items():
-            if k in constraintList.keys():
+            if k in constraintList:
                 if v is None or v == "None":
                     c = " %s is NULL " % (constraintList[k])
                 else:
                     c = " %s = '%s' " % (constraintList[k], v)
                 ld.append(c)
-            else:
-                if self.__verbose:
-                    self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
+            elif self.__verbose:
+                self.__lfh.write("DbCommand::makeConstraintCross(): Warning -- %s is not a key in WfSchemaMap::_constraintList.\n" % (k))
 
             if len(ld) > 0:
                 constraint = " WHERE " + ld[0]
@@ -117,7 +124,7 @@ class DbCommand:
         if cType.find("dict") > 0:
             ld = []
             for k, v in constraintDef.items():
-                if k in attribDict.keys():
+                if k in attribDict:
                     if v == "None" or v is None:
                         c = " %s is NULL " % (attribDict[k])
                     else:
@@ -129,9 +136,8 @@ class DbCommand:
                     # like " column in (select column from another table)"
                     c = "  %s " % (v)
                     ld.append(c)
-                else:
-                    if self.__verbose:
-                        self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
+                elif self.__verbose:
+                    self.__lfh.write("DbCommand::makeSqlConstraint(): Warning -- %s is not defined in the database.\n" % (k))
                 if len(ld) > 0:
                     constraint = " WHERE " + ld[0]
                     for c in ld[1:]:
@@ -147,25 +153,35 @@ class DbCommand:
             if len(constraintDef) > 0:
                 constraint += " WHERE "
                 for c in constraintDef:
-                    if len(c) == 4 and str(c[0]).upper() in self.__ops:
-
+                    if len(c) == 4 and str(c[0]).upper() in self.__ops:  # noqa: PLR2004
                         if str(c[3]).upper() == "CHAR":
-                            constraint += " %s %s '%s' " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
+                            constraint += " %s %s '%s' " % (
+                                attribDict[str(c[1]).upper()],
+                                self.__opDict[str(c[0]).upper()],
+                                str(c[2]),
+                            )
                         else:
-                            constraint += " %s %s %s " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
+                            constraint += " %s %s %s " % (
+                                attribDict[str(c[1]).upper()],
+                                self.__opDict[str(c[0]).upper()],
+                                str(c[2]),
+                            )
 
-                    elif len(c) == 3 and str(c[0]).upper() in self.__ops:
-                        constraint += " %s %s '%s' " % (attribDict[str(c[1]).upper()], self.__opDict[str(c[0]).upper()], str(c[2]))
-                    elif len(c) == 2 and str(c[0]).upper() == "GROUP" and str(c[1]).upper() in self.__grpOps:  # noqa: W504
+                    elif len(c) == 3 and str(c[0]).upper() in self.__ops:  # noqa: PLR2004
+                        constraint += " %s %s '%s' " % (
+                            attribDict[str(c[1]).upper()],
+                            self.__opDict[str(c[0]).upper()],
+                            str(c[2]),
+                        )
+                    elif len(c) == 2 and str(c[0]).upper() == "GROUP" and str(c[1]).upper() in self.__grpOps:  # noqa: PLR2004
                         if str(c[1]).upper() == "BEGIN":
                             constraint += "("
                         else:
                             constraint += ")"
-                    elif len(c) == 2 and str(c[0]).upper() == "LOGOP" and str(c[1]).upper() in self.__logOps:  # noqa: W504
+                    elif len(c) == 2 and str(c[0]).upper() == "LOGOP" and str(c[1]).upper() in self.__logOps:  # noqa: PLR2004
                         constraint += " %s " % str(c[1]).upper()
-                    else:
-                        if self.__lfh:
-                            self.__lfh.write("Constraint error: %s\n" % str(c))
+                    elif self.__lfh:
+                        self.__lfh.write("Constraint error: %s\n" % str(c))
 
         else:
             #           Just ignore if constraints are entered as None
@@ -233,7 +249,7 @@ class DbCommand:
                         ir = 0
                         for _k in result:
                             row.append(result[ir])
-                            ir += 1
+                            ir += 1  # noqa: SIM113
                         returnList.append(row)
                     else:
                         break
@@ -294,7 +310,7 @@ class DbCommand:
             # order += " desc "
 
         #
-        query = "SELECT " + attribsCsv + " FROM " + tableName + constraint + order
+        query = "SELECT " + attribsCsv + " FROM " + tableName + constraint + order  # noqa: S608
         # Tom added verbose check
         if self.__verbose:
             self.__lfh.write("DB command --\n%s\n" % query)
@@ -310,10 +326,8 @@ class DbCommand:
                 result = curs.fetchone()
                 if result is not None:
                     row = {}
-                    ir = 0
-                    for k in attribs:
+                    for ir, k in enumerate(attribs):
                         row[k] = result[ir]
-                        ir += 1
                     returnList.append(row)
                 else:
                     break
@@ -329,10 +343,9 @@ class DbCommand:
 
         if len(returnList) > 1:
             return returnList
-        else:
-            return row
+        return row
 
-    def update(self, type, tableDef, updateVal, constraintDef=None):  # pylint: disable=redefined-builtin
+    def update(self, type, tableDef, updateVal, constraintDef=None):  # noqa: A002  pylint: disable=redefined-builtin
         """
         Update value for any column(s) in a giving table.
         type may be 'insert' or 'update', default is 'insert'.
@@ -372,7 +385,6 @@ class DbCommand:
             self.__lfh.write("DB command --\n%s\n" % command)
 
         try:
-
             curs = self.__dbcon.cursor()
             curs.execute("set autocommit=0")
             curs.execute(command)
@@ -430,7 +442,7 @@ class DbCommand:
                     ir = 0
                     for k in selectList:
                         row[k] = result[ir]
-                        ir += 1
+                        ir += 1  # noqa: SIM113
                     returnList.append(row)
                 else:
                     break

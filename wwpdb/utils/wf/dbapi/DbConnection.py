@@ -1,27 +1,41 @@
 """
-      File: DbConnection
+    File: DbConnection
 
-   Database connection class (MYSQL only)
+ Database connection class (MYSQL only)
 
-   __author__    = "Li Chen"
-   __email__     = "lchen@rcsb.rutgers.edu"
-   __version__   = "V0.01"
-   __Date__      = "April 21, 2010"
+ __author__    = "Li Chen"
+ __email__     = "lchen@rcsb.rutgers.edu"
+ __version__   = "V0.01"
+ __Date__      = "April 21, 2010"
 
-  Updated:
+Updated:
 
-     07-Feb-2014  jdw  -  Add socket support --
-     23-Mar-2016  jdw  -  make ports ints.
+   07-Feb-2014  jdw  -  Add socket support --
+   23-Mar-2016  jdw  -  make ports ints.
 """
-import sys
+
+import contextlib
 import os
+import sys
+
 import MySQLdb
 
 
 class DbConnection:
     """Class to encapsulate rdbms DBI connection ..."""
 
-    def __init__(self, dbServer="mysql", dbHost="localhost", dbName=None, dbUser=None, dbPw=None, dbPort=None, dbSocket=None, log=sys.stderr, verbose=True):
+    def __init__(
+        self,
+        dbServer="mysql",
+        dbHost="localhost",
+        dbName=None,
+        dbUser=None,
+        dbPw=None,
+        dbPort=None,
+        dbSocket=None,
+        log=sys.stderr,
+        verbose=True,
+    ):
         self.__lfh = log
         self.__verbose = verbose  # pylint: disable=unused-private-member
         self.__debug = False
@@ -56,10 +70,8 @@ class DbConnection:
         else:
             self.__dbPort = dbPort
 
-        try:
+        with contextlib.suppress(Exception):
             self.__dbPort = int(self.__dbPort)
-        except Exception as _e:  # noqa: F841
-            pass
 
         if dbSocket is None:
             # try from the environment -
@@ -89,7 +101,12 @@ class DbConnection:
         try:
             if self.__dbSocket is None:
                 dbcon = MySQLdb.connect(
-                    db="%s" % self.__dbName, user="%s" % self.__dbUser, passwd="%s" % self.__dbPw, port=self.__dbPort, host="%s" % self.__dbHost, local_infile=1
+                    db="%s" % self.__dbName,
+                    user="%s" % self.__dbUser,
+                    passwd="%s" % self.__dbPw,
+                    port=self.__dbPort,
+                    host="%s" % self.__dbHost,
+                    local_infile=1,
                 )
             else:
                 dbcon = MySQLdb.connect(
@@ -106,7 +123,15 @@ class DbConnection:
             self.__lfh.write("+DbConnection.connect(): Connection error %s: %s\n" % (e.args[0], e.args[1]))
             self.__lfh.write(
                 "+DbConnection.connect(): Connection failed using server %s host %s dsn %s user %s pw %s port %d socket %s\n"
-                % (self.__dbServer, self.__dbHost, self.__dbName, self.__dbUser, self.__dbPw, self.__dbPort, self.__dbSocket)
+                % (
+                    self.__dbServer,
+                    self.__dbHost,
+                    self.__dbName,
+                    self.__dbUser,
+                    self.__dbPw,
+                    self.__dbPort,
+                    self.__dbSocket,
+                )
             )
             sys.exit(1)
 

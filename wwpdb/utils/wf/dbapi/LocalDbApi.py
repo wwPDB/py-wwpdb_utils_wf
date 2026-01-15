@@ -1,25 +1,26 @@
 """
 
-    File:    LocalDbApi.py
+ File:    LocalDbApi.py
 
-    Providing addintaional APIs for WFE to get info from local database
+ Providing addintaional APIs for WFE to get info from local database
 
-   __author__    = "Li Chen"
-   __email__     = "lchen@rcsb.rutgers.edu"
-   __version__   = "V0.01"
-   __Date__      = "Jun 4, 2010"
+__author__    = "Li Chen"
+__email__     = "lchen@rcsb.rutgers.edu"
+__version__   = "V0.01"
+__Date__      = "Jun 4, 2010"
 
 
 """
 
 import sys
+
 import MySQLdb
 
 #
 from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 
 
-class LocalDbApi(object):
+class LocalDbApi:
     """ """
 
     def __init__(self, log=sys.stderr, verbose=False):
@@ -35,7 +36,14 @@ class LocalDbApi(object):
         self.__dbPw = "password"
         self.__dbPort = 3306
 
-        self.__myDb = DbConnection(dbServer=self.__dbServer, dbHost=self.__dbHost, dbName=self.__dbName, dbUser=self.__dbUser, dbPw=self.__dbPw, dbPort=self.__dbPort)
+        self.__myDb = DbConnection(
+            dbServer=self.__dbServer,
+            dbHost=self.__dbHost,
+            dbName=self.__dbName,
+            dbUser=self.__dbUser,
+            dbPw=self.__dbPw,
+            dbPort=self.__dbPort,
+        )
 
         self.__dbcon = self.__myDb.connect()
 
@@ -47,7 +55,11 @@ class LocalDbApi(object):
         code is run.
 
         """
-        query = "select lcase(structure_id) from rcsb_status where initial_deposition_date>=DATE_SUB(curdate(), interval %s" % interval + " day) order by structure_id"
+        query = (
+            "select lcase(structure_id) from rcsb_status where initial_deposition_date>=DATE_SUB(curdate(), interval %s"  # noqa: S608
+            % interval
+            + " day) order by structure_id"
+        )  # noqa: S608
         returnList = []
         try:
             self.__dbcon.commit()
