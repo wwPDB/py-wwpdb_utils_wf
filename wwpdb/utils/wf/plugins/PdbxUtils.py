@@ -453,7 +453,7 @@ class PdbxUtils(UtilsBase):
         Determine if AnnMod should auto-complete based on:
         1. For EM/NMR methods: Check if assembly information is present
         2. For X-ray entries: Check if assembly_inferred = "Y" (site-specific configuration)
-        
+    
         Note: Missing PCM information check is handled in the workflow before this method is called.
         """
         try:
@@ -461,14 +461,11 @@ class PdbxUtils(UtilsBase):
             method = None
             if self.__block.IsTablePresent("exptl"):
                 table = self.__block.GetTable("exptl")
-                if table and (table.GetNumRows() > 0):
-                    if table.IsColumnPresent("method"):
-                        val = table(0, "method")
-                        method = val.strip().upper()
-                        if (method == "ELECTRON MICROSCOPY") or (method == "SOLID-STATE NMR") or (method == "SOLUTION NMR"):
-                            val = val.strip().upper()
-                        if val in ("ELECTRON MICROSCOPY", "SOLID-STATE NMR", "SOLUTION NMR"):
-                            ret = "YES"
+                if table and (table.GetNumRows() > 0) and table.IsColumnPresent("method"):
+                    val = table(0, "method")
+                    method = val.strip().upper() if val else None
+                    if method in ("ELECTRON MICROSCOPY", "SOLID-STATE NMR", "SOLUTION NMR"):
+                        ret = "YES"
                         #
                     #
                 #
