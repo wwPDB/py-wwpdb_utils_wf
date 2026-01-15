@@ -466,7 +466,7 @@ class PdbxUtils(UtilsBase):
                         val = table(0, "method")
                         method = val.strip().upper()
                         if (method == "ELECTRON MICROSCOPY") or (method == "SOLID-STATE NMR") or (method == "SOLUTION NMR"):
-                        val = val.strip().upper()
+                            val = val.strip().upper()
                         if val in ("ELECTRON MICROSCOPY", "SOLID-STATE NMR", "SOLUTION NMR"):
                             ret = "YES"
                         #
