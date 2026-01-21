@@ -453,7 +453,7 @@ class PdbxUtils(UtilsBase):
         Determine if AnnMod should auto-complete based on:
         1. For EM/NMR methods: Check if assembly information is present
         2. For X-ray entries: Check if assembly_inferred = "Y" (site-specific configuration)
-    
+
         Note: Missing PCM information check is handled in the workflow before this method is called.
         """
         try:
