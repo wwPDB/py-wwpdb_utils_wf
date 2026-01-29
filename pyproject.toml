@@ -23,7 +23,7 @@ classifiers = [
 dependencies = [
     "mmcif",
     "mmcif_utils",
-    "mysqlclient",
+    "PyMySQL",
     "wwpdb.io",
     "wwpdb.utils.config >= 0.42",
     "wwpdb.utils.dp ~= 0.52",
