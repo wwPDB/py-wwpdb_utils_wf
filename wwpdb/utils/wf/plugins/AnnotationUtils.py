@@ -16,6 +16,7 @@
 #  20-Jan-2017 ep  add assemblyUpdateDepInfoOp()
 #  15-Feb-2017 ep  add combineCifFilesOp()
 #  26-Aug-2024 zf  add linkPtmOp()
+#  06-Jul-2026 zf  add linkPtmMccOp(), linkPtmMccWithSkipOp(), metalCoordinationOp(), and metalCoordinationWithLargeTimeoutOp()
 ##
 """
 Module of annotation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -38,6 +39,7 @@ import traceback
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.DensityWrapper import DensityWrapper
+from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
@@ -703,6 +705,155 @@ class AnnotationUtils(UtilsBase):
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
+
+    def linkPtmMccOp(self, **kwArgs):
+        """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+
+            pdbxOutputPath = outObjD["dst1"].getFilePathReference()
+            dirPath = outObjD["dst1"].getDirPathReference()
+            csvOutputPath = outObjD["dst2"].getFilePathReference()
+            txtOutputPath = outObjD["dst3"].getFilePathReference()
+            logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.op("annot-link-ssbond-with-ptm-mcc")
+            dp.expLog(logPath)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def linkPtmMccWithSkipOp(self, **kwArgs):
+        """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+
+            pdbxOutputPath = outObjD["dst1"].getFilePathReference()
+            dirPath = outObjD["dst1"].getDirPathReference()
+            csvOutputPath = outObjD["dst2"].getFilePathReference()
+            txtOutputPath = outObjD["dst3"].getFilePathReference()
+            logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.imp(pdbxPath)
+            dp.addInput(name="check_skip_option", value="add")
+            dp.op("annot-link-ssbond-with-ptm-mcc")
+            dp.expLog(logPath)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def metalCoordinationOp(self, **kwArgs):
+        """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
+           and update this data in the PDBx model file.
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            txtFilePath = inpObjD["src2"].getFilePathReference()
+            pdbxOutputPath = outObjD["dst1"].getFilePathReference()
+            dirPath = outObjD["dst1"].getDirPathReference()
+            csvOutputPath = outObjD["dst2"].getFilePathReference()
+            #
+            entryId = outObjD["dst1"].getDepositionDataSetId()
+            instId = outObjD["dst1"].getWorkflowInstanceId()
+            fileSource = outObjD["dst1"].getStorageType()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            #
+            pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
+            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", \
+                                             fileSource=fileSource, versionId="next")
+            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", \
+                                                fileSource=fileSource, versionId="next")
+            #
+            mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            mp.setModelCoordinatesFilePath(pdbxPath)
+            mp.setPolyAtomicMetalLigandInfoWithFilePath(txtFilePath)
+            mp.setFindGeoOutputFilePath(findGeoFilePath)
+            mp.setMetalCoordOutputFilePath(metalCoordFilePath)
+            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, entryId + ".Annotation.txt"))
+            mp.runUpdate(pdbxPath=pdbxOutputPath, csvPath=csvOutputPath)
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
+
+    def metalCoordinationWithLargeTimeoutOp(self, **kwArgs):
+        """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
+           and update this data in the PDBx model file.
+        """
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            txtFilePath = inpObjD["src2"].getFilePathReference()
+            pdbxOutputPath = outObjD["dst1"].getFilePathReference()
+            dirPath = outObjD["dst1"].getDirPathReference()
+            csvOutputPath = outObjD["dst2"].getFilePathReference()
+            #
+            entryId = outObjD["dst1"].getDepositionDataSetId()
+            instId = outObjD["dst1"].getWorkflowInstanceId()
+            fileSource = outObjD["dst1"].getStorageType()
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            #
+            pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
+            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", \
+                                             fileSource=fileSource, versionId="next")
+            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", \
+                                                fileSource=fileSource, versionId="next")
+            #
+            mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            mp.setModelCoordinatesFilePath(pdbxPath)
+            mp.setPolyAtomicMetalLigandInfoWithFilePath(txtFilePath)
+            mp.setFindGeoOutputFilePath(findGeoFilePath)
+            mp.setMetalCoordOutputFilePath(metalCoordFilePath)
+            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, entryId + ".Annotation.txt"))
+            mp.runUpdate(pdbxPath=pdbxOutputPath, csvPath=csvOutputPath, noTimeOut=True)
+            if self._verbose:
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
+                self._lfh.write("+AnnotationUtils.linkOp() - PDBx output file path:  %s\n" % pdbxOutputPath)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
 
     def cisPeptideOp(self, **kwArgs):
         """Performs cis-peptide link perception on PDBx format input file and update this data in the PDBx model file."""

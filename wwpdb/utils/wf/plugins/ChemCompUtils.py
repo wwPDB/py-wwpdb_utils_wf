@@ -7,6 +7,7 @@
 # 2012-06-14    jdw    Add user selection file to instance update option.
 # 2013-06-27    RPS    Added chemCompAssignExactOp and chemCompAssignExactNLOp for use by LigandLite Module.
 # 2014-07-07    jdw    Disable user selection file to instance update option.
+# 2026-07-10     zf    Add chemCompAssignUIOp and chemCompAssignNLUIOp
 ##
 """
 Module of chemical component utility operations supporting the call protocol of the ProcessRunner() class.
@@ -23,11 +24,12 @@ import os
 import sys
 import traceback
 
+from mmcif.io.IoAdapterCore import IoAdapterCore
+from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
-
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
-
 
 class ChemCompUtils(UtilsBase):
     """Utility class to perform file format conversions.
@@ -112,14 +114,61 @@ class ChemCompUtils(UtilsBase):
             dp.exp(ccAssignFilePath)
             if self.__cleanUp:
                 dp.cleanup()
+            #
             if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
+            #
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
+                                        dirPath, pdbxPath, ccAssignFilePath, False)
+            #
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
+        #
+
+    def chemCompAssignUIOp(self, **kwArgs):
+        """Performs chemical component assignment calculation on PDBx format files."""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src1"].getFilePathReference()
+            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+            #
+            ccLinkFilePath = inpObjD["src2"].getFilePathReference()
+            #
+            ccAssignFilePath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            #
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.setWorkingDir(ccAssignWrkngDirPath)
+            dp.addInput(name="id", value=depDataSetId)
+            if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
+                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
+            dp.imp(pdbxPath)
+            dp.op("chem-comp-assign")
+            dp.exp(ccAssignFilePath)
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if self._verbose:
+                self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
+                self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
+                self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
+            #
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
+                                        dirPath, pdbxPath, ccAssignFilePath, True)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
 
     def chemCompAssignNLOp(self, **kwArgs):
         """Performs chemical component assignment calculation on PDBx format files."""
@@ -142,18 +191,66 @@ class ChemCompUtils(UtilsBase):
             dp.addInput(name="id", value=depDataSetId)
             if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
                 dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
+            #
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign")
             dp.exp(ccAssignPath)
             if self.__cleanUp:
                 dp.cleanup()
+            #
             if self._verbose:
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
+            #
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
+                                        dirPath, pdbxPath, ccAssignPath, False)
+            #
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
+        #
+
+    def chemCompAssignNLUIOp(self, **kwArgs):
+        """Performs chemical component assignment calculation on PDBx format files."""
+        try:
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            depDataSetId = inpObjD["src"].getDepositionDataSetId()
+            #
+            ccLinkFilePath = None
+            #
+            ccAssignPath = outObjD["dst"].getFilePathReference()
+            dirPath = outObjD["dst"].getDirPathReference()
+            #
+            ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
+            #
+            cI = ConfigInfo()
+            siteId = cI.get("SITE_PREFIX")
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+            dp.setWorkingDir(ccAssignWrkngDirPath)
+            dp.addInput(name="id", value=depDataSetId)
+            if (ccLinkFilePath is not None) and os.path.exists(ccLinkFilePath):
+                dp.addInput(name="cc_link_file_path", value=ccLinkFilePath, type="file")
+            #
+            dp.imp(pdbxPath)
+            dp.op("chem-comp-assign")
+            dp.exp(ccAssignPath)
+            if self.__cleanUp:
+                dp.cleanup()
+            #
+            if self._verbose:
+                self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
+                self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
+            #
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
+                                        dirPath, pdbxPath, ccAssignPath, True)
+            #
+            return True
+        except Exception as _e:  # noqa: F841,BLE001
+            traceback.print_exc(file=self._lfh)
+            return False
+        #
 
     def chemCompAssignExactOp(self, **kwArgs):
         """Performs chemical component assignment calculation with exact match option on PDBx format files."""
@@ -260,3 +357,75 @@ class ChemCompUtils(UtilsBase):
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
+
+    def __runMetalCoordination(self, siteId, depId, instId, fileSource, dirPath, pdbxPath, ccAssignFilePath, uiFlag):
+        """ Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
+        """
+        if (not ccAssignFilePath) or (not os.access(ccAssignFilePath, os.R_OK)):
+            return
+        #
+        assignReader = IoAdapterCore(verbose=self._verbose, log=self._lfh)
+        assignList = assignReader.readFile(inputFilePath=ccAssignFilePath, selectList=["pdbx_entry_info", "pdbx_polyatomic_metal_ccd"], outDirPath=dirPath)
+        if len(assignList) == 0:
+            return
+        #
+        polyAtomicMetalCcdList = []
+        #
+        ccdObj = assignList[0].getObj("pdbx_polyatomic_metal_ccd")
+        if ccdObj:
+            for rowIdx in range(ccdObj.getRowCount()):
+                value = ccdObj.getValue(attributeName="id", rowIndex=rowIdx)
+                if (value is None) or (value == ".") or (value == "?"):
+                    value = ""
+                #
+                if value != "":
+                    polyAtomicMetalCcdList.append(value)
+                #
+            #
+        #
+        if len(polyAtomicMetalCcdList) == 0:
+            return
+        #
+        if not uiFlag:
+            # for AUTO pass
+            infoObj = assignList[0].getObj("pdbx_entry_info")
+            if infoObj:
+                status = infoObj.getValue(attributeName="status", rowIndex=0)
+                if status == "OK":
+                    return
+                #
+            #
+            # for timeout
+            pdbxReader = IoAdapterCore(verbose=self._verbose, log=self._lfh)
+            pdbxList = pdbxReader.readFile(inputFilePath=pdbxPath, selectList=["pdbx_data_processing_status"], outDirPath=dirPath)
+            if len(pdbxList) > 0:
+                pdbxObj = pdbxList[0].getObj("pdbx_data_processing_status")
+                if pdbxObj:
+                    found = False
+                    for rowIdx in range(pdbxObj.getRowCount()):
+                        value = pdbxObj.getValue(attributeName="task_name", rowIndex=rowIdx)
+                        if value == "metal coordination":
+                            found = True
+                            break
+                        #
+                    #
+                    if found:
+                        return
+                    #
+                #
+            #
+        #
+        pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
+        findFilePath = pI.getFilePath(depId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
+        metFilePath = pI.getFilePath(depId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
+        #
+        metalUtil = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
+        metalUtil.setModelCoordinatesFilePath(pdbxPath)
+        metalUtil.setPolyAtomicMetalLigandIdList(polyAtomicMetalCcdList)
+        metalUtil.setFindGeoOutputFilePath(findFilePath)
+        metalUtil.setMetalCoordOutputFilePath(metFilePath)
+        if not uiFlag:
+            metalUtil.run(noTimeOutFlag=False, regularFilter="-filter-regular")
+        else:
+            metalUtil.run(noTimeOutFlag=True, regularFilter="-filter-regular")
+        #
