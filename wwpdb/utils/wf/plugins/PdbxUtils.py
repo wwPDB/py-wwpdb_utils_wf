@@ -472,7 +472,7 @@ class PdbxUtils(UtilsBase):
             #
             # Check for X-ray entries with assembly_inferred = "Y" (DAOTHER-10088)
             # This is site-specific configuration
-            if ret == "NO" and method and (method == "X-RAY DIFFRACTION" or method == "X-RAY"):
+            if ret == "NO" and method and (method in ("X-RAY DIFFRACTION", "X-RAY")):
                 if self.__block.IsTablePresent("pdbx_depui_status_flags"):
                     statusTable = self.__block.GetTable("pdbx_depui_status_flags")
                     if statusTable and (statusTable.GetNumRows() > 0):

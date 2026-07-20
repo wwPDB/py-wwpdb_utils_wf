@@ -773,7 +773,7 @@ class AnnotationUtils(UtilsBase):
 
     def metalCoordinationOp(self, **kwArgs):
         """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
-           and update this data in the PDBx model file.
+        and update this data in the PDBx model file.
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -791,10 +791,8 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             #
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
-            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", \
-                                             fileSource=fileSource, versionId="next")
-            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", \
-                                                fileSource=fileSource, versionId="next")
+            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
+            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
             #
             mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             mp.setModelCoordinatesFilePath(pdbxPath)
@@ -815,7 +813,7 @@ class AnnotationUtils(UtilsBase):
 
     def metalCoordinationWithLargeTimeoutOp(self, **kwArgs):
         """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
-           and update this data in the PDBx model file.
+        and update this data in the PDBx model file.
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -833,10 +831,8 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             #
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
-            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", \
-                                             fileSource=fileSource, versionId="next")
-            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", \
-                                                fileSource=fileSource, versionId="next")
+            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
+            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
             #
             mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             mp.setModelCoordinatesFilePath(pdbxPath)

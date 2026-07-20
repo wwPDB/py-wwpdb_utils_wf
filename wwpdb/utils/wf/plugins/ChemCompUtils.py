@@ -29,7 +29,9 @@ from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+
 
 class ChemCompUtils(UtilsBase):
     """Utility class to perform file format conversions.
@@ -120,8 +122,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
             #
-            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
-                                        dirPath, pdbxPath, ccAssignFilePath, False)
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), dirPath, pdbxPath, ccAssignFilePath, False)
             #
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -161,8 +162,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC link file path:   %s\n" % ccLinkFilePath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignFilePath)
             #
-            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
-                                        dirPath, pdbxPath, ccAssignFilePath, True)
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), dirPath, pdbxPath, ccAssignFilePath, True)
             #
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -202,8 +202,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
             #
-            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
-                                        dirPath, pdbxPath, ccAssignPath, False)
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), dirPath, pdbxPath, ccAssignPath, False)
             #
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -243,8 +242,7 @@ class ChemCompUtils(UtilsBase):
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - PDBx file path:      %s\n" % pdbxPath)
                 self._lfh.write("+ChemCompUtils.chemCompAssignOp() - CC assign file path: %s\n" % ccAssignPath)
             #
-            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), \
-                                        dirPath, pdbxPath, ccAssignPath, True)
+            self.__runMetalCoordination(siteId, depDataSetId, outObjD["dst"].getWorkflowInstanceId(), outObjD["dst"].getStorageType(), dirPath, pdbxPath, ccAssignPath, True)
             #
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -359,8 +357,7 @@ class ChemCompUtils(UtilsBase):
             return False
 
     def __runMetalCoordination(self, siteId, depId, instId, fileSource, dirPath, pdbxPath, ccAssignFilePath, uiFlag):
-        """ Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
-        """
+        """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file"""
         if (not ccAssignFilePath) or (not os.access(ccAssignFilePath, os.R_OK)):
             return
         #
@@ -375,7 +372,7 @@ class ChemCompUtils(UtilsBase):
         if ccdObj:
             for rowIdx in range(ccdObj.getRowCount()):
                 value = ccdObj.getValue(attributeName="id", rowIndex=rowIdx)
-                if (value is None) or (value == ".") or (value == "?"):
+                if (value is None) or (value == ".") or (value == "?"):  # noqa: PLR1714
                     value = ""
                 #
                 if value != "":
