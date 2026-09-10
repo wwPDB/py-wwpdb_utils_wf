@@ -10,6 +10,7 @@
 # 31-Dec  -2013  jdw add timeout for mtz2pdbxOp()
 # 16-Jan  -2014  jdw repoint dst3 in mtz2pdbxOp() to logfile
 # 26-Sep  -2014  jdw add pdbx2nmrstarAnnotOp() from annotation package
+# 10-Sep  -2026  ep  add optional parameter to mtz2pdbxOp to display first block of diagnostics
 ##
 """
 Module of format translation utility operations supporting the call protocol of the ProcessRunner() class.
@@ -201,6 +202,9 @@ class FormatUtils(UtilsBase):
             dmpPath = os.path.join(dirPath, "mtzdmp.log")
             #
             timeout = int(uD["timeout"])
+            # Display first block diagnostics only
+            firstblock = uD.get("firstblockdiags", "N") == "Y"
+
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
 
@@ -210,6 +214,9 @@ class FormatUtils(UtilsBase):
                 dp.addInput(name="xyz_file_path", value=xyzPath, type="file")
             if timeout > 0:
                 dp.setTimeout(timeout)
+            if firstblock:
+                dp.addInput(name="firstblockdiags", value=True, type="param")
+
             dp.op("annot-sf-convert")
             dp.expLog(logFilePath)
             dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])

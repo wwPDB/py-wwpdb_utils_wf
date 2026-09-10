@@ -26,7 +26,7 @@ dependencies = [
     "mysqlclient",
     "wwpdb.io",
     "wwpdb.utils.config >= 1.0.1",
-    "wwpdb.utils.dp >= 0.63",
+    "wwpdb.utils.dp >= 0.64",
     "wwpdb.utils.session",
 ]
 
