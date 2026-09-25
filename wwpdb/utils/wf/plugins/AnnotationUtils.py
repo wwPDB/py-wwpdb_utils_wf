@@ -41,6 +41,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.DensityWrapper import DensityWrapper
 from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -139,6 +140,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -172,6 +178,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -206,6 +217,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -235,6 +251,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -281,6 +302,10 @@ class AnnotationUtils(UtilsBase):
                         self._lfh.write("+AnnotationUtils.dictCheckOp() - PDBx input  file path:  %s\n" % pdbxPath)
                         self._lfh.write("+AnnotationUtils.dictCheckOp() - Report file path:       %s\n" % reportPath)
                     #
+                    # Log activity for the exported report file
+                    oSt = outObjD["dst"].getStorageType()
+                    FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
                     os.remove(xmlPath)
                     return True
                 #
@@ -391,6 +416,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("check-cif")
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -420,6 +450,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -449,6 +484,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -478,6 +518,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(reportPath)
+
+            # Log activity for the exported report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -510,6 +555,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-dcc-report")
             dp.expLog(logFilePath)
             dp.exp(reportFilePath)
+
+            # Log activity for the report file
+            oSt1 = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportFilePath, oSt1)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -541,6 +591,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -578,6 +633,11 @@ class AnnotationUtils(UtilsBase):
             # dp.op("annot-distant-solvent")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -610,6 +670,11 @@ class AnnotationUtils(UtilsBase):
             # dp.op("annot-distant-solvent")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -641,6 +706,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-distant-solvent")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -668,6 +738,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-link-ssbond")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -696,6 +771,13 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-link-ssbond-with-ptm")
             dp.expLog(logPath)
             dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])
+
+            # Log activity for each exported file
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csvOutputPath, oSt2)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -867,6 +949,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-cis-peptide")
             # dp.expLog("annot-cis-peptide.log")
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -893,6 +980,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-validate-geometry")
             # dp.expLog("annot-validate-geometry.log")
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -919,6 +1011,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-get-corres-info")
             # dp.expLog("annot-get-corres-info")
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -948,6 +1045,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-secondary-structure")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -982,6 +1084,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-secondary-structure")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -1017,6 +1124,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-consolidated-tasks")
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -1050,6 +1162,10 @@ class AnnotationUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(resultPath)
 
+            # Log activity for the intermediate site analysis file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(resultPath, oSt)
+
             # Step 2
             dp.imp(pdbxPath)
             dp.addInput(name="site_info_file_path", value=resultPath, type="file")
@@ -1057,7 +1173,10 @@ class AnnotationUtils(UtilsBase):
             #
             # dp.expLog(logPath2)
             dp.exp(pdbxOutputPath)
-            #
+
+            # Log activity for the final output PDBx file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -1092,6 +1211,11 @@ class AnnotationUtils(UtilsBase):
             dp.op("pisa-assembly-report-xml")
             dp.exp(assemblyReportPath)
             dp.expLog(logPath2)
+
+            # Log activity for the assembly report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(assemblyReportPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -1137,6 +1261,10 @@ class AnnotationUtils(UtilsBase):
             dp.exp(assemblyReportPath)
             dp.expLog(logPath2)
 
+            # Log activity for the exported assembly report file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(assemblyReportPath, oSt)
+
             #
             assemD = self.__readAssemblyReport(assemblyReportPath)
             pathList = []
@@ -1153,6 +1281,10 @@ class AnnotationUtils(UtilsBase):
                     dp.addInput(name="pisa_assembly_id", value=assemblyUid)
                     dp.op("pisa-assembly-coordinates-cif")
                     dp.exp(assemModelFileName)
+
+                    # Log activity for the exported assembly model file
+                    FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(assemModelFileName, oSt)
+
                     if self._verbose:
                         self._lfh.write("+AnnotationUtils.assemblyReportAndModels() - creating assembly model %r file %s\n" % (assemblyUid, assemModelFileName))
                     pathList.append(assemModelFileName)
@@ -1233,6 +1365,11 @@ class AnnotationUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(pdbxOutputPath)
+
+            # Log activity for the exported PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -1313,6 +1450,10 @@ class AnnotationUtils(UtilsBase):
             dp.op("annot-merge-xyz")
             dp.expLog(logFilePath)
             dp.exp(mergedFilePath)
+
+            # Log activity for the exported merged file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(mergedFilePath, oSt)
 
             if not os.access(mergedFilePath, os.R_OK):
                 myStatus = "error"
@@ -1399,6 +1540,11 @@ class AnnotationUtils(UtilsBase):
 
             # Write out
             ret = ioObj.writeFile(outputFilePath=outPath, containerList=dIn)
+
+            # Log activity for the exported combined file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outPath, oSt)
+
             return ret
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
@@ -1418,6 +1564,9 @@ class AnnotationUtils(UtilsBase):
 
             eaf = EmAutoFix(sessionPath=sessdir, siteId=siteId)
             _ret = eaf.autoFixMapLabels(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath)  # noqa: F841
+            # Log file activity for the output file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutPath, oSt)
             # Always return true - even if no work done
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -1445,6 +1594,10 @@ class AnnotationUtils(UtilsBase):
             ret = eaf.autoFixEmMapVersions(datasetid=depDataSetId, modelin=pdbxPath, modelout=pdbxOutPath, location=location)
             self._lfh.write("+em3dAutoEmMapFixVersOp fixvers returns %s\n" % ret)
 
+            # Log file activity for the output file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutPath, oSt)
+
             # Always return true - even if no work done
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -1467,6 +1620,12 @@ class AnnotationUtils(UtilsBase):
             ret = ur.updateRelatedEntries(pdbxPath, pdbxOutPath, logPath)
 
             self._lfh.write("+updatePdbxDatabaseRelatedOp returns %s\n" % ret)
+
+            # Log file activity for the output files
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutPath, oSt)
+            # Log activity for the log file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logPath, oSt)
 
             # Always return true - even if no work done
             return True
@@ -1500,6 +1659,10 @@ class AnnotationUtils(UtilsBase):
             ret = peu.doUpdate(entryId, modelInputFile=pdbxPath, expInputFile=sfPath, expOutputFile=sfOutPath, skipNotChanged=True)
 
             self._lfh.write("+updateSFWavelengthOp returns %s\n" % ret)
+
+            # Log file activity for the output file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(sfOutPath, oSt)
 
             # Always return true - even if no work done
             return True
@@ -1556,6 +1719,10 @@ class AnnotationUtils(UtilsBase):
             status = emh.transHeader(fPath, emdXmlPath, reportPath, validateXml=True)
             self._lfh.write("Status of xml translation %s\n" % status)
 
+            # Log file activity for the output report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             # Cleanup directory
             shutil.rmtree(wrkPath, ignore_errors=True)
 
@@ -1580,6 +1747,11 @@ class AnnotationUtils(UtilsBase):
             #
             checkTask = EmMapCheckTask(siteId=siteId, sessionPath=dirPath, verbose=self._verbose, log=self._lfh)
             checkTask.run(depDataSetId, pdbxPath, reportPath)
+
+            # Log file activity for the output report file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(reportPath, oSt)
+
             # Always return true - even if no work done
             return True
         except Exception as _e:  # noqa: F841,BLE001
@@ -1625,6 +1797,8 @@ class AnnotationUtils(UtilsBase):
                 mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType="bcif", partNumber=mapNameInfo[3])
                 dw = DensityWrapper()
                 dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
+                # Log file activity for the converted bcif file
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(mapBcifPath, "archive")
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
@@ -1647,13 +1821,18 @@ class AnnotationUtils(UtilsBase):
             dirPath = outObjD["dst"].getDirPathReference()
             if os.path.exists(twofofcmap) and os.path.exists(fofcmap) and os.path.exists(coordinates):
                 dw = DensityWrapper()
-                return dw.convert_xray_density_map(
+                convert_result = dw.convert_xray_density_map(
                     coord_file=coordinates,
                     in_2fofc_cif=twofofcmap,
                     in_fofc_cif=fofcmap,
                     out_binary_volume=mapBcifPath,
                     working_dir=dirPath,
                 )
+                # Log activity for the created bcif file if conversion was successful
+                if convert_result and os.path.exists(mapBcifPath):
+                    oSt = outObjD["dst"].getStorageType()
+                    FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(mapBcifPath, oSt)
+                return convert_result
             # no x-ray mmCIF map files
             return True
 

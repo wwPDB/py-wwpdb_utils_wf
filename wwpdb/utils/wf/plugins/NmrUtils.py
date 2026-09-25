@@ -26,6 +26,7 @@ import sys
 import traceback
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
@@ -115,6 +116,12 @@ class NmrUtils(UtilsBase):
             dp.op("annot-chem-shifts-upload-check")
             dp.expLog(logPath)
             dp.exp(csOutPath)
+            # Log activity for the output chemical shift file
+            oSt1 = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csOutPath, oSt1)
+            # Log activity for the check file
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(chkPath, oSt2)
 
             csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
             status = str("".join(csr.getStatus())).lower()
@@ -185,6 +192,12 @@ class NmrUtils(UtilsBase):
             dp.op("annot-chem-shifts-upload-check")
             dp.expLog(logPath)
             dp.exp(csOutPath)
+            # Log activity for the output chemical shift file
+            oSt1 = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csOutPath, oSt1)
+            # Log activity for the check file
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(chkPath, oSt2)
 
             #
             if self.__cleanUp:
@@ -226,6 +239,13 @@ class NmrUtils(UtilsBase):
 
             dp.expLog(logPath)
             dp.exp(csOutPath)
+
+            # Log activity for the output chemical shift file
+            oSt1 = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csOutPath, oSt1)
+            # Log activity for the check file
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(chkPath, oSt2)
 
             csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
             status = str("".join(csr.getStatus())).lower()
@@ -280,6 +300,13 @@ class NmrUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(csOutPath)
 
+            # Log activity for the output chemical shift file
+            oSt1 = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csOutPath, oSt1)
+            # Log activity for the check file
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(chkPath, oSt2)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -329,6 +356,26 @@ class NmrUtils(UtilsBase):
                 ]
             )
             util.run()
+
+            # Log activity for output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            oSt3 = outObjD["dst3"].getStorageType()
+            oSt4 = outObjD["dst4"].getStorageType()
+            oSt5 = outObjD["dst5"].getStorageType()
+            oSt6 = outObjD["dst6"].getStorageType()
+            oSt7 = outObjD["dst7"].getStorageType()
+            oSt8 = outObjD["dst8"].getStorageType()
+
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xyzOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csOutPath, oSt2)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationReportPath, oSt3)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xmlReportPath, oSt4)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationFullReportPath, oSt5)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pngReportPath, oSt6)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(svgReportPath, oSt7)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(csReportPath, oSt8)
+
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
@@ -371,6 +418,11 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-nef-consistency-check")
+
+            # Log activity for the output JSON file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath, oSt)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - NEF input file path:      %s\n" % nefInpPath)
@@ -468,6 +520,11 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-str-consistency-check")
+
+            # Log activity for the output JSON file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath, oSt)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
@@ -696,6 +753,15 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-cs-mr-merge")
+
+            # Log activity for the output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            oSt3 = outObjD["dst3"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(strOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath, oSt2)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nifOutPath, oSt3)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.csMrMergeOp() - CS file path list:          %s\n" % csPathList)
@@ -841,6 +907,22 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath1)
 
             stat = dp.op("nmr-nef2cif-deposit")
+
+            # Log activity for all output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            oSt3 = outObjD["dst3"].getStorageType()
+            oSt4 = outObjD["dst4"].getStorageType()
+            oSt5 = outObjD["dst5"].getStorageType()
+            oSt6 = outObjD["dst6"].getStorageType()
+
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nefOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(strOutPath, oSt2)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(s2cOutPath, oSt3)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath1, oSt4)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath2, oSt5)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nifOutPath, oSt6)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.nef2cifDepositOp() - NEF input file path:               %s\n" % nefInpPath)
@@ -972,6 +1054,18 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-str2cif-deposit")
+
+            # Log activity for all output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            oSt3 = outObjD["dst3"].getStorageType()
+            oSt4 = outObjD["dst4"].getStorageType()
+
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(strOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(s2cOutPath, oSt2)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath, oSt3)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nifOutPath, oSt4)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
@@ -1022,6 +1116,11 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")  # DAOTHER-1728, 9846
 
             stat = dp.op("nmr-if-merge-deposit")
+
+            # Log activity for the output file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(s2cOutPath, oSt)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
@@ -1068,6 +1167,11 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath)
 
             stat = dp.op("nmr-str-consistency-check")
+
+            # Log activity for the output log file
+            oSt0 = outObjD["dst0"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath, oSt0)
+
             #
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
@@ -1079,6 +1183,18 @@ class NmrUtils(UtilsBase):
             dp.setLog(logOutPath1)
 
             stat = dp.op("nmr-str2nef-release")
+
+            # Log activity for all output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            oSt3 = outObjD["dst3"].getStorageType()
+            oSt4 = outObjD["dst4"].getStorageType()
+
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(strOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nefOutPath, oSt2)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath1, oSt3)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(logOutPath2, oSt4)
+
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.str2nefReleaseOp() - NMR-STAR V3.2 input file path:     %s\n" % strInpPath)
@@ -1116,6 +1232,13 @@ class NmrUtils(UtilsBase):
             util.setOutputModelFileName(fileName=xyzOutPath)
             util.setOutputNefFileName(fileName=nefOutPath)
             util.runNefProcess()
+
+            # Log activity for output files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xyzOutPath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(nefOutPath, oSt2)
+
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)

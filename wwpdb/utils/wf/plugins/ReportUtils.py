@@ -31,6 +31,7 @@ import sys
 import traceback
 
 from wwpdb.utils.dp.PdbxMergeCategory import PdbxMergeCategory
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -85,6 +86,11 @@ class ReportUtils(UtilsBase):
                 ["pdbx_entry_details"],
                 ["pdbx_binding_assay", "pdbx_entity_instance_feature"],
             )
+
+            # Log activity for the generated output file if successful
+            if ret:
+                oSt = outObjD["dst"].getStorageType()
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+ReportUtils.combineLigandInfoOp() - return: %s\n" % ret)
