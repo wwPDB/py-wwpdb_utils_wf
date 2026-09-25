@@ -29,6 +29,7 @@ from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -79,6 +80,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-link")
             dp.exp(ccLinkPath)
+
+            # Log activity for the output CC link file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(ccLinkPath, oSt)
+
             if self.__cleanUpSafe:
                 dp.cleanup()
             if self._verbose:
@@ -114,6 +120,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign")
             dp.exp(ccAssignFilePath)
+
+            # Log activity for the output CC assignment file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(ccAssignFilePath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -195,6 +206,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign")
             dp.exp(ccAssignPath)
+
+            # Log activity for the output CC assignment file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(ccAssignPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -274,6 +290,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign-exact")
             dp.exp(ccAssignFilePath)
+
+            # Log activity for the output CC assignment file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(ccAssignFilePath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -308,6 +329,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-assign-exact")
             dp.exp(ccAssignPath)
+
+            # Log activity for the output CC assignment file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(ccAssignPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -344,6 +370,11 @@ class ChemCompUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("chem-comp-instance-update")
             dp.exp(outputModelPdbxPath)
+
+            # Log activity for the output model file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outputModelPdbxPath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:

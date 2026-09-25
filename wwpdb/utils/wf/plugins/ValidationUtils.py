@@ -38,6 +38,7 @@ import traceback
 
 from wwpdb.io.file.DataExchange import DataExchange
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 from wwpdb.utils.session.WebRequest import InputRequest
@@ -209,6 +210,18 @@ class ValidationUtils(UtilsBase):
                 ]
             )
 
+            # Log activity for each exported file
+            # Assuming storage type is the same for all output files, get from dst1
+            oSt = outObjD["dst1"].getStorageType()
+            # Log each file in the destination list
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xmlReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationFullReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pngReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(svgReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(imageTarPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(cifReportPath, oSt)
+
             if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - Entry Id:                %s\n" % depDataSetId)
                 self._lfh.write("+ValidationUtils.validationReportAllOp() - PDBx   file path:        %s\n" % pdbxPath)
@@ -348,6 +361,20 @@ class ValidationUtils(UtilsBase):
                     coef2foReportPath,
                 ]
             )
+
+            # Log activity for each exported file
+            # Assuming storage type is the same for all output files, get from dst1
+            oSt = outObjD["dst1"].getStorageType()
+            # Log each file in the destination list
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xmlReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationFullReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pngReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(svgReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(imageTarPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(cifReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(coeffoReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(coef2foReportPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOpV2() - Entry Id:                %s\n" % depDataSetId)
@@ -513,6 +540,20 @@ class ValidationUtils(UtilsBase):
                 ]
             )
 
+            # Log activity for each exported file
+            # Assuming storage type is the same for all output files, get from dst1
+            oSt = outObjD["dst1"].getStorageType()
+            # Log each file in the destination list
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(xmlReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(validationFullReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pngReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(svgReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(imageTarPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(cifReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(coeffoReportPath, oSt)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(coef2foReportPath, oSt)
+
             if self._verbose:
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - Entry Id:                %s\n" % depDataSetId)
                 self._lfh.write("+ValidationUtils.validationReportAllOpV3() - PDBx    file path:       %s\n" % pdbxPath)
@@ -599,6 +640,10 @@ class ValidationUtils(UtilsBase):
                 self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - XML report file path:  %s\n" % xmlReportPath)
                 self._lfh.write("+ValidationUtils.validationGetCorrespondLetterOp() - Cor letter file path:  %s\n" % correspondLetterPath)
             #
+            # Get storage type for logging
+            oSt = outObjD["dst"].getStorageType()
+            # Log the correspondence letter file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(correspondLetterPath, oSt)
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)

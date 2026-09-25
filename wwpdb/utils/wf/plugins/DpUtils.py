@@ -24,6 +24,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 
 class DpUtils(UtilsBase):
@@ -59,6 +60,8 @@ class DpUtils(UtilsBase):
             pdbxPath = inpObjD["src"].getFilePathReference()
             distPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
+            # Get storage type for logging
+            oSt = outObjD["dst"].getStorageType()
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -66,6 +69,8 @@ class DpUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-poly-link-dist")
             dp.exp(distPath)
+            # Log activity for the exported distance file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(distPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -83,6 +88,9 @@ class DpUtils(UtilsBase):
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             logPath = os.path.join(dirPath, "centre-of-mass.log")
+            # Get storage type for logging output file
+            oSt = outObjD["dst"].getStorageType()
+            # Remove log storage type variable as we don't need to log log files
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -91,7 +99,11 @@ class DpUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("centre-of-mass")
             dp.expLog(logPath)
+            # Remove log file activity logging
+
             dp.exp(pdbxOutputPath)
+            # Log activity for the exported output file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
 
             if self.__cleanUp:
                 dp.cleanup()
@@ -110,6 +122,9 @@ class DpUtils(UtilsBase):
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             logPath = os.path.join(dirPath, "generate-complexity.log")
+            # Get storage type for logging output file
+            oSt = outObjD["dst"].getStorageType()
+            # Remove log storage type variable as we don't need to log log files
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -118,7 +133,11 @@ class DpUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-complexity")
             dp.expLog(logPath)
+            # Remove log file activity logging
+
             dp.exp(pdbxOutputPath)
+            # Log activity for the exported output file
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxOutputPath, oSt)
 
             if self.__cleanUp:
                 dp.cleanup()
