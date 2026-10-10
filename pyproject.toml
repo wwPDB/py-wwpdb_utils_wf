@@ -76,6 +76,7 @@ preview = false
 [tool.ruff.lint]
 explicit-preview-rules = true
 ignore = [
+  "D419",     # Docstring is empty
   "FBT002",   # Boolean default positional argument in function definition
   "ISC003",   # Do not remove + in string concatenation
   "N801",     # Class name `markdownTests` should use CapWords convention
@@ -101,8 +102,8 @@ ignore = [
 
 # -------------------- default environment scripts ------------------
 [tool.hatch.envs.default]
-skip-install = true
-dependencies = ["mypy", "ruff >=0.6.9", "wwpdb.utils.testing", "mmcif_utils", "mmcif", "types-mysqlclient"]
+# skip-install = true
+dependencies = ["mypy", "ruff >=0.6.9", "wwpdb.utils.testing", "mmcif_utils", "mmcif", "types-mysqlclient", "wwpdb.utils.db"]
 
 
 [tool.hatch.envs.default.scripts]
@@ -137,7 +138,8 @@ run = ["tox"]
 
 # -------------------------  Mypy disable ---------
 [[tool.mypy.overrides]]
-module = ["mmcif.*", "wwpdb.*", "tests.*", "commonsetup", "mmcif_utils.*"]
+#module = ["mmcif.*", "wwpdb.*", "tests.*", "commonsetup", "mmcif_utils.*"]
+module = ["mmcif.*", "wwpdb.apps.*", "wwpdb.utils.nmr.*", "commonsetup"]
 ignore_missing_imports = true
 
 [tool.mypy]

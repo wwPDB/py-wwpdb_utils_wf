@@ -312,7 +312,7 @@ class EmUtils(UtilsBase):
             try:
                 cD = json.load(open(inpCfgPath))  # noqa: SIM115
                 pL = cD["part-list"]
-                inpMileStone = cD["map-content-milestone"] if "map-content-milestone" in cD else None
+                inpMileStone = cD.get("map-content-milestone", None)
                 mapContentType = cD["map-content-type"]
                 cmdLineArgList = cD["cmd-line-arg-list"]
                 for p, arg in zip(pL, cmdLineArgList):
