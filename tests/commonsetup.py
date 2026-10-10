@@ -22,5 +22,5 @@ crw.createtree(["site-config", "actiondata", ["archive", "D_000001"]])
 SiteConfigSetup().setupEnvironment(rwMockTopPath, rwMockTopPath)
 
 
-def MyNoop():
+def MyNoop() -> None:
     pass

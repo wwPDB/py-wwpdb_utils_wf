@@ -27,10 +27,10 @@ from wwpdb.utils.wf.dbapi.StatusDbApi import StatusDbApi  # noqa: F401 pylint: d
 
 
 class ImportTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         pass
 
-    def testInstantiate(self):
+    def testInstantiate(self) -> None:
         pass
 
 

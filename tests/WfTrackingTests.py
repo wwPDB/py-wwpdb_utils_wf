@@ -35,7 +35,7 @@ from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 
 @unittest.skipUnless(Features().haveMySqlTestServer(), "Needs MySql test server for testing")
 class WfTrackingTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.__verbose = True
         self.__lfh = sys.stderr
         #
@@ -47,10 +47,10 @@ class WfTrackingTests(unittest.TestCase):
         self.__wfInstanceId = "W_000001"
         self.__wfClassId = "seqedTST"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         pass
 
-    def testInstanceUpdateStart(self):
+    def testInstanceUpdateStart(self) -> None:
         """ """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function testInstanceUpdateStart")
@@ -63,7 +63,7 @@ class WfTrackingTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testInstanceUpdateFinish(self):
+    def testInstanceUpdateFinish(self) -> None:
         """ """
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function testInstanceUpdateFinish")
@@ -77,8 +77,8 @@ class WfTrackingTests(unittest.TestCase):
             self.fail()
 
 
-def suite():
-    return unittest.makeSuite(WfTrackingTests, "test")
+def suite() -> unittest.TestSuite:
+    return unittest.TestLoader().loadTestsFromTestCase(WfTrackingTests)
 
 
 if __name__ == "__main__":

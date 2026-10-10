@@ -39,7 +39,7 @@ logger.setLevel(logging.DEBUG)
 
 
 class ProcessRunnerTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.__verbose = True
         self.__lfh = sys.stderr
         self.assertNotEqual(getSiteId(), "None", "Site ID is not set")  # noqa: PT009
@@ -49,10 +49,10 @@ class ProcessRunnerTests(unittest.TestCase):
         self.__depDataSetId = "D_000001"
         self.__wfInstanceId = "W_000002"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         pass
 
-    def testCopyOp(self):
+    def testCopyOp(self) -> None:
         """Test file copy from archival to workflow instance storage."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testCopyOp")
@@ -112,7 +112,7 @@ class ProcessRunnerTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testSizeOfOp(self):
+    def testSizeOfOp(self) -> None:
         """Test obtaining the size of an archival data file."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testSizeOfOp")
@@ -156,7 +156,7 @@ class ProcessRunnerTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testMtimeOfOp(self):
+    def testMtimeOfOp(self) -> None:
         """Test of obtaining the modification time of an archival data file."""
         self.__lfh.write("\n------------------------ ")
         self.__lfh.write("Starting test function  testMtimeOfOp")
@@ -200,7 +200,7 @@ class ProcessRunnerTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testDiffOp(self):
+    def testDiffOp(self) -> None:
         """Test of computing the contextual difference between the latest two versions of
         an archival file.
         """
@@ -264,7 +264,7 @@ class ProcessRunnerTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testDiffIntOp(self):
+    def testDiffIntOp(self) -> None:
         """Test of computing the contextual difference between the latest two versions of
         an archival file.  Files identified by integer versions.
         """
@@ -329,7 +329,7 @@ class ProcessRunnerTests(unittest.TestCase):
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-    def testDiffStringOp(self):
+    def testDiffStringOp(self) -> None:
         """Test of computing the contextual difference between the latest two versions of
         an archival file.  Files identified by stringified versions.
         """
@@ -394,8 +394,8 @@ class ProcessRunnerTests(unittest.TestCase):
             self.fail()
 
 
-def suite():
-    return unittest.makeSuite(ProcessRunnerTests, "test")
+def suite() -> unittest.TestSuite:
+    return unittest.TestLoader().loadTestsFromTestCase(ProcessRunnerTests)
 
 
 if __name__ == "__main__":

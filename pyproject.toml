@@ -142,11 +142,24 @@ run = ["tox"]
 module = ["mmcif.*", "wwpdb.apps.*", "wwpdb.utils.nmr.*", "commonsetup"]
 ignore_missing_imports = true
 
+# The test suite is fully annotated.  Calls into the (still untyped) library are permitted.
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+warn_return_any = true
+no_implicit_optional = true
+strict_equality = true
+
 [tool.mypy]
 exclude = [
 	"test-output",
 ]
 
 # ------------------------ ruff disable until typing added
-#[tool.ruff.lint.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
+# Tests use typing.Optional/List/Dict (Python 3.8 compatible) per AGENTS.md
+"tests/*" = ["FA100", "FBT001", "PT009", "PT027", "S106", "TID252", "RUF005"]
 

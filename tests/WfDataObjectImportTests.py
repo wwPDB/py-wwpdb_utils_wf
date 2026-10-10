@@ -27,10 +27,10 @@ from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 
 class ImportTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         pass
 
-    def testInstantiate(self):
+    def testInstantiate(self) -> None:
         # vT = WfDbApi()
         dO = WfDataObject()
         # __repr__ should not crash if not fixed

@@ -41,14 +41,14 @@ from wwpdb.utils.wf.dbapi.WfTracking import WfTracking
 
 
 class ImportTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         pass
 
-    def testInstantiate(self):
+    def testInstantiate(self) -> None:
         # vT = WfDbApi() --- This should be mocked
-        _vC = DbConnection()  # noqa: F841
-        _vC = DbCommand(dbcon=None)  # noqa: F841
-        _vC = WfTracking()  # noqa: F841
+        _vConn = DbConnection()  # noqa: F841
+        _vCmd = DbCommand(dbcon=None)  # noqa: F841
+        _vTrack = WfTracking()  # noqa: F841
 
         self.assertEqual(getTimeZero(), datetime.datetime(2000, 1, 1, 0, 0, 0))  # noqa: PT009,DTZ001
 

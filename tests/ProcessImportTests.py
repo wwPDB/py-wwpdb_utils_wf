@@ -14,6 +14,7 @@ __version__ = "V0.01"
 
 # pylint: disable=unused-import
 
+import io
 import unittest
 
 if __package__ is None or __package__ == "":
@@ -25,18 +26,23 @@ if __package__ is None or __package__ == "":
 else:
     from .commonsetup import HERE  # noqa: F401
 
-from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry  # noqa: F401
-from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo  # noqa: F401
-from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner  # noqa: F401
+from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
+from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
+from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 
 
 class ImportTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         pass
 
-    def testInstantiate(self):
-        # vc = ProcessRunner()
-        pass
+    def testInstantiate(self) -> None:
+        pR = ProcessRunner(verbose=False, log=io.StringIO())
+        self.assertEqual(pR.getParameterDict(), {})
+        self.assertTrue(pR.setAction("copy"))
+        aR = ActionRegistry()
+        self.assertTrue(aR.isDefinedAction("copy"))
+        aRIo = ActionRegistryIo(filePath="/nonexistent/actionData.xml", log=io.StringIO())
+        self.assertEqual(aRIo.getRegistry(), {})
 
 
 if __name__ == "__main__":
