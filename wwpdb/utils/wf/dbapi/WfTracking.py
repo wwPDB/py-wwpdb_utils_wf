@@ -20,6 +20,7 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
 import sys
+from typing import Any, Dict, Optional, TextIO
 
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
@@ -28,16 +29,16 @@ from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 class WfTracking:
     """Provides methods to update progress and tracking information in the WF status database."""
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         self.__verbose = verbose
         self.__lfh = log
 
-    def setInstanceStatus(self, depId=None, instId=None, classId=None, status=None):
+    def setInstanceStatus(self, depId: Optional[str] = None, instId: Optional[str] = None, classId: Optional[str] = None, status: Optional[str] = None) -> bool:
         """Update the tracking status record for the input instance step."""
 
         now = getTimeNow()
         DBstatusAPI = WfDbApi(verbose=self.__verbose)
-        instD = {}
+        instD: Dict[str, Any] = {}
         instD["WF_INST_ID"] = instId
         instD["WF_CLASS_ID"] = classId
         instD["DEP_SET_ID"] = depId
@@ -56,7 +57,7 @@ class WfTracking:
         #
         #
         sql = (
-            "update wf_instance_last set status_timestamp="  # noqa: S608
+            "update wf_instance_last set status_timestamp="  # type: ignore[operator]  # noqa: S608 None ids raise TypeError (not handled)
             + str(now)
             + ", inst_status='"
             + str(status)
@@ -70,7 +71,7 @@ class WfTracking:
         )
 
         ok = DBstatusAPI.runUpdateSQL(sql)
-        if ok < 1:
+        if ok < 1:  # type: ignore[operator]  # Could be None
             self.__lfh.write("+WfTracking.setInstanceStatus() ERROR: failed to update workflow status, current task does not control the workflow\n")
             return False
         # Can update existing record using  ---

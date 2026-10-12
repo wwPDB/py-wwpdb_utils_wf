@@ -20,10 +20,12 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import Any, Collection, Dict, List, Optional
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from wwpdb.utils.wf.process.ActionRegistryIo import ActionRegistryIo
+from wwpdb.utils.wf.process.ActionRegistryTypes import ActionDef, ActionParameterDict
 
 
 class ActionRegistry:
@@ -48,13 +50,15 @@ class ActionRegistry:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__cI = ConfigInfo()
         regPath = self.__cI.get("SITE_REGISTRY_FILE_PATH")
         aR = ActionRegistryIo(filePath=regPath)
-        self.__D = aR.getRegistry()
+        # Keyed by action id (str).  The key type is Any because the accessors are also called with an unset (None)
+        # action id by ProcessRunner; that lookup raises KeyError and each accessor returns its default.
+        self.__D: Dict[Any, ActionDef] = aR.getRegistry()
 
-    def getActions(self):
+    def getActions(self) -> Collection[str]:  # the registry's keys view, or [] on error
         """Returns:
 
         List of action identifiers defined in the action registry. An empty list is
@@ -66,7 +70,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return []
 
-    def isDefinedAction(self, actionId):
+    def isDefinedAction(self, actionId: Optional[str]) -> bool:
         """Returns:
 
         True if the input action identifier is defined in the registry or False otherwise.
@@ -75,7 +79,7 @@ class ActionRegistry:
             return True
         return False
 
-    def getMethodName(self, actionId):
+    def getMethodName(self, actionId: Optional[str]) -> Optional[str]:
         """Returns:
 
         The Python method name associated with the input action identifier
@@ -86,7 +90,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def getModuleName(self, actionId):
+    def getModuleName(self, actionId: Optional[str]) -> Optional[str]:
         """Returns:
 
         The Python module name containing the method associated with the input action identifier
@@ -98,7 +102,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def getUserParameterDict(self, actionId):
+    def getUserParameterDict(self, actionId: Optional[str]) -> ActionParameterDict:
         """Returns:
 
         The user parameter dictionary for the input action identifier
@@ -110,7 +114,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return {}
 
-    def getInternalParameterDict(self, actionId):
+    def getInternalParameterDict(self, actionId: Optional[str]) -> ActionParameterDict:
         """Returns:
 
         The internal parameter dictionary for the input action identifier
@@ -122,7 +126,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return {}
 
-    def getInputObjectCount(self, actionId):
+    def getInputObjectCount(self, actionId: Optional[str]) -> int:
         """Returns:
 
         The number of input data objects required for input action identifier
@@ -135,7 +139,7 @@ class ActionRegistry:
             traceback.print_exc(file=sys.stderr)
             return 0
 
-    def getInputObjectNames(self, actionId):
+    def getInputObjectNames(self, actionId: Optional[str]) -> List[str]:
         """Returns:
 
         The list of names of input data objects required for input action identifier
@@ -148,7 +152,7 @@ class ActionRegistry:
             traceback.print_exc(file=sys.stderr)
             return []
 
-    def getOutputObjectCount(self, actionId):
+    def getOutputObjectCount(self, actionId: Optional[str]) -> int:
         """Returns:
 
         The number of output data objects required for the input action identifier
@@ -160,7 +164,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return 0
 
-    def getOutputObjectNames(self, actionId):
+    def getOutputObjectNames(self, actionId: Optional[str]) -> List[str]:
         """Returns:
 
         The list of names of output data objects required for the input action identifier
@@ -172,7 +176,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return []
 
-    def setUserParameter(self, actionId, paramKey, paramValue):
+    def setUserParameter(self, actionId: Optional[str], paramKey: str, paramValue: Any) -> bool:
         """Set a user adjustable parameter for the input action.  The parameter is
         identifiers by *paramKey* and the value is specified as *paramValue*.
 
@@ -187,7 +191,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getUserParameter(self, actionId, paramKey):
+    def getUserParameter(self, actionId: Optional[str], paramKey: str) -> Any:
         """Returns:
 
         The value of a user adjustable parameter for the input action.  The
@@ -199,7 +203,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputReferenceType(self, actionId, inpName="1"):
+    def isSetInputReferenceType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the reference type for the specified action and input object assigned?
 
         Returns:
@@ -212,7 +216,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputReferenceType(self, actionId, inpName="1"):
+    def getInputReferenceType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the reference type for the specified action and input object.
 
         Returns:
@@ -225,7 +229,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputContainerType(self, actionId, inpName="1"):
+    def isSetInputContainerType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the container type for the specified action and input object assigned?
 
         Returns:
@@ -239,7 +243,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputContainerType(self, actionId, inpName="1"):
+    def getInputContainerType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the container type for the specified action and input object.
 
         Returns:
@@ -252,7 +256,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputValueType(self, actionId, inpName="1"):
+    def isSetInputValueType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the value type for the specified action and input object assigned?
 
         Returns:
@@ -266,7 +270,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputValueType(self, actionId, inpName="1"):
+    def getInputValueType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the value type for the specified action and input object.
 
         Returns:
@@ -279,7 +283,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputSelectorType(self, actionId, inpName="1"):
+    def isSetInputSelectorType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the selector type for the specified action and input object assigned?
 
         Returns:
@@ -292,7 +296,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputSelectorType(self, actionId, inpName="1"):
+    def getInputSelectorType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the selector type for the specified action and input object.
 
         Returns:
@@ -305,7 +309,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputContentType(self, actionId, inpName="1"):
+    def isSetInputContentType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the content type for the specified action and input object assigned?
 
         Returns:
@@ -318,7 +322,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputContentType(self, actionId, inpName="1"):
+    def getInputContentType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the content type for the specified action and input object.
 
         Returns:
@@ -331,7 +335,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetInputFileFormat(self, actionId, inpName="1"):
+    def isSetInputFileFormat(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the file format for the specified action and input object assigned?
 
         Returns:
@@ -344,7 +348,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getInputFileFormat(self, actionId, inpName="1"):
+    def getInputFileFormat(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the file format for the specified action and input object.
 
         Returns:
@@ -357,7 +361,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputReferenceType(self, actionId, inpName="1"):
+    def isSetOutputReferenceType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the reference type for the specified action and output object assigned?
 
         Returns:
@@ -370,7 +374,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputReferenceType(self, actionId, inpName="1"):
+    def getOutputReferenceType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the reference type for the specified action and output object.
 
         Returns:
@@ -383,7 +387,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputContainerType(self, actionId, inpName="1"):
+    def isSetOutputContainerType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the container type for the specified action and output object assigned?
 
         Returns:
@@ -396,7 +400,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputContainerType(self, actionId, inpName="1"):
+    def getOutputContainerType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the container type for the specified action and output object.
 
         Returns:
@@ -409,7 +413,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputValueType(self, actionId, inpName="1"):
+    def isSetOutputValueType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the value type for the specified action and output object assigned?
 
         Returns:
@@ -422,7 +426,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputValueType(self, actionId, inpName="1"):
+    def getOutputValueType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the value type for the specified action and output object.
 
         Returns:
@@ -435,7 +439,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputSelectorType(self, actionId, inpName="1"):
+    def isSetOutputSelectorType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the selector type for the specified action and output object assigned?
 
         Returns:
@@ -448,7 +452,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputSelectorType(self, actionId, inpName="1"):
+    def getOutputSelectorType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the selector type for the specified action and output object.
 
         Returns:
@@ -461,7 +465,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputContentType(self, actionId, inpName="1"):
+    def isSetOutputContentType(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the content type for the specified action and output object assigned?
 
         Returns:
@@ -474,7 +478,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputContentType(self, actionId, inpName="1"):
+    def getOutputContentType(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the content type for the specified action and output object.
 
         Returns:
@@ -487,7 +491,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return None
 
-    def isSetOutputFileFormat(self, actionId, inpName="1"):
+    def isSetOutputFileFormat(self, actionId: Optional[str], inpName: str = "1") -> bool:
         """Is the file format for the specified action and output object assigned?
 
         Returns:
@@ -500,7 +504,7 @@ class ActionRegistry:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def getOutputFileFormat(self, actionId, inpName="1"):
+    def getOutputFileFormat(self, actionId: Optional[str], inpName: str = "1") -> Optional[str]:
         """Get the file format for the specified action and output object.
 
         Returns:

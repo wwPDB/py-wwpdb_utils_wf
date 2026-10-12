@@ -19,11 +19,13 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+from typing import TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class DpUtils(UtilsBase):
@@ -45,14 +47,14 @@ class DpUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(DpUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
         #
 
-    def polymerLinkageDistanceOp(self, **kwArgs):
+    def polymerLinkageDistanceOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Calculate polymer linkage distances -"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -76,13 +78,13 @@ class DpUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def centreOfMassCalculation(self, **kwargs):
+    def centreOfMassCalculation(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
-            logPath = os.path.join(dirPath, "centre-of-mass.log")
+            logPath = os.path.join(cast("str", dirPath), "centre-of-mass.log")
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -102,14 +104,14 @@ class DpUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def generateComplexityOp(self, **kwargs):
+    def generateComplexityOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Generates complexity report"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
-            logPath = os.path.join(dirPath, "generate-complexity.log")
+            logPath = os.path.join(cast("str", dirPath), "generate-complexity.log")
 
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")

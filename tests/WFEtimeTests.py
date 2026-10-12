@@ -59,10 +59,9 @@ class WFEtimeTests(unittest.TestCase):
         self.assertEqual(WFEtime.getTimeFromEpoc(ts), "2010-05-06 07:08:09 ")
         self.assertEqual(WFEtime.getTimeFromEpoc(str(ts + 0.75)), "2010-05-06 07:08:09 ")
 
-    @unittest.expectedFailure
-    def testTimeReadable(self) -> None:
-        # Bug: getTimeReadable() reads zeroDate.days/.seconds, which datetime objects do not have (AttributeError)
-        self.assertEqual(WFEtime.getTimeReadable(3600), datetime.datetime(2000, 1, 1, 1, 0, 0))  # noqa: DTZ001
+    def testTimeReadableRemoved(self) -> None:
+        # getTimeReadable() was unused and always raised AttributeError; it is commented out in WFEtime.py
+        self.assertFalse(hasattr(WFEtime, "getTimeReadable"))
 
 
 if __name__ == "__main__":

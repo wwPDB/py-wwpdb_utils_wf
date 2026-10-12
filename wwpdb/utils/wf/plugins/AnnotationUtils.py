@@ -36,13 +36,15 @@ import socket
 import sys
 import tempfile
 import traceback
+from typing import TYPE_CHECKING, Any, Dict, Optional, TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.DensityWrapper import DensityWrapper
 from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 try:
     # We will have present on annotation system - but allow testing without
@@ -60,6 +62,9 @@ except ImportError:
 
 from mmcif.io.IoAdapterCore import IoAdapterCore
 from wwpdb.utils.db.DbLoadingApi import DbLoadingApi
+
+if TYPE_CHECKING:
+    from wwpdb.utils.dp.RcsbDpUtility import RcsbDpOp
 
 logger = logging.getLogger(__name__)
 
@@ -94,14 +99,14 @@ class AnnotationUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(AnnotationUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
         #
 
-    def statusLoadOp(self, **kwArgs):
+    def statusLoadOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx database load of status related categories."""
         try:
             (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -113,21 +118,22 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.statusLoadOp() - PDBx input  file path:  %s\n" % pdbxPath)
                 self._lfh.write("+AnnotationUtils.statusLoadOp() - deposition ID:          %s\n" % depDataSetId)
             dbLd = DbLoadingApi(log=self._lfh, verbose=self._verbose)
-            ok = dbLd.doLoadStatus(pdbxPath, dirPath)
+            # A None path makes doLoadStatus() fail inside its own try and return False
+            ok = dbLd.doLoadStatus(cast("str", pdbxPath), cast("str", dirPath))
             self._lfh.write("+AnnotationUtils.statusLoadOp() - returns   %r\n" % ok)
             return ok
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
-    def specialPositionCheckOp(self, **kwArgs):
+    def specialPositionCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs special position check and produces a summary report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "special-position-check.log")
             #
             cI = ConfigInfo()
@@ -149,14 +155,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def formatCheckPdbxOp(self, **kwArgs):
+    def formatCheckPdbxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx format check and returns a text check report."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "format-check-pdbx.log")
             #
             cI = ConfigInfo()
@@ -182,14 +188,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def formatCheckPdbOp(self, **kwArgs):
+    def formatCheckPdbOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDB format check and returns a text check report."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
             pdbPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "format-check-pdb.log")
             #
             cI = ConfigInfo()
@@ -216,14 +222,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def dictCheckOp(self, **kwArgs):
+    def dictCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx dictionary check on PDBx format input file and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "dict-check.log")
             #
             cI = ConfigInfo()
@@ -245,7 +251,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def xmlCheckOp(self, **kwArgs):
+    def xmlCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBML XML check on PDBx format input file and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -253,9 +259,9 @@ class AnnotationUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "cif2pdbx-next.log")
-            expPath = os.path.join(dirPath, depDataSetId + "_model-temp_P1.cif.V1")
+            expPath = os.path.join(dirPath, cast("str", depDataSetId) + "_model-temp_P1.cif.V1")  # None -> TypeError -> False
             if os.path.exists(expPath):
                 os.remove(expPath)
             #
@@ -291,7 +297,7 @@ class AnnotationUtils(UtilsBase):
             return False
         #
 
-    def __generateXMLFile(self, siteId, pdbxPath, dirPath):
+    def __generateXMLFile(self, siteId: str, pdbxPath: str, dirPath: str) -> Optional[str]:
         """Generate noatom xml file"""
         try:
             xmlPath = pdbxPath + ".xml-noatom"
@@ -320,7 +326,7 @@ class AnnotationUtils(UtilsBase):
         #
         return None
 
-    def __checkXMLFile(self, siteId, xmlPath, dirPath, reportPath, op):
+    def __checkXMLFile(self, siteId: str, xmlPath: str, dirPath: str, reportPath: Optional[str], op: "RcsbDpOp") -> None:
         """Check noatom xml file"""
         MAX_SIZE_CHECK = 100000000
         try:
@@ -346,7 +352,8 @@ class AnnotationUtils(UtilsBase):
                 with open(inReportPath) as ith:
                     data = ith.read()
                 if len(data) > 0:
-                    oth = open(reportPath, "a")  # noqa: SIM115
+                    # A None reportPath (dst without a file reference) raises here; the bare except swallows it and xmlCheckOp still returns True
+                    oth = open(reportPath, "a")  # type: ignore[arg-type]  # noqa: SIM115
                     for line in data.split("\n"):
                         strip_line = line.strip()
                         if strip_line in {"", "input_file_1 validates"} or strip_line.startswith("stdin:"):
@@ -368,7 +375,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
         #
 
-    def dictCheckFirstOp(self, **kwArgs):
+    def dictCheckFirstOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx dictionary check on the first block of a PDBx format input file
         and returns a text check report.
         """
@@ -377,7 +384,7 @@ class AnnotationUtils(UtilsBase):
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "dict-check.log")
             #
             cI = ConfigInfo()
@@ -401,14 +408,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def dictR4CheckOp(self, **kwArgs):
+    def dictR4CheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx R4 dictionary check on PDBx format input file and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "dict-check.log")
             #
             cI = ConfigInfo()
@@ -430,14 +437,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def geometryCheckOp(self, **kwArgs):
+    def geometryCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs geometry check on PDBx format input file and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "geometry-check-report.log")
             #
             cI = ConfigInfo()
@@ -459,14 +466,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def miscCheckReportOp(self, **kwArgs):
+    def miscCheckReportOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs additional checks on PDBx format model files and returns a text check report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "misc-check-report.log")
             #
             cI = ConfigInfo()
@@ -488,7 +495,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def dccCheckReportOp(self, **kwArgs):
+    def dccCheckReportOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """DCC generated check report of model and SF file --"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -522,14 +529,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def nucleicAcidGeometryOp(self, **kwArgs):
+    def nucleicAcidGeometryOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs base pair/step geometry calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "base-pair-position.log")
             #
             cI = ConfigInfo()
@@ -551,7 +558,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def solventPositionAddDerivedOp(self, **kwArgs):
+    def solventPositionAddDerivedOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs solvent reorganization calculation on PDBx format input file and update this data in the PDBx model file.
 
         This version also adds selected derived categories required by other annotation tasks.   This step should
@@ -563,7 +570,7 @@ class AnnotationUtils(UtilsBase):
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "solvent-position.log")
             #
             cI = ConfigInfo()
@@ -588,14 +595,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def solventPositionOp(self, **kwArgs):
+    def solventPositionOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs solvent reorganization calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "solvent-position.log")
             #
             cI = ConfigInfo()
@@ -620,14 +627,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def solventPositionAnalysis(self, **kwArgs):
+    def solventPositionAnalysis(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs distant solvent calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "solvent-position-analysis.log")
             #
             cI = ConfigInfo()
@@ -651,14 +658,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def linkOp(self, **kwArgs):
+    def linkOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
             #
             cI = ConfigInfo()
@@ -678,14 +685,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def linkPtmOp(self, **kwArgs):
+    def linkPtmOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             csvOutputPath = outObjD["dst2"].getFilePathReference()
             logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
             #
@@ -695,7 +702,7 @@ class AnnotationUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-link-ssbond-with-ptm")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -706,14 +713,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def linkPtmMccOp(self, **kwArgs):
+    def linkPtmMccOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             csvOutputPath = outObjD["dst2"].getFilePathReference()
             txtOutputPath = outObjD["dst3"].getFilePathReference()
             logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
@@ -724,7 +731,7 @@ class AnnotationUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-link-ssbond-with-ptm-mcc")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -738,14 +745,14 @@ class AnnotationUtils(UtilsBase):
             return False
         #
 
-    def linkPtmMccWithSkipOp(self, **kwArgs):
+    def linkPtmMccWithSkipOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs link calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             csvOutputPath = outObjD["dst2"].getFilePathReference()
             txtOutputPath = outObjD["dst3"].getFilePathReference()
             logPath = os.path.join(dirPath, "annot-link-and-ss-bond.log")
@@ -757,7 +764,7 @@ class AnnotationUtils(UtilsBase):
             dp.addInput(name="check_skip_option", value="add")
             dp.op("annot-link-ssbond-with-ptm-mcc")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -771,7 +778,7 @@ class AnnotationUtils(UtilsBase):
             return False
         #
 
-    def metalCoordinationOp(self, **kwArgs):
+    def metalCoordinationOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
         and update this data in the PDBx model file.
         """
@@ -780,7 +787,7 @@ class AnnotationUtils(UtilsBase):
             pdbxPath = inpObjD["src1"].getFilePathReference()
             txtFilePath = inpObjD["src2"].getFilePathReference()
             pdbxOutputPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             csvOutputPath = outObjD["dst2"].getFilePathReference()
             #
             entryId = outObjD["dst1"].getDepositionDataSetId()
@@ -791,15 +798,29 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             #
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
-            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
-            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
+            findGeoFilePath = pI.getFilePath(
+                entryId,
+                wfInstanceId=instId,
+                contentType="findgeo-annotation",
+                formatType="json",
+                fileSource=fileSource,  # type: ignore[arg-type]  # None storage type gives a None path
+                versionId="next",
+            )
+            metalCoordFilePath = pI.getFilePath(
+                entryId,
+                wfInstanceId=instId,
+                contentType="metalcoord-annotation",
+                formatType="json",
+                fileSource=fileSource,  # type: ignore[arg-type]  # None storage type gives a None path
+                versionId="next",
+            )
             #
             mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             mp.setModelCoordinatesFilePath(pdbxPath)
             mp.setPolyAtomicMetalLigandInfoWithFilePath(txtFilePath)
             mp.setFindGeoOutputFilePath(findGeoFilePath)
             mp.setMetalCoordOutputFilePath(metalCoordFilePath)
-            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, entryId + ".Annotation.txt"))
+            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, cast("str", entryId) + ".Annotation.txt"))  # None -> TypeError -> False
             mp.runUpdate(pdbxPath=pdbxOutputPath, csvPath=csvOutputPath)
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
@@ -811,7 +832,7 @@ class AnnotationUtils(UtilsBase):
             return False
         #
 
-    def metalCoordinationWithLargeTimeoutOp(self, **kwArgs):
+    def metalCoordinationWithLargeTimeoutOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file
         and update this data in the PDBx model file.
         """
@@ -820,7 +841,7 @@ class AnnotationUtils(UtilsBase):
             pdbxPath = inpObjD["src1"].getFilePathReference()
             txtFilePath = inpObjD["src2"].getFilePathReference()
             pdbxOutputPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             csvOutputPath = outObjD["dst2"].getFilePathReference()
             #
             entryId = outObjD["dst1"].getDepositionDataSetId()
@@ -831,15 +852,29 @@ class AnnotationUtils(UtilsBase):
             siteId = cI.get("SITE_PREFIX")
             #
             pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
-            findGeoFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
-            metalCoordFilePath = pI.getFilePath(entryId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
+            findGeoFilePath = pI.getFilePath(
+                entryId,
+                wfInstanceId=instId,
+                contentType="findgeo-annotation",
+                formatType="json",
+                fileSource=fileSource,  # type: ignore[arg-type]  # None storage type gives a None path
+                versionId="next",
+            )
+            metalCoordFilePath = pI.getFilePath(
+                entryId,
+                wfInstanceId=instId,
+                contentType="metalcoord-annotation",
+                formatType="json",
+                fileSource=fileSource,  # type: ignore[arg-type]  # None storage type gives a None path
+                versionId="next",
+            )
             #
             mp = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             mp.setModelCoordinatesFilePath(pdbxPath)
             mp.setPolyAtomicMetalLigandInfoWithFilePath(txtFilePath)
             mp.setFindGeoOutputFilePath(findGeoFilePath)
             mp.setMetalCoordOutputFilePath(metalCoordFilePath)
-            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, entryId + ".Annotation.txt"))
+            mp.setMetalAnnotationOutputFilePath(os.path.join(dirPath, cast("str", entryId) + ".Annotation.txt"))  # None -> TypeError -> False
             mp.runUpdate(pdbxPath=pdbxOutputPath, csvPath=csvOutputPath, noTimeOut=True)
             if self._verbose:
                 self._lfh.write("+AnnotationUtils.linkOp() - PDBx input  file path:  %s\n" % pdbxPath)
@@ -851,7 +886,7 @@ class AnnotationUtils(UtilsBase):
             return False
         #
 
-    def cisPeptideOp(self, **kwArgs):
+    def cisPeptideOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs cis-peptide link perception on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -877,7 +912,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updateGeometryValidationOp(self, **kwArgs):
+    def updateGeometryValidationOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Updates geometrical validation diagnostics in the PDBx model file -"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -903,7 +938,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def getCorresInfoOp(self, **kwArgs):
+    def getCorresInfoOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """gets correspondance information for the PDBx model file -"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -929,14 +964,14 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def secondaryStructureOp(self, **kwArgs):
+    def secondaryStructureOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs secondary structure calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "annot-secondary-structure-w-top.log")
             #
             cI = ConfigInfo()
@@ -958,7 +993,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def secondaryStructureTopologyOp(self, **kwArgs):
+    def secondaryStructureTopologyOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs secondary structure calculation on PDBx format input file and update this data in the PDBx model file.
 
         This method includes the option for a supplementary topology file -
@@ -971,7 +1006,7 @@ class AnnotationUtils(UtilsBase):
             topFilePath = inpObjD["src2"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "annot-secondary-structure-w-top.log")
             #
             cI = ConfigInfo()
@@ -993,7 +1028,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def consolidatedTasksOp(self, **kwArgs):
+    def consolidatedTasksOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs most annotation tasks as a single step -
 
         This method includes the option for a supplementary topology file -
@@ -1006,7 +1041,7 @@ class AnnotationUtils(UtilsBase):
             topFilePath = inpObjD["src2"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "annot-consolidated-tasks-w-top.log")
             #
             cI = ConfigInfo()
@@ -1028,7 +1063,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def siteEnvironmentOp(self, **kwArgs):
+    def siteEnvironmentOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs site environment calculation on PDBx format input file and update this data in the PDBx model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1036,14 +1071,14 @@ class AnnotationUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "site-anal.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             # Step 1
-            resultPath = os.path.join(dirPath, depDataSetId + "-site-anal.cif")
+            resultPath = os.path.join(dirPath, cast("str", depDataSetId) + "-site-anal.cif")  # None -> TypeError -> False
             dp.imp(pdbxPath)
             dp.addInput(name="block_id", value=depDataSetId)
             dp.op("annot-site")
@@ -1069,7 +1104,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def assemblyReportOp(self, **kwArgs):
+    def assemblyReportOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs assembly prediction on PDBx format input files and produces an assembly report."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1077,8 +1112,8 @@ class AnnotationUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             assemblyReportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            pisaSession = "session_" + depDataSetId
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
+            pisaSession = "session_" + cast("str", depDataSetId)  # None -> TypeError -> False
             logPath1 = os.path.join(dirPath, "assembly-analysis.log")
             logPath2 = os.path.join(dirPath, "assembly-report.log")
             #
@@ -1102,7 +1137,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def assemblyReportAndModelsOp(self, **kwArgs):
+    def assemblyReportAndModelsOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs assembly prediction on PDBx format input files and produces an assembly report.
 
         The list of file paths for the materialized model coordinates for each assembly is also returned.
@@ -1113,8 +1148,8 @@ class AnnotationUtils(UtilsBase):
             pdbxPath = inpObjD["src"].getFilePathReference()
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             assemblyReportPath = outObjD["dst1"].getFilePathReference()
-            dirPath = outObjD["dst1"].getDirPathReference()
-            pisaSession = "session_" + depDataSetId
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None -> TypeError in os.path.join -> False
+            pisaSession = "session_" + cast("str", depDataSetId)  # None -> TypeError -> False
             logPath1 = os.path.join(dirPath, "assembly-analysis.log")
             logPath2 = os.path.join(dirPath, "assembly-report.log")
             cI = ConfigInfo()
@@ -1149,7 +1184,7 @@ class AnnotationUtils(UtilsBase):
                         break
                     if assemblyUid == 0:
                         continue
-                    assemModelFileName = os.path.join(dirPath, depDataSetId + "_assembly-model-xyz_P" + str(assemblyUid) + ".cif.V1")
+                    assemModelFileName = os.path.join(dirPath, cast("str", depDataSetId) + "_assembly-model-xyz_P" + str(assemblyUid) + ".cif.V1")
                     dp.addInput(name="pisa_assembly_id", value=assemblyUid)
                     dp.op("pisa-assembly-coordinates-cif")
                     dp.exp(assemModelFileName)
@@ -1165,7 +1200,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    # def assemblyInstanceUpdateOp(self, **kwArgs):
+    # def assemblyInstanceUpdateOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
     #     """Performs assembly assignment update operations on PDBx format model files.
 
     #        Requires: extra input files for assignment and user selection.
@@ -1214,14 +1249,14 @@ class AnnotationUtils(UtilsBase):
     #         traceback.print_exc(file=self._lfh)
     #         return False
 
-    def assemblyUpdateDepInfoOp(self, **kwArgs):
+    def assemblyUpdateDepInfoOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs an update of the pdbx_struct_assembly_gen_depositor_info"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
 
             pdbxOutputPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "assembly-depinfo-update.log")
             #
             cI = ConfigInfo()
@@ -1243,11 +1278,11 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def __readAssemblyReport(self, reportPath):
+    def __readAssemblyReport(self, reportPath: Optional[str]) -> Dict[int, Any]:
         """Read assembly calculation report and return a dictionary of assembly details."""
         pA = PisaAssemblyReader(verbose=self._verbose, log=self._lfh)
         _ok = pA.read(reportPath)  # noqa: F841
-        self.__assemblyD = pA.getAssemblyDict()  # pylint: disable=attribute-defined-outside-init
+        self.__assemblyD = cast("Dict[int, Any]", pA.getAssemblyDict())  # pylint: disable=attribute-defined-outside-init
         return self.__assemblyD
 
     # def __readSelection(self, selectPath):
@@ -1265,7 +1300,7 @@ class AnnotationUtils(UtilsBase):
     #             traceback.print_exc(file=self._lfh)
     #         return None
 
-    def mergeXyzOp(self, **kwArgs):
+    def mergeXyzOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Merge coordinate data files and report status -"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -1314,10 +1349,10 @@ class AnnotationUtils(UtilsBase):
             dp.expLog(logFilePath)
             dp.exp(mergedFilePath)
 
-            if not os.access(mergedFilePath, os.R_OK):
+            if not os.access(cast("str", mergedFilePath), os.R_OK):  # None -> TypeError -> False
                 myStatus = "error"
             else:
-                myStatus = self.__checkMergeStatus(logFilePath)
+                myStatus = self.__checkMergeStatus(cast("str", logFilePath))  # None -> TypeError in os.access -> False
 
             outObjD["dst3"].setValue(myStatus)
 
@@ -1335,7 +1370,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def __checkMergeStatus(self, logFilePath):
+    def __checkMergeStatus(self, logFilePath: str) -> str:
         # Tom changed this to check the last line as finished!
         # if the first line is not 'finished!' then there is a failure -
         status = "error"
@@ -1348,7 +1383,7 @@ class AnnotationUtils(UtilsBase):
             status = "error"
         return status
 
-    def combineCifFilesOp(self, **kwArgs):
+    def combineCifFilesOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Merges the first datablock from src1 and selected categories in
         src2 and output to dst1. Will not overwrite if present
         """
@@ -1370,7 +1405,7 @@ class AnnotationUtils(UtilsBase):
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() - mrgCat: %s\n" % mrgCat)
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
-            tmpdir = os.path.abspath(os.path.dirname(srcPath))
+            tmpdir = os.path.abspath(os.path.dirname(cast("str", srcPath)))  # None -> TypeError -> False
             dIn = ioObj.readFile(inputFilePath=srcPath, outDirPath=tmpdir)
             if not dIn:
                 self._lfh.write("+AnnotationUtils.combineCifFilesOp() -failed to load src1\n")
@@ -1398,13 +1433,13 @@ class AnnotationUtils(UtilsBase):
                     srcBlock.append(cObj)
 
             # Write out
-            ret = ioObj.writeFile(outputFilePath=outPath, containerList=dIn)
+            ret: bool = ioObj.writeFile(outputFilePath=outPath, containerList=dIn)
             return ret
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
-    def em3dAutoMapFixOp(self, **kwArgs):
+    def em3dAutoMapFixOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs mapfix if needed automatically.  Typically run on model and map files in archive as they need to be in sync."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1424,7 +1459,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def em3dAutoEmMapFixVersOp(self, **kwArgs):
+    def em3dAutoEmMapFixVersOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Updates version numbers of files in em_map category in model file.  Typically run on model and map files in archive as they need to be in sync."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -1451,13 +1486,13 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updatePdbxDatabaseRelatedOp(self, **kwArgs):
+    def updatePdbxDatabaseRelatedOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Updates pdbx_database_related by performing lookups on deposition ids D_XXX in the db_id field for PDB, BMRB and EMDB"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
             pdbxOutPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             logPath = os.path.join(dirPath, "update_pdbx_database_related.log")
 
             cI = ConfigInfo()
@@ -1474,7 +1509,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updateSFWavelengthOp(self, **kwArgs):
+    def updateSFWavelengthOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Updates wavelnegth in SF fie"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1485,7 +1520,7 @@ class AnnotationUtils(UtilsBase):
             dirPath = inpObjD["src1"].getDirPathReference()
             entryId = inpObjD["src1"].getDepositionDataSetId()
 
-            if not os.path.exists(sfPath):
+            if not os.path.exists(cast("str", sfPath)):  # None -> TypeError -> False
                 # NMR, EM, etc
                 return True
 
@@ -1507,7 +1542,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def emdXmlHeaderCheckOp(self, **kwArgs):
+    def emdXmlHeaderCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Checks EMD -> XML header conversion"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1515,7 +1550,7 @@ class AnnotationUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             reportPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None -> TypeError in os.path.join -> False
             # logPath = os.path.join(dirPath, "dict-check.log")
 
             ioObj = IoAdapterCore(verbose=self._verbose, log=self._lfh)
@@ -1539,14 +1574,14 @@ class AnnotationUtils(UtilsBase):
             wrkPath = tempfile.mkdtemp(suffix, "rcsb-", dirPath)
             os.chmod(wrkPath, 0o750)  # noqa: S103
 
-            emdXmlPath = os.path.join(wrkPath, depDataSetId + "-emd.xml")
+            emdXmlPath = os.path.join(wrkPath, cast("str", depDataSetId) + "-emd.xml")  # None -> TypeError -> False (wrkPath is left behind)
 
             fPath = pdbxPath
 
             emh = EmHeaderUtils(siteId=siteId, verbose=self._verbose, log=self._lfh)
             if hasattr(emh, "transEmd"):
                 # Still running EM->EMD conversion
-                emdModelPath = os.path.join(wrkPath, depDataSetId + "_model-emd.cif")
+                emdModelPath = os.path.join(wrkPath, cast("str", depDataSetId) + "_model-emd.cif")
                 status = emh.transEmd(pdbxPath, emdModelPath, mode="src-dst", tags=[])
                 if not status:
                     self._lfh.write("Translation of model failed\n")
@@ -1565,7 +1600,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def emMapCheckOp(self, **kwArgs):
+    def emMapCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Checks em_map category"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -1586,7 +1621,7 @@ class AnnotationUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def emVolumeBcifConversionOp(self, **kwArgs):
+    def emVolumeBcifConversionOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """
         converts EM volume from map format into bcif
         :param kwArgs:
@@ -1598,7 +1633,7 @@ class AnnotationUtils(UtilsBase):
             # depDataSetId = inpObjD["src"].getDepositionDataSetId()
 
             dirPath = inpObjD["src"].getDirPathReference()
-            if not os.path.exists(modelPath):
+            if not os.path.exists(cast("str", modelPath)):  # None -> TypeError -> False
                 # no model
                 msg = "Missing model file"
                 raise OSError(msg)  # noqa: TRY301
@@ -1621,16 +1656,18 @@ class AnnotationUtils(UtilsBase):
             for mapNumber in range(len(cObj)):
                 mapName = cObj.getValue("file", mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
-                mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])
-                mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType="bcif", partNumber=mapNameInfo[3])
+                # An unparsable map file name gives None parts (and None paths below)
+                mapPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType=mapNameInfo[2], partNumber=mapNameInfo[3])  # type: ignore[arg-type]
+                mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType="bcif", partNumber=mapNameInfo[3])  # type: ignore[arg-type]
                 dw = DensityWrapper()
-                dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=dirPath)
+                # mapPath is None when the map file name cannot be parsed; dirPath is set because the src file exists (checked above)
+                dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=cast("str", dirPath))  # type: ignore[arg-type]
             return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False
 
-    def xrayBcifConversionOp(self, **kwArgs):
+    def xrayBcifConversionOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """
         converts X-ray maps from maps format into bcif
         :param kwArgs:
@@ -1638,9 +1675,10 @@ class AnnotationUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            coordinates = inpObjD["src1"].getFilePathReference()
-            twofofcmap = inpObjD["src2"].getFilePathReference()
-            fofcmap = inpObjD["src3"].getFilePathReference()
+            # A None path raises TypeError in os.path.exists below -> False
+            coordinates = cast("str", inpObjD["src1"].getFilePathReference())
+            twofofcmap = cast("str", inpObjD["src2"].getFilePathReference())
+            fofcmap = cast("str", inpObjD["src3"].getFilePathReference())
             # depDataSetId = inpObjD["src1"].getDepositionDataSetId()
 
             mapBcifPath = outObjD["dst"].getFilePathReference()
@@ -1652,7 +1690,7 @@ class AnnotationUtils(UtilsBase):
                     in_2fofc_cif=twofofcmap,
                     in_fofc_cif=fofcmap,
                     out_binary_volume=mapBcifPath,
-                    working_dir=dirPath,
+                    working_dir=cast("str", dirPath),  # dst dir reference is set whenever its file reference is
                 )
             # no x-ray mmCIF map files
             return True

@@ -18,8 +18,22 @@ Updates :
 """
 
 import sys
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, TextIO, Tuple, Union, cast
 
 import MySQLdb
+
+if TYPE_CHECKING:
+    from MySQLdb.connections import Connection
+
+    from wwpdb.utils.wf.schema.SchemaMapTypes import SchemaTableDef
+
+# Logical attribute name -> SQL column (or qualified column) name
+DbCommandAttribDict = Dict[str, str]
+# Simple {logical name: value} constraint, ANDed together
+DbCommandConstraintDict = Dict[str, Any]
+# Compact constraint list: ('EQ'|..., attrib, value[, type]), ('LOGOP', 'AND'|'OR'|'NOT'), ('GROUP', 'BEGIN'|'END')
+DbCommandConstraintList = List[Tuple[Any, ...]]
+DbCommandDictRow = Dict[str, Any]
 
 
 class DbCommand:
@@ -27,10 +41,10 @@ class DbCommand:
     Parameterized SQL queries using Python DBI protocol...
     """
 
-    def __init__(self, dbcon, log=sys.stderr, verbose=False):
+    def __init__(self, dbcon: Optional["Connection"], log: TextIO = sys.stderr, verbose: bool = False) -> None:
         # Tom : put in dbState to store the error code
         self.dbState = 0
-        self.__dbcon = dbcon
+        self.__dbcon: Connection = dbcon  # type: ignore[assignment]  # None only accepted for construction (tests/DbImportTests); all queries need a connection
         self.__lfh = log
         self.__verbose = verbose
         self.__ops = ["EQ", "GE", "GT", "LT", "LE", "LIKE", "NOT LIKE"]
@@ -49,7 +63,7 @@ class DbCommand:
 
     #
 
-    def makeSqlSet(self, attribDict, constraintDef):
+    def makeSqlSet(self, attribDict: DbCommandAttribDict, constraintDef: Union[DbCommandConstraintDict, DbCommandConstraintList]) -> str:
         """
         construct syntext in use of SQL commands like 'update' and 'insert'.
         e.g. SET key1 = value1 and key2 = value2 and ...
@@ -62,8 +76,8 @@ class DbCommand:
         cType = str(type(constraintDef))
 
         if cType.find("dict") > 0:
-            ld = []
-            for k, v in constraintDef.items():
+            ld: List[str] = []
+            for k, v in cast("DbCommandConstraintDict", constraintDef).items():
                 if k in attribDict:
                     if v is None or v == "None":
                         c = " %s = NULL " % (attribDict[k])
@@ -79,7 +93,7 @@ class DbCommand:
 
         return changingVal
 
-    def makeConstraintCross(self, constraintList, constraintDef):
+    def makeConstraintCross(self, constraintList: DbCommandAttribDict, constraintDef: DbCommandConstraintDict) -> str:
         """
         construct constraint syntext in use of SQL commands for
         querying multiple tables
@@ -90,7 +104,7 @@ class DbCommand:
 
         """
         constraint = ""
-        ld = []
+        ld: List[str] = []
         for k, v in constraintDef.items():
             if k in constraintList:
                 if v is None or v == "None":
@@ -108,7 +122,7 @@ class DbCommand:
 
         return constraint
 
-    def makeSqlConstraint(self, attribDict, constraintDef):
+    def makeSqlConstraint(self, attribDict: DbCommandAttribDict, constraintDef: Union[DbCommandConstraintDict, DbCommandConstraintList, None]) -> str:
         """
         construct constraint syntext in use for SQL commands.
         e.g. WHERE key1 = value1 and key2 > value2 and ...
@@ -120,10 +134,11 @@ class DbCommand:
 
         constraint = ""
         cType = str(type(constraintDef))
+        c: Any  # reused: a SQL fragment (str) in the dict branch, a constraint tuple in the list branch
 
         if cType.find("dict") > 0:
-            ld = []
-            for k, v in constraintDef.items():
+            ld: List[str] = []
+            for k, v in cast("DbCommandConstraintDict", constraintDef).items():
                 if k in attribDict:
                     if v == "None" or v is None:
                         c = " %s is NULL " % (attribDict[k])
@@ -150,9 +165,9 @@ class DbCommand:
             # ('AND'|'OR')
             # ('GROUP', 'BEGIN|END')
 
-            if len(constraintDef) > 0:
+            if len(cast("DbCommandConstraintList", constraintDef)) > 0:
                 constraint += " WHERE "
-                for c in constraintDef:
+                for c in cast("DbCommandConstraintList", constraintDef):
                     if len(c) == 4 and str(c[0]).upper() in self.__ops:  # noqa: PLR2004
                         if str(c[3]).upper() == "CHAR":
                             constraint += " %s %s '%s' " % (
@@ -190,7 +205,7 @@ class DbCommand:
 
         return constraint
 
-    def makeOrderStr(self, orderList):
+    def makeOrderStr(self, orderList: List[str]) -> str:
         """
         construct a string "ORDER BY ..." in SQL command for cross tables search
 
@@ -203,13 +218,14 @@ class DbCommand:
 
         return orderBy
 
-    def runInsertSQL(self, query, args=None):
+    def runInsertSQL(self, query: str, args: Optional[Union[Tuple[Any, ...], List[Any], Dict[str, Any]]] = None) -> Optional[int]:
         return self.runUpdateSQL(query, args)
 
-    def runUpdateSQL(self, query, args=None):
+    def runUpdateSQL(self, query: str, args: Optional[Union[Tuple[Any, ...], List[Any], Dict[str, Any]]] = None) -> Optional[int]:
         try:
             curs = self.__dbcon.cursor()
             curs.execute("set autocommit=0")
+            nrows: int
             if args:
                 nrows = curs.execute(query, args)
             else:
@@ -226,18 +242,18 @@ class DbCommand:
             self.dbState = e.args[0]
             return None
 
-    def runSelectSQL(self, query):
+    def runSelectSQL(self, query: Optional[str]) -> Optional[List[List[Any]]]:
         """
         method to run a SQL query : no checking - just a simple method to
         get things working
         note that this does not use attrib list = but returns a list of lists.
         """
-        returnList = []
+        returnList: List[List[Any]] = []
 
         if self.__debug:
             self.__lfh.write("\n+DbCommand.runSelectSQL - input query %r\n" % query)
         if query is not None:
-            row = []
+            row: List[Any] = []
             try:
                 self.__dbcon.commit()
                 curs = self.__dbcon.cursor()
@@ -268,7 +284,13 @@ class DbCommand:
 
         return returnList
 
-    def selectRows(self, tableDef, constraintDef, orderList=None, selectList=None):
+    def selectRows(
+        self,
+        tableDef: "SchemaTableDef",
+        constraintDef: Union[DbCommandConstraintDict, DbCommandConstraintList, None],
+        orderList: Optional[List[str]] = None,
+        selectList: Optional[List[str]] = None,
+    ) -> Optional[Union[List[DbCommandDictRow], DbCommandDictRow]]:
         """
         Execute query on the table described by "tableDef"
         subject to the conditions in constraintDef and
@@ -290,6 +312,7 @@ class DbCommand:
 
         tableName = tableDef["TABLE_NAME"]
         attribDict = tableDef["ATTRIBUTES"]
+        attribs: Iterable[str]
         if len(selectList) > 0:
             attribsCsv = ",".join(["%s" % attribDict[k] for k in selectList])
             attribs = selectList
@@ -316,8 +339,8 @@ class DbCommand:
             self.__lfh.write("DB command --\n%s\n" % query)
 
         ##
-        returnList = []
-        row = {}
+        returnList: List[DbCommandDictRow] = []
+        row: DbCommandDictRow = {}
         try:
             self.__dbcon.commit()
             curs = self.__dbcon.cursor()
@@ -345,7 +368,13 @@ class DbCommand:
             return returnList
         return row
 
-    def update(self, type, tableDef, updateVal, constraintDef=None):  # noqa: A002  pylint: disable=redefined-builtin
+    def update(  # noqa: A002  pylint: disable=redefined-builtin
+        self,
+        type: str,  # noqa: A002  pylint: disable=redefined-builtin
+        tableDef: "SchemaTableDef",
+        updateVal: Dict[str, Any],
+        constraintDef: Union[DbCommandConstraintDict, DbCommandConstraintList, None] = None,  # noqa: A002
+    ) -> Optional[str]:
         """
         Update value for any column(s) in a giving table.
         type may be 'insert' or 'update', default is 'insert'.
@@ -356,8 +385,8 @@ class DbCommand:
         tableName = tableDef["TABLE_NAME"]
         attribDict = tableDef["ATTRIBUTES"]
         # modify the specicial characters like "'",""" in the updateVal
-        updateValMod = {}
-        v2 = ""
+        updateValMod: Dict[str, Optional[str]] = {}
+        v2: Optional[str] = ""
         for k, v in updateVal.items():
             if str(v).find("'") != -1:
                 v2 = str(v).replace("'", "\\'")
@@ -408,7 +437,9 @@ class DbCommand:
 
         return "ok"
 
-    def selectCrossTables(self, selectList, sqlJoinStr, orderBy, constraintList, constraintDef=None):
+    def selectCrossTables(
+        self, selectList: List[str], sqlJoinStr: str, orderBy: str, constraintList: DbCommandAttribDict, constraintDef: Optional[DbCommandConstraintDict] = None
+    ) -> Optional[List[DbCommandDictRow]]:
         """
         This function is specially for some complicate queries. The
         "sql join" is used.
@@ -422,14 +453,14 @@ class DbCommand:
 
         attribsCsv = ",".join(["%s" % k for k in selectList])
 
-        constraint = self.makeConstraintCross(constraintList, constraintDef)
+        constraint = self.makeConstraintCross(constraintList, constraintDef)  # type: ignore[arg-type]  # latent bug: the None default crashes in makeConstraintCross
         query = "SELECT DISTINCT " + attribsCsv + sqlJoinStr + constraint + orderBy
         # Tom - added verbose check
         if self.__verbose:
             self.__lfh.write("DB command --\n%s\n" % query)
 
-        returnList = []
-        row = {}
+        returnList: List[DbCommandDictRow] = []
+        row: DbCommandDictRow = {}
 
         try:
             self.__dbcon.commit()

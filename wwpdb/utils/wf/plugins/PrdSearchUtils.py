@@ -19,11 +19,13 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+from typing import TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class PrdSearchUtils(UtilsBase):
@@ -42,7 +44,7 @@ class PrdSearchUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(PrdSearchUtils, self).__init__(verbose, log)
         # Be careful before setting self.__cleanUp, WorkingDirPath is in use - and cleanup removes that
         self.__cleanUp = False
@@ -50,13 +52,14 @@ class PrdSearchUtils(UtilsBase):
         """
         #
 
-    def PrdSearchOp(self, **kwArgs):
+    def PrdSearchOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PRD search on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
-            resultFilePath = outObjD["dst"].getFilePathReference()
+            # None only for a misconfigured output object; os.path.join()/os.access() then raise and the except below returns False
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())
+            resultFilePath = cast("str", outObjD["dst"].getFilePathReference())
             #
             WorkingDirPath = os.path.join(dirPath, "search")
             firstModelPath = os.path.join(WorkingDirPath, "firstmodel.cif")

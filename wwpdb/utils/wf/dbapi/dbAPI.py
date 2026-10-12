@@ -6,8 +6,16 @@
 
 import logging
 import sys
+from typing import Any, Dict, List, Optional, Union
 
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
+
+# A row returned by WfDbApi.runSelectSQL()
+DbRow = List[Any]
+# runSelect*(): rows (or [] on error / missing deposition), None on a DB error, or the SQL string when run=False
+SelectReturn = Optional[Union[List[DbRow], str]]
+# runInsert*/runUpdate*(): number of rows (None on a DB error), False on bad input/exception, or the SQL string when run=False
+UpdateReturn = Optional[Union[int, bool, str]]
 
 logger = logging.getLogger(__name__)
 """
@@ -18,7 +26,7 @@ Grab bag of methods to execute SQL commands on various WF status tables -
 
 
 class dbAPI:
-    def __init__(self, depID, connection=None, verbose=True):
+    def __init__(self, depID: str, connection: Optional[WfDbApi] = None, verbose: bool = True) -> None:
         if connection:
             self.con = connection
         else:
@@ -26,10 +34,21 @@ class dbAPI:
         self.depID = depID
         self.verbose = verbose
 
-    def close(self):
+    def close(self) -> None:
         self.con.close()
 
-    def runSelectNQ(self, table=None, join=None, select=None, where=None, order=None, reverse=False, ordinal=0, run=True, limit=0):
+    def runSelectNQ(
+        self,
+        table: Optional[str] = None,
+        join: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        where: Optional[Dict[str, str]] = None,
+        order: Optional[List[str]] = None,
+        reverse: bool = False,
+        ordinal: int = 0,
+        run: bool = True,
+        limit: int = 0,
+    ) -> SelectReturn:
         if where:
             for k, v in where.items():
                 where[k] = "'" + v + "'"
@@ -45,7 +64,18 @@ class dbAPI:
             limit=limit,
         )
 
-    def runSelect(self, table=None, join=None, select=None, where=None, order=None, reverse=False, ordinal=0, run=True, limit=0):
+    def runSelect(
+        self,
+        table: Optional[str] = None,
+        join: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        where: Optional[Dict[str, str]] = None,
+        order: Optional[List[str]] = None,
+        reverse: bool = False,
+        ordinal: int = 0,
+        run: bool = True,
+        limit: int = 0,
+    ) -> SelectReturn:
         """
         Very simple select SQL creator - single table
         table = string
@@ -69,7 +99,7 @@ class dbAPI:
             logger.info("WFE.dbAPI.runSelect : Undefined select")
             return []
 
-        depDB = {}
+        depDB: Dict[str, Any] = {}
         depDB["DEP_SET_ID"] = self.depID
 
         try:
@@ -99,7 +129,7 @@ class dbAPI:
             logger.exception("WFE.dbAPI.runSelect :Exception")
             return []
 
-    def runUpdateOnOrdinal(self, table=None, ordinal=None, data=None, run=True):
+    def runUpdateOnOrdinal(self, table: Optional[str] = None, ordinal: Optional[Union[int, str]] = None, data: Optional[Dict[str, str]] = None, run: bool = True) -> UpdateReturn:
         """
         Very simple update/insert SQL creator base on ordinal
         table = string
@@ -122,7 +152,7 @@ class dbAPI:
             return False
 
         try:
-            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # noqa: S608
+            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # type: ignore[union-attr]  # noqa: S608 data=None caught below
             sql = sql + " where ordinal = " + str(ordinal)
             if self.verbose:
                 logger.info("WFE.dbAPI.runInsertUpdate(update) > %s", str(sql))
@@ -137,7 +167,14 @@ class dbAPI:
             logger.info("WFE.dbAPI.runSelect :Exception %s", str(e))
             return False
 
-    def runInsertUpdateNQ(self, table=None, depID=None, where=None, data=None, run=True):
+    def runInsertUpdateNQ(
+        self,
+        table: Optional[str] = None,
+        depID: Optional[str] = None,
+        where: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+        run: bool = True,
+    ) -> UpdateReturn:
         """
         wrapper to add quotes to values
         """
@@ -150,7 +187,14 @@ class dbAPI:
                 data[k] = "'" + v + "'"
         return self.runInsertUpdate(table, depID, where, data, run)
 
-    def runInsertNQ(self, table=None, depID=None, where=None, data=None, run=True):
+    def runInsertNQ(
+        self,
+        table: Optional[str] = None,
+        depID: Optional[str] = None,
+        where: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+        run: bool = True,
+    ) -> UpdateReturn:
         if where:
             for k, v in where.items():
                 where[k] = "'" + v + "'"
@@ -159,11 +203,18 @@ class dbAPI:
                 data[k] = "'" + v + "'"
         return self.runInsert(table, depID, where, data, run)
 
-    def runInsert(self, table=None, depID=None, where=None, data=None, run=True):
+    def runInsert(
+        self,
+        table: Optional[str] = None,
+        depID: Optional[str] = None,
+        where: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+        run: bool = True,
+    ) -> UpdateReturn:
         try:
             if depID:
-                sql = "insert into " + str(table) + " (dep_set_id," + ",".join(["%s" % (k) for k, v in data.items()])
-                sql += ") values ('" + str(depID) + "'," + ",".join(["%s" % (v) for k, v in data.items()]) + ")"
+                sql = "insert into " + str(table) + " (dep_set_id," + ",".join(["%s" % (k) for k, v in data.items()])  # type: ignore[union-attr]  # data=None caught below
+                sql += ") values ('" + str(depID) + "'," + ",".join(["%s" % (v) for k, v in data.items()]) + ")"  # type: ignore[union-attr]  # data=None caught below
 
             if where:
                 sql = "insert into " + str(table) + " (" + ",".join(["%s" % (k) for k, v in where.items()])
@@ -184,10 +235,17 @@ class dbAPI:
             logger.exception("WFE.dbAPI.runInsert :Exception")
             return False
 
-    def runUpdate(self, table=None, depID=None, where=None, data=None, run=True):
+    def runUpdate(
+        self,
+        table: Optional[str] = None,
+        depID: Optional[str] = None,
+        where: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+        run: bool = True,
+    ) -> UpdateReturn:
         logger.debug("Beginning run update")
         try:
-            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # noqa: S608
+            sql = "update " + str(table) + " set " + ",".join(["%s = %s" % (k, v) for k, v in data.items()])  # type: ignore[union-attr]  # noqa: S608 data=None caught below
             if depID:
                 sql += " where dep_set_id = '" + str(depID) + "'"
             if where:
@@ -204,7 +262,14 @@ class dbAPI:
             logger.exception("WFE.dbAPI.runUpdate :Exception")
             return False
 
-    def runInsertUpdate(self, table=None, depID=None, where=None, data=None, run=True):
+    def runInsertUpdate(
+        self,
+        table: Optional[str] = None,
+        depID: Optional[str] = None,
+        where: Optional[Dict[str, str]] = None,
+        data: Optional[Dict[str, str]] = None,
+        run: bool = True,
+    ) -> UpdateReturn:
         """
         Very simple update/insert SQL creator
         table = string
@@ -233,7 +298,7 @@ class dbAPI:
         rowExists = False
         if depID:
             # then data is unique on depID
-            depDB = {}
+            depDB: Dict[str, Any] = {}
             depDB["DEP_SET_ID"] = depID
             if self.con.exist(depDB):
                 rowExists = True
@@ -251,7 +316,7 @@ class dbAPI:
         else:
             logger.info("WFE.dbAPI.runUpdate: Undefined key ")
 
-        ok = True
+        ok: UpdateReturn = True
         try:
             if rowExists:
                 ok = self.runUpdate(table, depID, where, data, run)
@@ -271,7 +336,7 @@ class dbAPI:
             return False
 
 
-def main(_argv):
+def main(_argv: List[str]) -> None:
     print("starting DBAPI test")  # noqa: T201
 
     depid = "D_1100201819"

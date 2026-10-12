@@ -20,9 +20,14 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import TYPE_CHECKING, Any, Dict, Optional, TextIO, Union, cast
 
 #
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
+from wwpdb.utils.wf.process.ActionRegistryTypes import ActionParameterDict
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 
 class ProcessRunner:
@@ -31,17 +36,17 @@ class ProcessRunner:
 
     """
 
-    def __init__(self, verbose=True, log=sys.stderr):
+    def __init__(self, verbose: bool = True, log: TextIO = sys.stderr) -> None:
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
-        self.__actionId = None
-        self.__userParameterD = {}
-        self.__inputD = {}
-        self.__outputD = {}
+        self.__actionId: Optional[str] = None
+        self.__userParameterD: ActionParameterDict = {}
+        self.__inputD: Dict[str, WfDataObject] = {}
+        self.__outputD: Dict[str, WfDataObject] = {}
         self.__aReg = ActionRegistry()
 
-    def setInput(self, name, wfDataObject):
+    def setInput(self, name: Union[str, int], wfDataObject: "WfDataObject") -> bool:  # name is converted with str()
         """Set the input data object identified by the input name.
 
         Returns:
@@ -54,7 +59,7 @@ class ProcessRunner:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def setOutput(self, name, wfDataObject):
+    def setOutput(self, name: Union[str, int], wfDataObject: "WfDataObject") -> bool:  # name is converted with str()
         """Set the output data object identified by the input name.
 
         Returns:
@@ -67,7 +72,7 @@ class ProcessRunner:
         except Exception as _e:  # noqa: F841,BLE001
             return False
 
-    def setAction(self, actionId):
+    def setAction(self, actionId: str) -> bool:
         """Set the name for this action.  The input action identifier should correspond
         to a action defined in the action registry in class `ActionRegistry`.
 
@@ -81,7 +86,7 @@ class ProcessRunner:
             return True
         return False
 
-    def __setParameterDictDefault(self):
+    def __setParameterDictDefault(self) -> bool:
         """Copy the default user adjustable parameters from the action definition
         to a local dictionary.
         """
@@ -97,10 +102,10 @@ class ProcessRunner:
 
         return True
 
-    def getParameterDict(self):
+    def getParameterDict(self) -> ActionParameterDict:
         return self.__userParameterD
 
-    def setParameterDict(self, pD):
+    def setParameterDict(self, pD: Dict[str, Any]) -> bool:
         """Copy values for input parameters corresponding to any user adjustable
         parameters for the current action.
 
@@ -130,7 +135,7 @@ class ProcessRunner:
 
         return True
 
-    def preCheck(self):
+    def preCheck(self) -> bool:
         """Check that input and output data objects are consistent with the type requirements
         for the specified action.
 
@@ -241,7 +246,7 @@ class ProcessRunner:
 
         return True
 
-    def run(self):
+    def run(self) -> bool:
         """Invokes the specified action.
 
         Returns:
@@ -250,7 +255,8 @@ class ProcessRunner:
 
         """
         try:
-            modulePath = self.__aReg.getModuleName(self.__actionId)
+            # None (unset or unknown action) makes __import__() raise TypeError, which is caught below
+            modulePath = cast("str", self.__aReg.getModuleName(self.__actionId))
             aMod = __import__(modulePath, globals(), locals(), [""])
             sys.modules[modulePath] = aMod
             #
@@ -260,9 +266,9 @@ class ProcessRunner:
             #
             # aObj = getattr(aMod,modulePath)()
             aObj = getattr(aMod, clN)(verbose=self.__verbose, log=self.__lfh)
-            aMeth = getattr(aObj, self.__aReg.getMethodName(self.__actionId), None)
+            aMeth = getattr(aObj, cast("str", self.__aReg.getMethodName(self.__actionId)), None)  # None raises TypeError, caught below
             if aMeth is not None:
-                ok = aMeth(
+                ok: bool = aMeth(  # plugin action methods return True/False
                     inputObjectD=self.__inputD,
                     outputObjectD=self.__outputD,
                     userParameterD=self.__userParameterD,

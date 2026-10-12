@@ -28,9 +28,10 @@ dependencies = [
     "wwpdb.utils.config >= 1.0.1",
     "wwpdb.utils.dp >= 0.64",
     "wwpdb.utils.session",
+    "typing_extensions",
 ]
 
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 [project.urls]
 Homepage = "https://github.com/wwpdb/py-wwpdb_utils_wf"
@@ -77,6 +78,8 @@ preview = false
 explicit-preview-rules = true
 ignore = [
   "D419",     # Docstring is empty
+  "FA100",    # Add `from __future__ import annotations` to simplify `typing.Optional`
+  "FBT001",   # Boolean-typed positional argument in function definition
   "FBT002",   # Boolean default positional argument in function definition
   "ISC003",   # Do not remove + in string concatenation
   "N801",     # Class name `markdownTests` should use CapWords convention
@@ -142,17 +145,6 @@ run = ["tox"]
 module = ["mmcif.*", "wwpdb.apps.*", "wwpdb.utils.nmr.*", "commonsetup"]
 ignore_missing_imports = true
 
-# The test suite is fully annotated.  Calls into the (still untyped) library are permitted.
-[[tool.mypy.overrides]]
-module = ["tests.*"]
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-warn_return_any = true
-no_implicit_optional = true
-strict_equality = true
-
 [tool.mypy]
 exclude = [
 	"test-output",
@@ -160,6 +152,6 @@ exclude = [
 
 # ------------------------ ruff disable until typing added
 [tool.ruff.lint.per-file-ignores]
-# Tests use typing.Optional/List/Dict (Python 3.8 compatible) per AGENTS.md
+# Typed code uses typing.Optional/List/Dict (Python 3.8 compatible) per AGENTS.md
 "tests/*" = ["FA100", "FBT001", "PT009", "PT027", "S106", "TID252", "RUF005"]
 

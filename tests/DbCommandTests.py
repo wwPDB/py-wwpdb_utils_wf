@@ -9,7 +9,7 @@
 import io
 import sys
 import unittest
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 from unittest.mock import MagicMock
 
 if __package__ is None or __package__ == "":
@@ -23,9 +23,10 @@ else:
 import MySQLdb
 
 from wwpdb.utils.wf.dbapi.DbCommand import DbCommand
+from wwpdb.utils.wf.schema.SchemaMapTypes import SchemaTableDef
 
 ATTRIBS = {"DEP_SET_ID": "dep_set_id", "PDB_ID": "pdb_id", "STATUS_CODE": "status_code"}
-TABLEDEF: Dict[str, Any] = {"TABLE_NAME": "deposition", "ATTRIBUTES": ATTRIBS}
+TABLEDEF: SchemaTableDef = {"TABLE_NAME": "deposition", "ATTRIBUTES": ATTRIBS}
 
 
 def _failOn(match: str, code: int = 1146) -> Any:

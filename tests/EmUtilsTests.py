@@ -12,7 +12,7 @@ import os
 import sys
 import tempfile
 import unittest
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 from unittest.mock import ANY, MagicMock, call, patch
 
 if __package__ is None or __package__ == "":
@@ -24,6 +24,9 @@ else:
     from .commonsetup import TESTOUTPUT  # noqa: F401
 
 from wwpdb.utils.wf.plugins.EmUtils import EmUtils
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 MODNAME = "wwpdb.utils.wf.plugins.EmUtils"
@@ -81,7 +84,7 @@ class EmUtilsTests(unittest.TestCase):
     def testFscCheckOptions(self) -> None:
         self.__dp.op.return_value = 0
         eu = EmUtils(verbose=True, log=self.__lfh)
-        self.assertEqual(eu.fsc_check_options(**self.__args({"options": "-v"})), 0)
+        self.assertIs(eu.fsc_check_options(**self.__args({"options": "-v"})), True)
         self.__checkCtor()
         self.assertEqual(
             self.__dp.method_calls,
@@ -91,18 +94,26 @@ class EmUtilsTests(unittest.TestCase):
     def testFscCheckOptionsEmptyOptions(self) -> None:
         self.__dp.op.return_value = 3
         eu = EmUtils(verbose=False, log=self.__lfh)
-        self.assertEqual(eu.fsc_check_options(**self.__args({"options": ""})), 3)
+        # A non-zero exit status from the tool is not treated as a failure; only an exception is
+        self.assertIs(eu.fsc_check_options(**self.__args({"options": ""})), True)
         self.__dp.addInput.assert_not_called()
 
     def testFscCheckOptionsException(self) -> None:
         eu = EmUtils(verbose=False, log=self.__lfh)
-        self.assertEqual(eu.fsc_check_options(**self.__args({})), -100)
+        self.assertIs(eu.fsc_check_options(**self.__args({})), False)
         self.assertIn("KeyError", self.__lfh.getvalue())
+
+    def testFscCheckOptionsSuccessIsTrue(self) -> None:
+        # Regression test: fsc_check_options() and imageMagickOp() used to return the RcsbDpUtility exit status (0 on success)
+        # or -100 on error, which ProcessRunner.run() passed through, so success read as False.  They now return True/False.
+        self.__dp.op.return_value = 0
+        eu = EmUtils(verbose=False, log=self.__lfh)
+        self.assertIs(eu.fsc_check_options(**self.__args({"options": "-v"})), True)
 
     def testImageMagickOp(self) -> None:
         self.__dp.op.return_value = 0
         eu = EmUtils(verbose=True, log=self.__lfh)
-        self.assertEqual(eu.imageMagickOp(**self.__args({"options": "-resize 400x400"})), 0)
+        self.assertIs(eu.imageMagickOp(**self.__args({"options": "-resize 400x400"})), True)
         self.__checkCtor()
         self.assertEqual(
             self.__dp.method_calls,
@@ -112,7 +123,7 @@ class EmUtilsTests(unittest.TestCase):
     def testImageMagickOpException(self) -> None:
         self.__dp.op.side_effect = RuntimeError("convert failed")
         eu = EmUtils(verbose=False, log=self.__lfh)
-        self.assertEqual(eu.imageMagickOp(**self.__args({"options": ""})), -100)
+        self.assertIs(eu.imageMagickOp(**self.__args({"options": ""})), False)
         self.assertIn("convert failed", self.__lfh.getvalue())
 
     def testMapFixOp(self) -> None:
@@ -144,7 +155,7 @@ class EmUtilsTests(unittest.TestCase):
 
     def testEmmapcheck(self) -> None:
         eu = EmUtils(verbose=True, log=self.__lfh)
-        args = {
+        args: PluginKwargs = {
             "inputObjectD": {"src": mockObj("/in/check.json")},
             "outputObjectD": {"dst": mockObj("/out/check.json", self.__tmp)},
             "userParameterD": {},

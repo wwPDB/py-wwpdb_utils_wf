@@ -23,8 +23,11 @@ import os
 import shutil
 import sys
 import traceback
+from typing import TextIO, cast
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from typing_extensions import Unpack
+
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 #
@@ -53,17 +56,17 @@ class FileUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(FileUtils, self).__init__(verbose, log)
 
-    def copyOp(self, **kwargs):
+    def copyOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Copy operation the file reference from the input object ('src') to the
         file reference in the output object ('dst')
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
-            iPth = inpObjD["src"].getFilePathReference()
-            oPth = outObjD["dst"].getFilePathReference()
+            iPth = cast("str", inpObjD["src"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
+            oPth = cast("str", outObjD["dst"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
             if self._verbose:
                 self._lfh.write("+FileUtils.copyOp Input  path %s\n" % iPth)
                 self._lfh.write("+FileUtils.copyOp Output path %s\n" % oPth)
@@ -74,7 +77,7 @@ class FileUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def copyIfExistsOp(self, **kwargs):
+    def copyIfExistsOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Copy operation the file reference from the input object ('src') to the
         file reference in the output object ('dst')
 
@@ -82,8 +85,8 @@ class FileUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
-            iPth = inpObjD["src"].getFilePathReference()
-            oPth = outObjD["dst"].getFilePathReference()
+            iPth = cast("str", inpObjD["src"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
+            oPth = cast("str", outObjD["dst"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
             if self._verbose:
                 self._lfh.write("+FileUtils.copyIfExistsOp Input  path %s\n" % iPth)
                 self._lfh.write("+FileUtils.copyIfExistsOp Output path %s\n" % oPth)
@@ -94,7 +97,7 @@ class FileUtils(UtilsBase):
             # if (self._verbose): traceback.print_exc(file=self._lfh)
             return True
 
-    def makeDirOp(self, **kwargs):
+    def makeDirOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Create the directory path for the file reference in the input object ('src').
         Set the mode of the directory according to the value of *mode*.
 
@@ -105,7 +108,7 @@ class FileUtils(UtilsBase):
         """
         try:
             (inpObjD, _outObjD, uD, _pD) = self._getArgs(kwargs)
-            newPth = inpObjD["src"].getDirPathReference()
+            newPth = cast("str", inpObjD["src"].getDirPathReference())  # None (unset reference) raises TypeError below -> caught
             if not os.path.exists(newPth):
                 modeS = uD["mode"]
                 modeO = int(modeS, 8)
@@ -116,7 +119,7 @@ class FileUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def sizeOfOp(self, **kwargs):
+    def sizeOfOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Determine the input file ('src') size in bytes and store this value in the
         output object ('dst')
 
@@ -126,7 +129,7 @@ class FileUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
-            newPth = inpObjD["src"].getFilePathReference()
+            newPth = cast("str", inpObjD["src"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
             if os.path.exists(newPth):
                 nBytes = os.path.getsize(newPth)
                 outObjD["dst"].setValue(nBytes)
@@ -138,11 +141,11 @@ class FileUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def mtimeOp(self, **kwargs):
+    def mtimeOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Determine the input file ('src') modification time and store this value in the output object ('dst')."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
-            newPth = inpObjD["src"].getFilePathReference()
+            newPth = cast("str", inpObjD["src"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
             if os.path.exists(newPth):
                 tSec = os.path.getmtime(newPth)
                 # This op is not used - but EP decided should be UTC
@@ -155,14 +158,14 @@ class FileUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def diffOp(self, **kwargs):
+    def diffOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """Difference the file references from the input objects ('src1' and 'src2')
         and store the line based difference in the output object ('dst')
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwargs)
-            iPth1 = inpObjD["src1"].getFilePathReference()
-            iPth2 = inpObjD["src2"].getFilePathReference()
+            iPth1 = cast("str", inpObjD["src1"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
+            iPth2 = cast("str", inpObjD["src2"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
             if self._verbose:
                 self._lfh.write("+FileUtils.diffOp Input  path 1 %s\n" % iPth1)
                 self._lfh.write("+FileUtils.diffOp Input  path 2 %s\n" % iPth2)
@@ -180,7 +183,7 @@ class FileUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def batchCopyOp(self, **kwargs):
+    def batchCopyOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         """
         Perform batch copy operations as specified in a config file.
         Expects:
@@ -189,7 +192,7 @@ class FileUtils(UtilsBase):
         """
         try:
             (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwargs)
-            config_file_obj = inpObjD["src"].getFilePathReference()
+            config_file_obj = cast("str", inpObjD["src"].getFilePathReference())  # None (unset reference) raises TypeError below -> caught
 
             if self._verbose:
                 self._lfh.write(f"+FileUtils.batchCopyOp Config file: {config_file_obj}\n")
@@ -232,8 +235,8 @@ class FileUtils(UtilsBase):
                     fout.setVersionId(dst["version"])
                     fout.setPartitionNumber(dst["partno"])
 
-                    src_path = fin.getFilePathReference()
-                    dst_path = fout.getFilePathReference()
+                    src_path = cast("str", fin.getFilePathReference())  # None (unset reference) raises TypeError below -> caught
+                    dst_path = cast("str", fout.getFilePathReference())  # None (unset reference) raises TypeError below -> caught
 
                     dst_dir = os.path.dirname(dst_path)
                     if not os.path.exists(dst_dir):

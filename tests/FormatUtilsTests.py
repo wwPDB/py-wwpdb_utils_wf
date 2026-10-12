@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 import unittest
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 from unittest.mock import MagicMock, call, patch
 
 if __package__ is None or __package__ == "":
@@ -23,6 +23,9 @@ else:
     from .commonsetup import TESTOUTPUT  # noqa: F401
 
 from wwpdb.utils.wf.plugins.FormatUtils import FormatUtils
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 
@@ -115,7 +118,7 @@ class FormatUtilsTests(unittest.TestCase):
     def testPdbx2nmrstarAnnotOpAsImplemented(self) -> None:
         # Document current behaviour: source comes from outputObjectD["src"], destination from inputObjectD["dst"]
         fu = FormatUtils(verbose=True, log=self.__lfh)
-        args = {
+        args: PluginKwargs = {
             "inputObjectD": {"dst": mockObj(self.__out)},
             "outputObjectD": {"src": mockObj(self.__inp), "dst": mockObj(None, self.__tmp)},
             "userParameterD": {"data_set_id": "1ABC"},

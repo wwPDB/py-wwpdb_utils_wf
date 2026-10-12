@@ -153,6 +153,17 @@ class ProcessRunnerRegistryTests(unittest.TestCase):
         self.assertTrue(pR.setOutput("dst", _dataObject()))
         return pR
 
+    @unittest.expectedFailure
+    def testPreCheckWrongInputNameReturnsFalse(self) -> None:
+        # Library bug: preCheck() only compares input/output counts, not names.  With type constraints declared, an input
+        # set under a name the registry does not expect raises KeyError out of preCheck() instead of returning False.
+        # See ERRORS.md #17
+        pR = self.__pR
+        self.assertTrue(pR.setAction("check-op"))
+        pR.setInput("wrong", _dataObject())
+        pR.setOutput("dst", _dataObject())
+        self.assertFalse(pR.preCheck())
+
     # --- setAction / parameters ---
 
     def testSetAction(self) -> None:
@@ -186,7 +197,7 @@ class ProcessRunnerRegistryTests(unittest.TestCase):
     def testSetParameterDictFailure(self) -> None:
         self.__pR.setAction("check-op")
         with patch("sys.stderr", new_callable=io.StringIO) as err:
-            self.assertFalse(self.__pR.setParameterDict(None))
+            self.assertFalse(self.__pR.setParameterDict(None))  # type: ignore[arg-type]  # deliberate misuse: checks the failure path
         self.assertIn("TypeError", err.getvalue())
 
     def testSetParameterDictNoAction(self) -> None:
@@ -360,6 +371,23 @@ class ProcessRunnerMockRegistryTests(unittest.TestCase):
         aReg.getInputReferenceType.assert_not_called()
         obj.getReferenceType.assert_not_called()
         aReg.isSetInputFileFormat.assert_called_once_with("x", "in")
+
+    @unittest.expectedFailure
+    def testPreCheckWrongInputNameWithoutConstraints(self) -> None:
+        # Library bug: with no type constraints, an input set under the wrong name passes preCheck(), and run() then hands
+        # the plugin an inputObjectD without the name it expects.  See ERRORS.md #17
+        aReg = self.__aReg
+        aReg.isDefinedAction.return_value = True
+        aReg.getUserParameterDict.return_value = {}
+        aReg.getInputObjectCount.return_value = 1
+        aReg.getInputObjectNames.return_value = ["in"]
+        aReg.getOutputObjectCount.return_value = 0
+        for name in dir(ActionRegistry):
+            if name.startswith(("isSetInput", "isSetOutput")):
+                getattr(aReg, name).return_value = False
+        self.__pR.setAction("x")
+        self.__pR.setInput("wrong", MagicMock(spec=WfDataObject))
+        self.assertFalse(self.__pR.preCheck())
 
     def testSetInputOutputStringifiesNames(self) -> None:
         aReg = self.__aReg

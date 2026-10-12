@@ -26,7 +26,7 @@ class _ArgsPlugin(UtilsBase):
     """Subclass exposing the protected argument unpacker, as real plugins use it"""
 
     def unpack(self, **kwArgs: Any) -> Tuple[Any, Any, Any, Any]:
-        args: Tuple[Any, Any, Any, Any] = self._getArgs(kwArgs)
+        args: Tuple[Any, Any, Any, Any] = self._getArgs(kwArgs)  # type: ignore[arg-type]  # deliberately unchecked: tests also pass incomplete kwargs
         return args
 
 

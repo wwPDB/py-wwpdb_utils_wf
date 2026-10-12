@@ -13,6 +13,7 @@ __Date__      = "Jun 4, 2010"
 """
 
 import sys
+from typing import List, TextIO, Union
 
 import MySQLdb
 
@@ -23,7 +24,7 @@ from wwpdb.utils.wf.dbapi.DbConnection import DbConnection
 class LocalDbApi:
     """ """
 
-    def __init__(self, log=sys.stderr, verbose=False):
+    def __init__(self, log: TextIO = sys.stderr, verbose: bool = False) -> None:
         """
         connect to local database
         """
@@ -47,7 +48,7 @@ class LocalDbApi:
 
         self.__dbcon = self.__myDb.connect()
 
-    def getNewDepositedIds(self, interval):
+    def getNewDepositedIds(self, interval: Union[int, str]) -> List[str]:
         """
         Get newly deposited ids for RCSB site
 
@@ -60,7 +61,7 @@ class LocalDbApi:
             % interval
             + " day) order by structure_id"
         )  # noqa: S608
-        returnList = []
+        returnList: List[str] = []
         try:
             self.__dbcon.commit()
             curs = self.__dbcon.cursor()

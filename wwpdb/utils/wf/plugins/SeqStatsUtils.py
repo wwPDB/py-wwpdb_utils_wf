@@ -19,8 +19,11 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import TextIO
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from typing_extensions import Unpack
+
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class SeqStatsUtils(UtilsBase):
@@ -42,13 +45,13 @@ class SeqStatsUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=True, log=sys.stderr):
+    def __init__(self, verbose: bool = True, log: TextIO = sys.stderr) -> None:
         super(SeqStatsUtils, self).__init__(verbose, log)
         # Flag to remove any temporary directories created by this class.
         self.__cleanUp = True  # pylint: disable=unused-private-member
         #
 
-    def prepareSequenceDataOp(self, **kwArgs):
+    def prepareSequenceDataOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Prepare sequence data for alignment and selection operations.
 
         Model file and seqdb-match data files must all be in the source directory.
@@ -67,7 +70,7 @@ class SeqStatsUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def evalSequenceDataOp(self, **kwArgs):
+    def evalSequenceDataOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Assess sequence data and alignment against correspondence criteria.
 
         Returns:
@@ -93,7 +96,7 @@ class SeqStatsUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updateModelSequenceOp(self, **kwArgs):
+    def updateModelSequenceOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Update the model sequence with alignment edits and selection data.
 
         Returns:
@@ -128,7 +131,7 @@ class SeqStatsUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updateModelSequenceAssignOp(self, **kwArgs):
+    def updateModelSequenceAssignOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Update model coordinate file with alignment mapping information.
 
         Returns:

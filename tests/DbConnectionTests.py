@@ -103,14 +103,16 @@ class DbConnectionTests(unittest.TestCase):
         self.assertIn("Connection error 2003: Can't connect", log.getvalue())
         self.assertIn("host h1 dsn db1 user u1", log.getvalue())
 
-    @unittest.expectedFailure
     def testConnectErrorWithoutPortExits(self) -> None:
-        # Library bug: error message formats the port with %d, raising TypeError when no port is configured
+        # With no port configured, the failure message shows an empty port and the connection exits cleanly
+        log = io.StringIO()
         with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
             mConnect.side_effect = MySQLdb.OperationalError(2003, "Can't connect")
-            dbc = DbConnection(dbName="db1", log=io.StringIO())
-            with self.assertRaises(SystemExit):
+            dbc = DbConnection(dbName="db1", log=log)
+            with self.assertRaises(SystemExit) as cm:
                 dbc.connect()
+        self.assertEqual(cm.exception.code, 1)
+        self.assertIn(" port  socket ", log.getvalue())
 
     def testClose(self) -> None:
         con = MagicMock()
@@ -118,15 +120,69 @@ class DbConnectionTests(unittest.TestCase):
             DbConnection().close(con)
         con.close.assert_called_once_with()
 
-    @unittest.expectedFailure
     def testCommitUsesConnection(self) -> None:
-        # Library bug: commit()/rollback() use an internal connection that connect() never sets (always None)
+        # commit() acts on the connection opened by connect()
         with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
             dbc = DbConnection(dbPort=1)
             con = dbc.connect()
             dbc.commit()
         mConnect.return_value.commit.assert_called_once_with()
+        mConnect.return_value.rollback.assert_not_called()
         self.assertIsNotNone(con)
+
+    def testRollbackUsesConnection(self) -> None:
+        # rollback() acts on the connection opened by connect()
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            dbc = DbConnection(dbPort=1)
+            dbc.connect()
+            dbc.rollback()
+        mConnect.return_value.rollback.assert_called_once_with()
+        mConnect.return_value.commit.assert_not_called()
+
+    def testCommitAndRollbackBeforeConnectDoNothing(self) -> None:
+        # With no stored connection, commit() and rollback() return quietly
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            dbc = DbConnection(dbPort=1)
+            dbc.commit()
+            dbc.rollback()
+        mConnect.assert_not_called()
+
+    def testCommitAndRollbackAfterCloseDoNothing(self) -> None:
+        # close() clears the stored connection, so the closed connection is not used afterwards
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            dbc = DbConnection(dbPort=1)
+            con = dbc.connect()
+            dbc.close(con)
+            dbc.commit()
+            dbc.rollback()
+        mConnect.return_value.close.assert_called_once_with()
+        mConnect.return_value.commit.assert_not_called()
+        mConnect.return_value.rollback.assert_not_called()
+
+    @unittest.expectedFailure
+    def testMissingPortIsNotPassedToDriver(self) -> None:
+        # Library bug: with no port configured, port=None is passed to MySQLdb.connect(); mysqlclient then raises a
+        # TypeError (not a MySQLdb.Error), which escapes connect() instead of exiting cleanly.  See ERRORS.md #4
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            DbConnection(dbHost="h1", dbName="db1", dbUser="u1", dbPw="p1").connect()
+        self.assertIsInstance(mConnect.call_args.kwargs.get("port", 3306), int)
+
+    @unittest.expectedFailure
+    def testNonNumericPortIsNotPassedToDriver(self) -> None:
+        # Library bug: a non-numeric port is passed through unchanged, and mysqlclient raises TypeError.  See ERRORS.md #4
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            DbConnection(dbHost="h1", dbName="db1", dbUser="u1", dbPw="p1", dbPort="abc").connect()
+        self.assertIsInstance(mConnect.call_args.kwargs.get("port", 3306), int)
+
+    @unittest.expectedFailure
+    def testUnsetCredentialsAreNotStringNone(self) -> None:
+        # Library bug: unset db/user/password are formatted with "%s", so the driver receives the string "None".  See ERRORS.md #5
+        with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
+            DbConnection(dbPort=3306).connect()
+        kwargs = mConnect.call_args.kwargs
+        for key in ("db", "user", "passwd"):
+            with self.subTest(key=key):
+                self.assertNotEqual(kwargs.get(key), "None")
 
 
 if __name__ == "__main__":

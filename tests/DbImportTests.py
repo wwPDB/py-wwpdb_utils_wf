@@ -32,7 +32,6 @@ from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi  # noqa: F401
 from wwpdb.utils.wf.dbapi.WFEtime import (  # noqa: F401
     getTimeFromEpoc,
     getTimeNow,
-    getTimeReadable,
     getTimeSeconds,
     getTimeString,
     getTimeZero,

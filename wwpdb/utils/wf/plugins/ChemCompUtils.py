@@ -23,14 +23,19 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+from typing import TYPE_CHECKING, Optional, TextIO, cast
 
 from mmcif.io.IoAdapterCore import IoAdapterCore
+from typing_extensions import Unpack
 from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.MetalCoordinationUtility import MetalCoordinationUtility
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
+
+if TYPE_CHECKING:
+    from wwpdb.io.locator.DataReference import DataReferenceStorageType
 
 
 class ChemCompUtils(UtilsBase):
@@ -55,7 +60,7 @@ class ChemCompUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(ChemCompUtils, self).__init__(verbose, log)
         # DO NOT SET TO TRUE - RcsbDpUtility removes setWorkingDir - breaks image generation ligand lite as directories removed!!
         # Cannot cleanup after chemCompAssignOp
@@ -65,7 +70,7 @@ class ChemCompUtils(UtilsBase):
         """
         #
 
-    def chemCompLinkOp(self, **kwArgs):
+    def chemCompLinkOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component linkage calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -90,7 +95,7 @@ class ChemCompUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def chemCompAssignOp(self, **kwArgs):
+    def chemCompAssignOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -100,7 +105,7 @@ class ChemCompUtils(UtilsBase):
             ccLinkFilePath = inpObjD["src2"].getFilePathReference()
             #
             ccAssignFilePath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -130,7 +135,7 @@ class ChemCompUtils(UtilsBase):
             return False
         #
 
-    def chemCompAssignUIOp(self, **kwArgs):
+    def chemCompAssignUIOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -140,7 +145,7 @@ class ChemCompUtils(UtilsBase):
             ccLinkFilePath = inpObjD["src2"].getFilePathReference()
             #
             ccAssignFilePath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -170,7 +175,7 @@ class ChemCompUtils(UtilsBase):
             return False
         #
 
-    def chemCompAssignNLOp(self, **kwArgs):
+    def chemCompAssignNLOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -180,7 +185,7 @@ class ChemCompUtils(UtilsBase):
             ccLinkFilePath = None
             #
             ccAssignPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -210,7 +215,7 @@ class ChemCompUtils(UtilsBase):
             return False
         #
 
-    def chemCompAssignNLUIOp(self, **kwArgs):
+    def chemCompAssignNLUIOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -220,7 +225,7 @@ class ChemCompUtils(UtilsBase):
             ccLinkFilePath = None
             #
             ccAssignPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -250,7 +255,7 @@ class ChemCompUtils(UtilsBase):
             return False
         #
 
-    def chemCompAssignExactOp(self, **kwArgs):
+    def chemCompAssignExactOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation with exact match option on PDBx format files."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -260,7 +265,7 @@ class ChemCompUtils(UtilsBase):
             ccLinkFilePath = inpObjD["src2"].getFilePathReference()
             #
             ccAssignFilePath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -285,7 +290,7 @@ class ChemCompUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def chemCompAssignExactNLOp(self, **kwArgs):
+    def chemCompAssignExactNLOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment calculation with exact match option on PDBx format files.
         This method assumes no link file being provided.
         """
@@ -295,7 +300,7 @@ class ChemCompUtils(UtilsBase):
             depDataSetId = inpObjD["src"].getDepositionDataSetId()
             #
             ccAssignPath = outObjD["dst"].getFilePathReference()
-            dirPath = outObjD["dst"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             ccAssignWrkngDirPath = os.path.join(dirPath, "assign")
             #
@@ -318,7 +323,7 @@ class ChemCompUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def chemCompInstanceUpdateOp(self, **kwArgs):
+    def chemCompInstanceUpdateOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical component assignment update operations on PDBx format model files.
 
         Requires: extra input files for assignment and user selection.
@@ -356,7 +361,17 @@ class ChemCompUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def __runMetalCoordination(self, siteId, depId, instId, fileSource, dirPath, pdbxPath, ccAssignFilePath, uiFlag):
+    def __runMetalCoordination(
+        self,
+        siteId: str,
+        depId: Optional[str],
+        instId: Optional[str],
+        fileSource: Optional["DataReferenceStorageType"],
+        dirPath: str,
+        pdbxPath: Optional[str],
+        ccAssignFilePath: Optional[str],
+        uiFlag: bool,
+    ) -> None:
         """Performs metal coordination calculations with MetalCoord and FindGeo programs on PDBx format input file"""
         if (not ccAssignFilePath) or (not os.access(ccAssignFilePath, os.R_OK)):
             return
@@ -411,10 +426,24 @@ class ChemCompUtils(UtilsBase):
                     #
                 #
             #
-        #
+        # a None fileSource only comes from an output object with no storage type set
         pI = PathInfo(siteId=siteId, verbose=self._verbose, log=self._lfh)
-        findFilePath = pI.getFilePath(depId, wfInstanceId=instId, contentType="findgeo-annotation", formatType="json", fileSource=fileSource, versionId="next")
-        metFilePath = pI.getFilePath(depId, wfInstanceId=instId, contentType="metalcoord-annotation", formatType="json", fileSource=fileSource, versionId="next")
+        findFilePath = pI.getFilePath(
+            depId,
+            wfInstanceId=instId,
+            contentType="findgeo-annotation",
+            formatType="json",
+            fileSource=fileSource,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
+            versionId="next",
+        )
+        metFilePath = pI.getFilePath(
+            depId,
+            wfInstanceId=instId,
+            contentType="metalcoord-annotation",
+            formatType="json",
+            fileSource=fileSource,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
+            versionId="next",
+        )
         #
         metalUtil = MetalCoordinationUtility(wrkPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
         metalUtil.setModelCoordinatesFilePath(pdbxPath)

@@ -15,8 +15,6 @@ License described at http://creativecommons.org/licenses/by/3.0/.
 
 """
 
-from __future__ import annotations
-
 __docformat__ = "restructuredtext en"
 __author__ = "Zukang Feng"
 __email__ = "zfeng@rcsb.rutgers.edu"
@@ -24,22 +22,27 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.07"
 
 import sys
-from typing import ClassVar
+from typing import Any, ClassVar, Dict, List, Optional, TextIO, Tuple, Union, cast
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from wwpdb.utils.wf.dbapi.DbApiUtil import DbApiUtil
 
+# A row from a MySQLdb DictCursor: {column name: value}
+StatusDictRow = Dict[str, Any]
+# Arguments for %-substitution into a schema map SQL template: a single value or a tuple of values
+StatusSqlParameter = Union[str, Tuple[Any, ...]]
+
 
 class StatusDbApi:
     """ """
 
-    __schemaMap: ClassVar[dict[str, str]] = {
+    __schemaMap: ClassVar[Dict[str, str]] = {
         "GET_GROUP_ID": "select group_id from group_deposition_information where dep_set_id = '%s'",
         "GET_DEP_ID": "select dep_set_id from group_deposition_information where group_id = '%s'",
     }
 
-    def __init__(self, siteId=None, verbose=False, log=sys.stderr):
+    def __init__(self, siteId: Optional[str] = None, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         """ """
         self.__lfh = log
         self.__verbose = verbose
@@ -66,35 +69,35 @@ class StatusDbApi:
         )
         self.__dbApi.setSchemaMap(self.__schemaMap)
 
-    def __getDataDir(self, key, parameter, idx):
+    def __getDataDir(self, key: str, parameter: StatusSqlParameter, idx: int) -> Optional[StatusDictRow]:
         dlist = self.__dbApi.selectData(key=key, parameter=parameter)
         if dlist:
             return dlist[idx]
         #
         return None
 
-    def getGroupId(self, depId=None):
+    def getGroupId(self, depId: Optional[str] = None) -> Optional[str]:
         if not depId:
             return None
         #
         rtnDir = self.__getDataDir("GET_GROUP_ID", (depId), 0)
         if rtnDir:
-            return rtnDir["group_id"]
+            return cast("str", rtnDir["group_id"])
         #
         return None
 
-    def getEntryIdList(self, groupId=None):
-        entryList = []
+    def getEntryIdList(self, groupId: Optional[str] = None) -> List[str]:
+        entryList: List[str] = []
         if not groupId:
             return entryList
         #
         retList = self.__dbApi.selectData(key="GET_DEP_ID", parameter=(groupId))
-        for retDir in retList:
+        for retDir in retList:  # type: ignore[union-attr]  # latent bug: selectData() returns None on a database error
             if retDir.get("dep_set_id"):
                 entryList.append(str(retDir["dep_set_id"]))
             #
         #
         return entryList
 
-    def runUpdate(self, table=None, where=None, data=None):
+    def runUpdate(self, table: Optional[str] = None, where: Optional[Dict[str, str]] = None, data: Optional[Dict[str, str]] = None) -> Optional[str]:
         return self.__dbApi.runUpdate(table=table, where=where, data=data)

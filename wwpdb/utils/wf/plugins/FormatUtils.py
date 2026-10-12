@@ -26,11 +26,13 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+from typing import TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class FormatUtils(UtilsBase):
@@ -56,14 +58,14 @@ class FormatUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(FormatUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
         #
 
-    def pdbx2pdbOp(self, **kwArgs):
+    def pdbx2pdbOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs PDBx(cif) to PDB format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -87,7 +89,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def pdb2pdbxOp(self, **kwArgs):
+    def pdb2pdbxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform PDB to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -111,7 +113,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def pdb2pdbxDepositOp(self, **kwArgs):
+    def pdb2pdbxDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform PDB to PDBx(cif) format conversion operation (special processing for deposition sessions)"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -135,7 +137,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def rcsb2pdbxOp(self, **kwArgs):
+    def rcsb2pdbxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform RCSB(cif) to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -159,7 +161,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def pdbx2pdbxDepositOp(self, **kwArgs):
+    def pdbx2pdbxDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform  PDBx(cif) to PDBx(cif) format conversion operation (special processing deposition sessions)"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -183,7 +185,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def mtz2pdbxOp(self, **kwArgs):
+    def mtz2pdbxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform  MTZ or other SF file  to  PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -196,7 +198,7 @@ class FormatUtils(UtilsBase):
             sfDiagFilePath = outObjD["dst2"].getFilePathReference()
             logFilePath = outObjD["dst3"].getFilePathReference()
             #
-            dirPath = outObjD["dst1"].getDirPathReference()
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())  # None (unset reference) makes os.path.join() raise -> caught
             #
             # logPath=os.path.join(dirPath,"mtz2pdbx.log")
             dmpPath = os.path.join(dirPath, "mtzdmp.log")
@@ -219,10 +221,10 @@ class FormatUtils(UtilsBase):
 
             dp.op("annot-sf-convert")
             dp.expLog(logFilePath)
-            dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])
+            dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])  # type: ignore[list-item]  # expList() is typed List[str], but DataFile.copy() accepts None
 
             #
-            myStatus = self.__checkMergeStatus(logFilePath)
+            myStatus = self.__checkMergeStatus(cast("str", logFilePath))  # None (unset reference) makes os.access() raise -> caught
             outObjD["dst4"].setValue(myStatus)
 
             if self.__cleanUp:
@@ -238,7 +240,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def nmrstar2pdbxOp(self, **kwArgs):
+    def nmrstar2pdbxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NMRSTAR to PDBx(cif) format conversion operation."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -264,7 +266,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def pdbx2nmrstarAnnotOp(self, **kwArgs):
+    def pdbx2nmrstarAnnotOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -290,7 +292,7 @@ class FormatUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def __checkMergeStatus(self, logFilePath):
+    def __checkMergeStatus(self, logFilePath: str) -> str:
         status = "ok"
         if os.access(logFilePath, os.R_OK):
             with open(logFilePath) as ifh:

@@ -17,8 +17,12 @@ Updated:
 import contextlib
 import os
 import sys
+from typing import TYPE_CHECKING, Optional, TextIO, Union
 
 import MySQLdb
+
+if TYPE_CHECKING:
+    from MySQLdb.connections import Connection
 
 
 class DbConnection:
@@ -26,25 +30,31 @@ class DbConnection:
 
     def __init__(
         self,
-        dbServer="mysql",
-        dbHost="localhost",
-        dbName=None,
-        dbUser=None,
-        dbPw=None,
-        dbPort=None,
-        dbSocket=None,
-        log=sys.stderr,
-        verbose=True,
-    ):
+        dbServer: Optional[str] = "mysql",
+        dbHost: Optional[str] = "localhost",
+        dbName: Optional[str] = None,
+        dbUser: Optional[str] = None,
+        dbPw: Optional[str] = None,
+        dbPort: Optional[Union[int, str]] = None,
+        dbSocket: Optional[str] = None,
+        log: TextIO = sys.stderr,
+        verbose: bool = True,
+    ) -> None:
         self.__lfh = log
         self.__verbose = verbose  # pylint: disable=unused-private-member
         self.__debug = False
         if self.__debug:
             self.__lfh.write(
-                "\n\n+DbConnection.connect(): Connection using server %s host %s dsn %s user %s pw %s port %d socket %s\n"
-                % (dbServer, dbHost, dbName, dbUser, dbPw, dbPort, dbSocket)
+                "\n\n+DbConnection.connect(): Connection using server %s host %s dsn %s user %s pw %s port %s socket %s\n"
+                % (dbServer, dbHost, dbName, dbUser, dbPw, dbPort if dbPort is not None else "", dbSocket)
             )
 
+        self.__dbName: Optional[str]
+        self.__dbUser: Optional[str]
+        self.__dbPw: Optional[str]
+        self.__dbHost: Optional[str]
+        self.__dbPort: Optional[Union[int, str]]
+        self.__dbSocket: Optional[str]
         if dbName is None:
             self.__dbName = os.getenv("MYSQL_DB_NAME")
         else:
@@ -71,7 +81,7 @@ class DbConnection:
             self.__dbPort = dbPort
 
         with contextlib.suppress(Exception):
-            self.__dbPort = int(self.__dbPort)
+            self.__dbPort = int(self.__dbPort)  # type: ignore[arg-type]  # None (no port configured) raises TypeError, suppressed on purpose
 
         if dbSocket is None:
             # try from the environment -
@@ -91,9 +101,9 @@ class DbConnection:
             self.__lfh.write("DbConnection::__init__(): unsupported server %s\n" % dbServer)
             sys.exit(1)
 
-        self.__dbcon = None
+        self.__dbcon: Optional[Connection] = None
 
-    def connect(self):
+    def connect(self) -> "Connection":
         """Consistent db connection method...
 
         Return a connection object
@@ -122,35 +132,39 @@ class DbConnection:
         except MySQLdb.Error as e:
             self.__lfh.write("+DbConnection.connect(): Connection error %s: %s\n" % (e.args[0], e.args[1]))
             self.__lfh.write(
-                "+DbConnection.connect(): Connection failed using server %s host %s dsn %s user %s pw %s port %d socket %s\n"
+                "+DbConnection.connect(): Connection failed using server %s host %s dsn %s user %s pw %s port %s socket %s\n"
                 % (
                     self.__dbServer,
                     self.__dbHost,
                     self.__dbName,
                     self.__dbUser,
                     self.__dbPw,
-                    self.__dbPort,
+                    self.__dbPort if self.__dbPort is not None else "",
                     self.__dbSocket,
                 )
             )
             sys.exit(1)
 
+        self.__dbcon = dbcon
         return dbcon
 
-    def close(self, dbcon):
+    def close(self, dbcon: "Connection") -> None:
         """
         Consistent db close connection method...
         """
         dbcon.close()
+        self.__dbcon = None
 
-    def commit(self):
+    def commit(self) -> None:
         """
         Consistent db commit() method...
         """
-        self.__dbcon.commit()
+        if self.__dbcon:
+            self.__dbcon.commit()
 
-    def rollback(self):
+    def rollback(self) -> None:
         """
         Consistent db rollback() method...
         """
-        self.__dbcon.rollback()
+        if self.__dbcon:
+            self.__dbcon.rollback()

@@ -18,6 +18,8 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+from typing import TextIO
+
 try:
     import cStringIO as StringIO  # type: ignore[import-not-found]
 except ImportError:
@@ -45,7 +47,7 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
     # self.__verbose = False
     # sys.stderr.write("WfDataObject.__init_()\n")
 
-    def printMe(self, ofh):
+    def printMe(self, ofh: TextIO) -> None:
         if self.getReferenceType() in ["file"]:
             ofh.write("+WfDataObject.printMe() reference type    %s\n" % self.getReferenceType())
             ofh.write("+WfDataObject.printMe() version ID        %s\n" % self.getVersionId())
@@ -70,17 +72,17 @@ class WfDataObject(DataSelector, DataValueContainer, DataFileReference):
         else:
             ofh.write("+WfDataObject.printMe() undefined data object\n")
 
-    def __str__(self):
+    def __str__(self) -> str:
         output = StringIO.StringIO()
         self.printMe(ofh=output)
-        contents = output.getvalue()
+        contents: str = output.getvalue()
         output.close()
         return contents
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         output = StringIO.StringIO()
         self.printMe(ofh=output)
-        contents = output.getvalue()
+        contents: str = output.getvalue()
         output.close()
         return contents
 

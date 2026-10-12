@@ -35,14 +35,19 @@ import os
 import shutil
 import sys
 import traceback
+from typing import TYPE_CHECKING, Any, Optional, TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.io.file.DataExchange import DataExchange
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 from wwpdb.utils.session.WebRequest import InputRequest
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
+
+if TYPE_CHECKING:
+    from typing import List
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing without
@@ -60,13 +65,13 @@ with contextlib.suppress(ImportError):
     from wwpdb.utils.nmr.CifToNmrStar import CifToNmrStar  # pylint: disable=no-name-in-module
 
 
-def remediate_cs_file(infile, outfile):
+def remediate_cs_file(infile: str, outfile: str) -> Any:  # CifToNmrStar (optional wwpdb.utils.nmr) is untyped
     """Produces an NMR* formatted from input CIF.  Correcting missing section headers that are required"""
     ctns = CifToNmrStar()
     return ctns.convert(cifPath=infile, strPath=outfile)
 
 
-def starToPdbx(starPath=None, pdbxPath=None, log=sys.stderr):
+def starToPdbx(starPath: Optional[str] = None, pdbxPath: Optional[str] = None, log: TextIO = sys.stderr) -> bool:
     """Converts NMR* to mmCIF"""
     if starPath is None or pdbxPath is None:
         return False
@@ -107,13 +112,13 @@ class ValidationUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(ValidationUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
 
-    def validationReportAllOp(self, **kwArgs):
+    def validationReportAllOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
         the current implementation of all experimental methods  with optional input
         of experimental data files --
@@ -152,7 +157,8 @@ class ValidationUtils(UtilsBase):
             svgReportPath = outObjD["dst5"].getFilePathReference()
             cifReportPath = outObjD["dst6"].getFilePathReference()
 
-            dirPath = outObjD["dst1"].getDirPathReference()
+            # None only for a misconfigured output object; os.path.join() then raises and the except below returns False
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
@@ -197,16 +203,20 @@ class ValidationUtils(UtilsBase):
 
             dp.op("annot-wwpdb-validate-all")
             dp.expLog(logPath)
+            # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             dp.expList(
-                dstPathList=[
-                    validationReportPath,
-                    xmlReportPath,
-                    validationFullReportPath,
-                    pngReportPath,
-                    svgReportPath,
-                    imageTarPath,
-                    cifReportPath,
-                ]
+                dstPathList=cast(
+                    "List[str]",
+                    [
+                        validationReportPath,
+                        xmlReportPath,
+                        validationFullReportPath,
+                        pngReportPath,
+                        svgReportPath,
+                        imageTarPath,
+                        cifReportPath,
+                    ],
+                )
             )
 
             if self._verbose:
@@ -232,7 +242,7 @@ class ValidationUtils(UtilsBase):
             return False
         #
 
-    def validationReportAllOpV2(self, **kwArgs):
+    def validationReportAllOpV2(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
         the current implementation of all experimental methods  with optional input
         of experimental data files --
@@ -279,7 +289,8 @@ class ValidationUtils(UtilsBase):
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
             cifReportPath = outObjD["dst8"].getFilePathReference()
 
-            dirPath = outObjD["dst1"].getDirPathReference()
+            # None only for a misconfigured output object; os.path.join() then raises and the except below returns False
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
@@ -335,18 +346,22 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
+            # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             vw.expList(
-                dstPathList=[
-                    validationReportPath,
-                    xmlReportPath,
-                    validationFullReportPath,
-                    pngReportPath,
-                    svgReportPath,
-                    imageTarPath,
-                    cifReportPath,
-                    coeffoReportPath,
-                    coef2foReportPath,
-                ]
+                dstPathList=cast(
+                    "List[str]",
+                    [
+                        validationReportPath,
+                        xmlReportPath,
+                        validationFullReportPath,
+                        pngReportPath,
+                        svgReportPath,
+                        imageTarPath,
+                        cifReportPath,
+                        coeffoReportPath,
+                        coef2foReportPath,
+                    ],
+                )
             )
 
             if self._verbose:
@@ -375,7 +390,7 @@ class ValidationUtils(UtilsBase):
             return False
         #
 
-    def validationReportAllOpV3(self, **kwArgs):
+    def validationReportAllOpV3(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Create validation reports, supporting XML data, and image files for the input PDBx model file and
         the current implementation of all experimental methods  with optional input
         of experimental data files --
@@ -424,7 +439,8 @@ class ValidationUtils(UtilsBase):
             coef2foReportPath = outObjD["dst7"].getFilePathReference()
             cifReportPath = outObjD["dst8"].getFilePathReference()
 
-            dirPath = outObjD["dst1"].getDirPathReference()
+            # None only for a misconfigured output object; os.path.join() then raises and the except below returns False
+            dirPath = cast("str", outObjD["dst1"].getDirPathReference())
             imageTarPath = os.path.join(dirPath, "val-report-images.tar")
             logPath = os.path.join(dirPath, "val-report-all.log")
             #
@@ -499,18 +515,22 @@ class ValidationUtils(UtilsBase):
 
             vw.op("annot-wwpdb-validate-all-sf")
             vw.expLog(logPath)
+            # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             vw.expList(
-                dstPathList=[
-                    validationReportPath,
-                    xmlReportPath,
-                    validationFullReportPath,
-                    pngReportPath,
-                    svgReportPath,
-                    imageTarPath,
-                    cifReportPath,
-                    coeffoReportPath,
-                    coef2foReportPath,
-                ]
+                dstPathList=cast(
+                    "List[str]",
+                    [
+                        validationReportPath,
+                        xmlReportPath,
+                        validationFullReportPath,
+                        pngReportPath,
+                        svgReportPath,
+                        imageTarPath,
+                        cifReportPath,
+                        coeffoReportPath,
+                        coef2foReportPath,
+                    ],
+                )
             )
 
             if self._verbose:
@@ -539,20 +559,21 @@ class ValidationUtils(UtilsBase):
             return False
         #
 
-    def validationGetCorrespondLetterOp(self, **kwArgs):
+    def validationGetCorrespondLetterOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Create the correspondence letter"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            pdbxPath = inpObjD["src1"].getFilePathReference()
+            # A None path/id below only comes from a misconfigured data object; the first use then raises TypeError and the except returns False
+            pdbxPath = cast("str", inpObjD["src1"].getFilePathReference())
             if not os.access(pdbxPath, os.R_OK):
                 return False
             #
             xmlReportPath = inpObjD["src2"].getFilePathReference()
             #
-            correspondLetterPath = outObjD["dst"].getFilePathReference()
+            correspondLetterPath = cast("str", outObjD["dst"].getFilePathReference())
             #
             dirPath = outObjD["dst"].getDirPathReference()
-            depDataSetId = inpObjD["src1"].getDepositionDataSetId()
+            depDataSetId = cast("str", inpObjD["src1"].getDepositionDataSetId())
             instanceId = inpObjD["src1"].getWorkflowInstanceId()
             fileSource = inpObjD["src1"].getStorageType()
             #
@@ -570,7 +591,7 @@ class ValidationUtils(UtilsBase):
             reqObj.setValue("entryfilename", depDataSetId + "_model_P1.cif")
             #
             sessionObj = reqObj.newSessionObj()
-            sessionPath = sessionObj.getPath()
+            sessionPath = cast("str", sessionObj.getPath())  # None only if the session directory could not be created
             #
             de = DataExchange(
                 reqObj=reqObj,

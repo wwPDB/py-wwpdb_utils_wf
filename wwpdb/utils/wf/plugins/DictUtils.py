@@ -18,11 +18,13 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import TextIO, cast
 
 from mmcif_utils.trans.InstanceMapper import InstanceMapper
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppEm
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class DictUtils(UtilsBase):
@@ -45,10 +47,10 @@ class DictUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(DictUtils, self).__init__(verbose, log)
 
-    def em2emdOp(self, **kwArgs):
+    def em2emdOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Convert PDBx EM dialect to EMD dialect."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -62,7 +64,7 @@ class DictUtils(UtilsBase):
             #
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
             im.setMappingFilePath(mappingInfoPath)
-            ok = im.translate(pdbxPath, dstPath, mode="src-dst")
+            ok = im.translate(cast("str", pdbxPath), cast("str", dstPath), mode="src-dst")  # a None path makes translate() fail and return False
             self._lfh.write("+DictUtils em2emdOp return status %r \n" % ok)
             #
             if self._verbose:
@@ -74,7 +76,7 @@ class DictUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def emd2emOp(self, **kwArgs):
+    def emd2emOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Convert EMD dialect to PDBx EM dialect."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -88,7 +90,7 @@ class DictUtils(UtilsBase):
             #
             im = InstanceMapper(verbose=self._verbose, log=self._lfh)
             im.setMappingFilePath(mappingInfoPath)
-            ok = im.translate(pdbxPath, dstPath, mode="dst-src")
+            ok = im.translate(cast("str", pdbxPath), cast("str", dstPath), mode="dst-src")  # a None path makes translate() fail and return False
             self._lfh.write("+DictUtils emd2emOp return status %r \n" % ok)
             #
             if self._verbose:

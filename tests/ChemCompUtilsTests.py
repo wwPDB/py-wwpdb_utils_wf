@@ -11,7 +11,7 @@ import os
 import sys
 import tempfile
 import unittest
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 from unittest.mock import MagicMock, call, patch
 
 if __package__ is None or __package__ == "":
@@ -23,6 +23,9 @@ else:
     from .commonsetup import TESTOUTPUT  # noqa: F401
 
 from wwpdb.utils.wf.plugins.ChemCompUtils import ChemCompUtils
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 
 MODNAME = "wwpdb.utils.wf.plugins.ChemCompUtils"
@@ -172,7 +175,7 @@ class ChemCompUtilsTests(unittest.TestCase):
     def testChemCompInstanceUpdateOp(self) -> None:
         self.__touch(self.__assign)
         out = os.path.join(self.__tmp, "model-out.cif")
-        args = {
+        args: PluginKwargs = {
             "inputObjectD": {"src1": mockObj(self.__model), "src2": mockObj(self.__assign)},
             "outputObjectD": {"dst": mockObj(out, self.__tmp)},
             "userParameterD": {},
@@ -187,7 +190,7 @@ class ChemCompUtilsTests(unittest.TestCase):
         )
 
     def testChemCompInstanceUpdateOpNoAssignFile(self) -> None:
-        args = {
+        args: PluginKwargs = {
             "inputObjectD": {"src1": mockObj(self.__model), "src2": mockObj(None)},
             "outputObjectD": {"dst": mockObj(self.__assign, self.__tmp)},
             "userParameterD": {},

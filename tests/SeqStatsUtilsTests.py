@@ -53,7 +53,7 @@ class SeqStatsUtilsTests(unittest.TestCase):
 
     def testPrepareSequenceDataBadArgs(self) -> None:
         util = SeqStatsUtils(verbose=False, log=self.__log)
-        self.assertFalse(util.prepareSequenceDataOp(inputObjectD={}))
+        self.assertFalse(util.prepareSequenceDataOp(inputObjectD={}))  # type: ignore[call-arg]  # deliberate misuse: missing arguments
         self.assertIn("KeyError", self.__log.getvalue())
 
     def testEvalSequenceData(self) -> None:

@@ -1,10 +1,12 @@
 import contextlib
 import sys
 import traceback
+from typing import TextIO
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing without
@@ -16,10 +18,10 @@ with contextlib.suppress(ImportError):
 
 
 class DepositUtils(UtilsBase):
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(DepositUtils, self).__init__(verbose, log)
 
-    def syncToDepositOp(self, **kwargs):
+    def syncToDepositOp(self, **kwargs: Unpack[PluginKwargs]) -> bool:
         try:
             (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwargs)
 

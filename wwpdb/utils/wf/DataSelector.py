@@ -16,6 +16,11 @@ __email__ = "jwest@rcsb.rutgers.edu"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
+from typing import Any, List, Optional, Tuple
+
+# A selection condition: (attributeName, attributeValue, comparisonOp)
+SelectCondition = Tuple[str, Any, str]
+
 
 class DataSelector:
     """A container for data selection criteria.
@@ -32,21 +37,21 @@ class DataSelector:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(DataSelector, self).__init__()
         # self.__verbose = False
         # sys.stderr.write("DataSelector.__init_()\n")
-        self.__selectorType = None
+        self.__selectorType: Optional[str] = None
         #
-        self.__targetCategoryName = None
-        self.__targetAttributeList = []
-        self.__selectConditionList = []
+        self.__targetCategoryName: Optional[str] = None
+        self.__targetAttributeList: List[str] = []
+        self.__selectConditionList: List[SelectCondition] = []
 
-    def getSelectorType(self):
+    def getSelectorType(self) -> Optional[str]:
         """Get the type of selector type.  Currently only attribute value selections are supported."""
         return self.__selectorType
 
-    def setSelectCategoryName(self, categoryName):
+    def setSelectCategoryName(self, categoryName: str) -> bool:
         """Set the target category for this selection.
 
         Returns:
@@ -59,11 +64,11 @@ class DataSelector:
         except:  # noqa: E722 pylint: disable=bare-except
             return False
 
-    def getSelectCategoryName(self):
+    def getSelectCategoryName(self) -> Optional[str]:
         """Get the taget category for this selection."""
         return self.__targetCategoryName
 
-    def addSelectAttributeName(self, attributeName):
+    def addSelectAttributeName(self, attributeName: str) -> bool:
         """Add an attribute to the list of attributes for this selection.
 
         Returns:
@@ -78,11 +83,11 @@ class DataSelector:
         except:  # noqa: E722 pylint: disable=bare-except
             return False
 
-    def getSelectAttributeList(self):
+    def getSelectAttributeList(self) -> List[str]:
         """Get the list attributes for the current selection"""
         return self.__targetAttributeList
 
-    def addSelectCondition(self, attributeName, attributeValue, comparisonOp="equal"):
+    def addSelectCondition(self, attributeName: str, attributeValue: Any, comparisonOp: str = "equal") -> bool:
         """Add a selection condition to the current selection.
 
         A selection condition contains the following:
@@ -101,6 +106,6 @@ class DataSelector:
         except:  # noqa: E722 pylint: disable=bare-except
             return False
 
-    def getSelectConditionList(self):
+    def getSelectConditionList(self) -> List[SelectCondition]:
         """Get the list selection conditions."""
         return self.__selectConditionList

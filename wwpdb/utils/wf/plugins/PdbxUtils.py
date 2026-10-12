@@ -20,11 +20,13 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import Any, Dict, List, Optional, TextIO, cast
 
 from mmcif.core.mmciflib import ParseCifSimple  # pylint: disable=no-name-in-module
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class CifFile:
@@ -32,22 +34,22 @@ class CifFile:
     CifFile
     """
 
-    def __init__(self, fileName):
+    def __init__(self, fileName: str) -> None:
         self.__fileName = fileName
         self.__cifFile = ParseCifSimple(self.__fileName, verbose=False, intCaseSense=0, maxLineLength=1024, nullValue="?", parseLogFileName="")
 
-    def getCifFile(self):
+    def getCifFile(self) -> Any:  # mmcif CifFile object (mmcif is untyped)
         return self.__cifFile
 
     @classmethod
-    def getFileExt(cls):
+    def getFileExt(cls) -> str:
         return "cif"
 
-    def write(self, fileName):
+    def write(self, fileName: str) -> None:
         self.__cifFile.Write(fileName)
 
     @classmethod
-    def read(cls, fileName):
+    def read(cls, fileName: str) -> "CifFile":
         return cls(fileName)
 
 
@@ -69,19 +71,20 @@ class PdbxUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=True, log=sys.stderr):
+    def __init__(self, verbose: bool = True, log: TextIO = sys.stderr) -> None:
         super(PdbxUtils, self).__init__(verbose, log)
         #
-        self.__block = None
+        # mmcif DataBlock (untyped); None until __getBlock() succeeds, and only used after that
+        self.__block: Any = None
         """ Target block -
         """
-        self.__blockList = []
-        self.__targetBlockName = None
+        self.__blockList: List[str] = []
+        self.__targetBlockName: Optional[str] = None
         self.__targetBlockIndex = 0
-        self.__cifFile = None
+        self.__cifFile: Any = None  # mmcif CifFile object (untyped)
         self._lfh = log
 
-    def __getBlock(self, pdbxPath):
+    def __getBlock(self, pdbxPath: str) -> bool:
         """Open the input PDBx file and set the target data block.
 
         Returns:
@@ -92,7 +95,7 @@ class PdbxUtils(UtilsBase):
         try:
             cf = CifFile(pdbxPath)
             self.__cifFile = cf.getCifFile()
-            bL = []
+            bL: List[str] = []
             self.__blockList = self.__cifFile.GetBlockNames(bL)
             # print self.__blockList
 
@@ -108,7 +111,7 @@ class PdbxUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def __templateSelection(self, kwD):
+    def __templateSelection(self, kwD: PluginKwargs) -> bool:
         """Template selection method.
 
         This method supports equality selection conditions within the target category.
@@ -162,7 +165,7 @@ class PdbxUtils(UtilsBase):
 
         return False
 
-    def __templateFetchAttribute(self, kwD):
+    def __templateFetchAttribute(self, kwD: PluginKwargs) -> bool:
         """Template fetch column method.
 
         This method supports recovering the values of an attribute (or column of attributes).
@@ -187,7 +190,7 @@ class PdbxUtils(UtilsBase):
             targetAttribute = str(attributeList[0])
 
             myTable = self.__block.GetTable(targetCategory)
-            cL = []
+            cL: List[str] = []
             # colNames = list(myTable.GetColumnNames())
             rList = list(myTable.GetColumn(cL, targetAttribute))
 
@@ -204,7 +207,7 @@ class PdbxUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def __templateFetchAnnAuto(self, kwD):
+    def __templateFetchAnnAuto(self, kwD: PluginKwargs) -> bool:
         """Template fetch column method.
 
         This method supports recovering the values of an attribute (or column of attributes).
@@ -229,7 +232,7 @@ class PdbxUtils(UtilsBase):
             targetAttribute = str(attributeList[0])
 
             myTable = self.__block.GetTable(targetCategory)
-            cL = []
+            cL: List[str] = []
             # colNames = list(myTable.GetColumnNames())
             rList = list(myTable.GetColumn(cL, targetAttribute))
 
@@ -263,7 +266,7 @@ class PdbxUtils(UtilsBase):
                 traceback.print_exc(file=self._lfh)
             return False
 
-    def __getCategoryRowCount(self, kwD):
+    def __getCategoryRowCount(self, kwD: PluginKwargs) -> bool:
         """Template method to count category size/test for existence .
 
         Input src defines pdbx file and dst will hold integer row count.
@@ -301,22 +304,22 @@ class PdbxUtils(UtilsBase):
 
         return False
 
-    def categoryRowCountOp(self, **kwArgs):
+    def categoryRowCountOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         return self.__getCategoryRowCount(kwArgs)
 
-    def selectOp(self, **kwArgs):
+    def selectOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         return self.__templateSelection(kwArgs)
 
-    def fetchOp(self, **kwArgs):
+    def fetchOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         return self.__templateFetchAttribute(kwArgs)
 
-    def fetchAnnAutoOp(self, **kwArgs):
+    def fetchAnnAutoOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         return self.__templateFetchAnnAuto(kwArgs)
 
-    def statusOp(self, **kwArgs):
+    def statusOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         return self.__fetchStatusDictionary(kwArgs)
 
-    def __fetchStatusDictionary(self, kwD):
+    def __fetchStatusDictionary(self, kwD: PluginKwargs) -> bool:
         """
         depDB = {}
         Done -
@@ -336,11 +339,12 @@ class PdbxUtils(UtilsBase):
         depDB["AUTHOR_LIST"] = "A.Depositor, Anna.Depositor, Yeta,Depositor"
 
         """
-        d = {}
+        d: Dict[str, Any] = {}
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwD)
             pdbxPath = inpObjD["src"].getFilePathReference()
-            if not self.__getBlock(pdbxPath):
+            # A None path makes ParseCifSimple raise inside __getBlock(), which then returns False
+            if not self.__getBlock(cast("str", pdbxPath)):
                 return False
             #
             targetCategory = "struct"
@@ -348,7 +352,7 @@ class PdbxUtils(UtilsBase):
                 targetAttribute = "title"
                 myTable = self.__block.GetTable(targetCategory)
                 colNames = list(myTable.GetColumnNames())
-                cL = []
+                cL: List[str] = []
                 rList = list(myTable.GetColumn(cL, targetAttribute))
                 if len(rList) > 0:
                     d["title"] = rList[0]
@@ -408,7 +412,7 @@ class PdbxUtils(UtilsBase):
             #
             targetCategory = "database_2"
             dbIdList = ["PDB", "BMRRB", "EMDB"]
-            accessionD = {}
+            accessionD: Dict[str, List[Any]] = {}
             for dbId in dbIdList:
                 accessionD[dbId] = []
             #
@@ -448,7 +452,7 @@ class PdbxUtils(UtilsBase):
             return False
         #
 
-    def __getAnnModAutoCompleteFlag(self):
+    def __getAnnModAutoCompleteFlag(self) -> str:
         """
         Determine if AnnMod should auto-complete based on:
         1. For EM/NMR methods: Check if assembly information is present

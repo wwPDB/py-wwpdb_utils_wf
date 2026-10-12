@@ -24,10 +24,12 @@ import contextlib
 import os
 import sys
 import traceback
+from typing import Any, Optional, TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import getSiteId
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing
@@ -60,15 +62,16 @@ class SeqdbUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=True, log=sys.stderr):
+    def __init__(self, verbose: bool = True, log: TextIO = sys.stderr) -> None:
         super(SeqdbUtils, self).__init__(verbose, log)
         self.__cleanUp = False
         """Flag to remove any temporary directories created by this class.
         """
         # Init here to keep pylint happy
         self.__maxRefAlign = 0
-        self.__siteId = None
-        self.__reqObj = None
+        self.__siteId: Optional[str] = None
+        # SeqModInputRequest comes from the optional, untyped wwpdb.apps.seqmodule package; set by mySetup()
+        self.__reqObj: Any = None
         # self.__sessionId = None
         # self.__sessionObj = None
         # self.__sessionPath = None
@@ -76,7 +79,7 @@ class SeqdbUtils(UtilsBase):
         self.__includeSeqAssignFileFlag = False
         #
 
-    def mySetup(self, topSessionPath="."):
+    def mySetup(self, topSessionPath: Optional[str] = ".") -> None:
         """Setup application environment for managing session storage of
         temporally data files.
         """
@@ -92,7 +95,7 @@ class SeqdbUtils(UtilsBase):
         _sessionObj = self.__reqObj.newSessionObj()  # noqa: F841
         #  self.__sessionPath = self.__sessionObj.getPath()
 
-    def matchAllOp(self, **kwArgs):
+    def matchAllOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Find matching sequences for all entities."""
         try:
             self.__doAutoProcessFlag = False
@@ -104,7 +107,7 @@ class SeqdbUtils(UtilsBase):
             return False
         #
 
-    def matchAllAutoOp(self, **kwArgs):
+    def matchAllAutoOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Find matching sequences for all entities."""
         try:
             self.__doAutoProcessFlag = True
@@ -116,7 +119,7 @@ class SeqdbUtils(UtilsBase):
             return False
         #
 
-    def matchEntityOp(self, **kwArgs):
+    def matchEntityOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Find matching sequences for all entities."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -144,6 +147,7 @@ class SeqdbUtils(UtilsBase):
             )
             dI.copyModelFile(inputFileSource=fileSource, inputWfInstanceId=instanceId)
             dI.copyFiles(messageHead="SeqdbUtils.matchAllOp(OnStart)")
+            ok: bool
             entityIdList, ok = dI.loadSeqDataAssemble(selectedEntityIdList=[entityId], doRefSearch=True)
             #
             # Return the files according to the destination setting --
@@ -173,7 +177,7 @@ class SeqdbUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def updateModelWithSeqAssignmentOp(self, **kwArgs):
+    def updateModelWithSeqAssignmentOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs sequence assignment update operation on PDBx format model file."""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -191,7 +195,8 @@ class SeqdbUtils(UtilsBase):
             self.__reqObj.setValue("identifier", depDataSetId)
             self.__reqObj.setValue("instance", instanceId)
             #
-            dp = RcsbDpUtility(tmpPath=dirPath, siteId=self.__siteId, verbose=self._verbose, log=self._lfh)
+            # mySetup() above always sets self.__siteId
+            dp = RcsbDpUtility(tmpPath=dirPath, siteId=cast("str", self.__siteId), verbose=self._verbose, log=self._lfh)
             #
             if (seqAssignFilePath is not None) and os.path.exists(seqAssignFilePath):
                 dp.addInput(name="seqmod_assign_file_path", value=seqAssignFilePath, type="file")
@@ -232,7 +237,7 @@ class SeqdbUtils(UtilsBase):
             return False
         #
 
-    def __runMatchAllOp(self, kwArgs, functionName):
+    def __runMatchAllOp(self, kwArgs: PluginKwargs, functionName: str) -> None:
         """Find matching sequences for all entities."""
         (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
         pdbxPath = inpObjD["src"].getFilePathReference()

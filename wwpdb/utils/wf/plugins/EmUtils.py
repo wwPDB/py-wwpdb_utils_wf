@@ -23,12 +23,14 @@ __version__ = "V0.01"
 import json
 import sys
 import traceback
+from typing import TextIO, Union, cast
 
+from typing_extensions import Unpack
 from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class EmUtils(UtilsBase):
@@ -51,13 +53,13 @@ class EmUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=True, log=sys.stderr):
+    def __init__(self, verbose: bool = True, log: TextIO = sys.stderr) -> None:
         super(EmUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
         """
 
-    def fsc_check_options(self, **kwArgs):
+    def fsc_check_options(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """
         Set the options for xmllint
         """
@@ -78,7 +80,7 @@ class EmUtils(UtilsBase):
             if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
-            ret = dp.op("fsc_check")
+            dp.op("fsc_check")
             dp.expLog(logPath)
             dp.exp(outPath)
 
@@ -90,12 +92,12 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
 
-            return ret
+            return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
-            return -100
+            return False
 
-    def mapFixOp(self, **kwArgs):
+    def mapFixOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Run mapfix (Prior BIG VERSION) to correct header values in input map."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -129,7 +131,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def mapFixInPlaceOp(self, **kwArgs):
+    def mapFixInPlaceOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Run mapfix (BIG VERSION) to correct header values in input map (in place)."""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -170,7 +172,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def emmapcheck(self, **kwArgs):
+    def emmapcheck(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Run EM Map/Model validation on file upload"""
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
@@ -200,7 +202,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def em2emSpiderOp(self, **kwArgs):
+    def em2emSpiderOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Run em2em to convert Spider map to CCP4 format"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
@@ -214,9 +216,9 @@ class EmUtils(UtilsBase):
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(inpMapPath)
             #  add any extra command line options
-            pixelSpacingX = 1.0
-            pixelSpacingY = 1.0
-            pixelSpacingZ = 1.0
+            pixelSpacingX: Union[float, str] = 1.0
+            pixelSpacingY: Union[float, str] = 1.0
+            pixelSpacingZ: Union[float, str] = 1.0
             pixelSpacingX = str(uD["pixel-spacing-x"])
             pixelSpacingY = str(uD["pixel-spacing-y"])
             pixelSpacingZ = str(uD["pixel-spacing-z"])
@@ -240,7 +242,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def mapFixInPlaceAltOp(self, **kwArgs):
+    def mapFixInPlaceAltOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """MapFix operation on input map (in place).
 
         - with automatic input and output map file selection -
@@ -263,7 +265,7 @@ class EmUtils(UtilsBase):
             #  add any extra command line options
             options = None
             try:
-                with open(inpArgsPath) as ifh:
+                with open(cast("str", inpArgsPath)) as ifh:  # None (unset reference) raises TypeError -> caught just below
                     options = ifh.read()
                 dp.addInput(name="options", value=options)
             except Exception as _e:  # noqa: F841,BLE001,S110
@@ -289,7 +291,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def mapFixInPlaceCfgOp(self, **kwArgs):
+    def mapFixInPlaceCfgOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """execution wrapper for mapfix operations for all maps of a particular type.
 
         --- using explicit data file selection via configuration file selection.
@@ -310,7 +312,7 @@ class EmUtils(UtilsBase):
             arg = None
             cTupL = []
             try:
-                cD = json.load(open(inpCfgPath))  # noqa: SIM115
+                cD = json.load(open(cast("str", inpCfgPath)))  # noqa: SIM115  # None (unset reference) raises TypeError -> caught just below
                 pL = cD["part-list"]
                 inpMileStone = cD.get("map-content-milestone", None)
                 mapContentType = cD["map-content-type"]
@@ -330,7 +332,7 @@ class EmUtils(UtilsBase):
                     dataSetId,
                     contentType=mT,
                     formatType="map",
-                    fileSource=storageType,
+                    fileSource=storageType,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
                     versionId="latest",
                     partNumber=p,
                     mileStone=inpMileStone,
@@ -339,7 +341,7 @@ class EmUtils(UtilsBase):
                     dataSetId,
                     contentType=mT,
                     formatType="map",
-                    fileSource=storageType,
+                    fileSource=storageType,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
                     versionId="next",
                     partNumber=p,
                     mileStone=None,
@@ -348,7 +350,7 @@ class EmUtils(UtilsBase):
                     dataSetId,
                     contentType="mapfix-header-report",
                     formatType="json",
-                    fileSource=storageType,
+                    fileSource=storageType,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
                     versionId="next",
                     partNumber=p,
                     mileStone=None,
@@ -357,7 +359,7 @@ class EmUtils(UtilsBase):
                     dataSetId,
                     contentType="mapfix-report",
                     formatType="txt",
-                    fileSource=storageType,
+                    fileSource=storageType,  # type: ignore[arg-type]  # a None storage type is not checked; getFilePath() then returns None
                     versionId="next",
                     partNumber=p,
                     mileStone=None,
@@ -387,7 +389,7 @@ class EmUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def imageMagickOp(self, **kwArgs):
+    def imageMagickOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """
         Run ImageMagick to convert uploaded image to 400x400 (for atlas pages)
 
@@ -409,7 +411,7 @@ class EmUtils(UtilsBase):
             if (options is not None) and (len(options) > 0):
                 dp.addInput(name="options", value=options)
 
-            ret = dp.op("img-convert")
+            dp.op("img-convert")
             dp.expLog(logPath)
             dp.exp(outImgPath)
 
@@ -421,7 +423,7 @@ class EmUtils(UtilsBase):
             if self.__cleanUp:
                 dp.cleanup()
 
-            return ret
+            return True
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
-            return -100
+            return False

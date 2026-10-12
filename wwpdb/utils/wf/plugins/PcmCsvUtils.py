@@ -19,8 +19,11 @@ __version__ = "V0.01"
 import os
 import sys
 import traceback
+from typing import TextIO, cast
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from typing_extensions import Unpack
+
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class PcmCsvUtils(UtilsBase):
@@ -39,16 +42,16 @@ class PcmCsvUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(PcmCsvUtils, self).__init__(verbose, log)
 
-    def missingPcmDataOp(self, **kwArgs):
+    def missingPcmDataOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Merges the first datablock from src1 and selected categories in
         src2 and output to dst1. Will not overwrite if present
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            srcPath = inpObjD["src"].getFilePathReference()
+            srcPath = cast("str", inpObjD["src"].getFilePathReference())  # None raises TypeError in os.access(), caught below
             # outPath = outObjD["dst"].getFilePathReference()
             #
             yes_no_value = "NO"

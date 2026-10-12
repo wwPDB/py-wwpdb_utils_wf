@@ -29,10 +29,12 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.dp.PdbxMergeCategory import PdbxMergeCategory
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 
 class ReportUtils(UtilsBase):
@@ -55,13 +57,13 @@ class ReportUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(ReportUtils, self).__init__(verbose, log)
         #  Flag to remove any temporary directories created by this class.
         #  self.__cleanUp = True
         #
 
-    def combineLigandInfoOp(self, **kwArgs):
+    def combineLigandInfoOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Merges the first datablock from src1 and selected categories in
         src2 and output to dst1. Will not overwrite if present
         """
@@ -78,10 +80,11 @@ class ReportUtils(UtilsBase):
 
             pm = PdbxMergeCategory()
             # srcin, src2in, dstoit, mergelist replacelist
+            # A None path only comes from a misconfigured data object; merge() then catches the read error and returns False
             ret = pm.merge(
-                srcPath,
-                mrgPath,
-                outPath,
+                cast("str", srcPath),
+                cast("str", mrgPath),
+                cast("str", outPath),
                 ["pdbx_entry_details"],
                 ["pdbx_binding_assay", "pdbx_entity_instance_feature"],
             )

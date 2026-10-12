@@ -18,9 +18,15 @@ __version__ = "V0.01"
 
 import sys
 import traceback
+from typing import TYPE_CHECKING, Dict, List, Optional, TextIO, Tuple, cast
 from xml.dom import minidom
 
 from wwpdb.io.misc.FormatOut import FormatOut
+
+from wwpdb.utils.wf.process.ActionRegistryTypes import ActionDataObjectDef, ActionParameterDict, ActionRegistryDict
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.process.ActionRegistryTypes import ActionDef
 
 
 class ActionRegistryIo:
@@ -80,7 +86,7 @@ class ActionRegistryIo:
 
     """
 
-    def __init__(self, filePath="./examples/resources/actionData.xml", verbose=False, log=sys.stderr):
+    def __init__(self, filePath: str = "./examples/resources/actionData.xml", verbose: bool = False, log: TextIO = sys.stderr) -> None:
         #
         self.__lfh = log
         self.__verbose = verbose  # pylint: disable=unused-private-member
@@ -88,11 +94,11 @@ class ActionRegistryIo:
         # self.lt = time.strftime("%Y%m%d", time.localtime())
         #
         self.__fileName = filePath
-        self.__dict = {}
+        self.__dict: ActionRegistryDict = {}
         self.__setup()
         #
 
-    def __setup(self):
+    def __setup(self) -> bool:
         try:
             self.__dom = minidom.parse(self.__fileName)  # noqa: S318
             self.__dict = self.__getActionDictionary()
@@ -102,13 +108,13 @@ class ActionRegistryIo:
             traceback.print_exc(file=self.__lfh)
             return False
 
-    def getRegistry(self):
+    def getRegistry(self) -> ActionRegistryDict:
         """Returns the dictionary data structure representing the action registry."""
         return self.__dict
 
-    def __getWfDataObjectList(self, el):
-        oD = {}
-        oL = []
+    def __getWfDataObjectList(self, el: minidom.Element) -> Tuple[Dict[str, ActionDataObjectDef], List[str]]:
+        oD: Dict[str, ActionDataObjectDef] = {}
+        oL: List[str] = []
         for child in el.childNodes:
             if child.nodeType != child.ELEMENT_NODE:
                 continue
@@ -116,8 +122,8 @@ class ActionRegistryIo:
                 continue
             #
             if child.nodeName == "wfDataObject":
-                dId = child.getAttributeNode("name").nodeValue
-                tD = {
+                dId = child.getAttributeNode("name").nodeValue  # type: ignore[union-attr]  # a missing name attribute raises here, see ERRORS.md
+                tD: Dict[str, Optional[str]] = {
                     "dataReferenceType": None,
                     "contentType": None,
                     "fileFormat": None,
@@ -129,18 +135,18 @@ class ActionRegistryIo:
                     if tch.nodeName in tD:
                         if len(tch.childNodes) > 0:
                             tD[tch.nodeName] = tch.childNodes[0].nodeValue
-                oD[dId] = tD
+                oD[dId] = cast("ActionDataObjectDef", tD)  # tD holds exactly the ActionDataObjectDef keys
                 oL.append(dId)
         #
         return oD, oL
 
-    def __getActionDictionary(self):
+    def __getActionDictionary(self) -> ActionRegistryDict:
         """Parser for action registry data file.  Builds dictionary of action definitions."""
-        aD = {}
+        aD: ActionRegistryDict = {}
         els = self.__dom.getElementsByTagName("action")
         for el in els:
-            actionId = el.getAttributeNode("name").nodeValue
-            rD = {}
+            actionId = el.getAttributeNode("name").nodeValue  # type: ignore[union-attr]  # a missing name attribute raises here, see ERRORS.md
+            rD = cast("ActionDef", {})  # filled in key by key below
             rD["MODULE_NAME"] = None
             rD["METHOD_NAME"] = None
             rD["INPUT_INFO_LIST"] = {}
@@ -163,10 +169,10 @@ class ActionRegistryIo:
                     rD["METHOD_NAME"] = child.childNodes[0].nodeValue
 
                 elif child.nodeName == "userParameters":
-                    pD = {}
+                    pD: ActionParameterDict = {}
                     for tch in child.childNodes:
                         if tch.nodeName == "parameter":
-                            ky = tch.getAttributeNode("name").nodeValue
+                            ky = tch.getAttributeNode("name").nodeValue  # type: ignore[union-attr]  # tch is an Element; a missing name attribute raises here, see ERRORS.md
                             if len(tch.childNodes) > 0:
                                 val = tch.childNodes[0].nodeValue
                             else:
@@ -178,7 +184,7 @@ class ActionRegistryIo:
                     pD = {}
                     for tch in child.childNodes:
                         if tch.nodeName == "parameter":
-                            ky = tch.getAttributeNode("name").nodeValue
+                            ky = tch.getAttributeNode("name").nodeValue  # type: ignore[union-attr]  # tch is an Element; a missing name attribute raises here, see ERRORS.md
                             if len(tch.childNodes) > 0:
                                 val = tch.childNodes[0].nodeValue
                             else:
@@ -196,7 +202,7 @@ class ActionRegistryIo:
             aD[actionId] = rD
         return aD
 
-    def dump(self):
+    def dump(self) -> None:
         out = FormatOut()
         out.autoFormat("Action registry file", self.__dict, 3, 3)
         out.writeStream(self.__lfh)

@@ -24,12 +24,14 @@ import os
 import re
 import sys
 import traceback
+from typing import Dict, List, Optional, TextIO, cast
 
+from typing_extensions import Unpack
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.PdbxChemShiftReport import PdbxChemShiftReport
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing of DepUI merge without
@@ -64,7 +66,7 @@ class NmrUtils(UtilsBase):
 
     """
 
-    def __init__(self, verbose=False, log=sys.stderr):
+    def __init__(self, verbose: bool = False, log: TextIO = sys.stderr) -> None:
         super(NmrUtils, self).__init__(verbose, log)
         self.__cleanUp = True
         """Flag to remove any temporary directories created by this class.
@@ -73,7 +75,7 @@ class NmrUtils(UtilsBase):
 
     # """
     # @obsolete: DAOTHER-7407: ccpnExtractOp() has never been implemented before
-    # def ccpnExtractOp(self, **kwArgs):  # pylint: disable=unused-argument
+    # def ccpnExtractOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:  # pylint: disable=unused-argument
     #     """Extract PDB and NMRSTAR files from CCPn project
     #     """
     #
@@ -82,7 +84,7 @@ class NmrUtils(UtilsBase):
     #         self._lfh.write("+NmrUtils.ccpnExtractOp() - DISABLED\n")
     #     return False
     # """
-    def uploadChemicalShiftOp(self, **kwArgs):
+    def uploadChemicalShiftOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs format check on a list of chemical shift files and concatenates these.
 
         Data sections are assigned to user provided input names corresponding to each input file.
@@ -101,7 +103,7 @@ class NmrUtils(UtilsBase):
             dirPath = outObjD["dst1"].getDirPathReference()
             chkPath = outObjD["dst2"].getFilePathReference()
 
-            logPath = os.path.join(dirPath, "upload-chemical-shift-check.log")
+            logPath = os.path.join(cast("str", dirPath), "upload-chemical-shift-check.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -116,7 +118,7 @@ class NmrUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(csOutPath)
 
-            csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
+            csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)  # type: ignore[arg-type]  # a None chkPath gives an empty report
             status = str("".join(csr.getStatus())).lower()
             warnings = csr.getWarnings()
             errors = csr.getErrors()
@@ -141,7 +143,7 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def uploadChemicalShiftAltOp(self, **kwArgs):
+    def uploadChemicalShiftAltOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs format check on a list of chemical shift files and concatenates these.
 
         Data sections are assigned to user provided input names corresponding to each input file.
@@ -152,17 +154,17 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            csPathList = []
+            csPathList: List[str] = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
-            nameList = []
+            nameList: List[str] = []
             nameListFilePath = inpObjD["src2"].getFilePathReference()
             #
-            with open(csPathListFilePath) as ifh:
+            with open(cast("str", csPathListFilePath)) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append(txt)
             #
-            with open(nameListFilePath) as ifh:
+            with open(cast("str", nameListFilePath)) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     nameList.append(txt)
@@ -171,7 +173,7 @@ class NmrUtils(UtilsBase):
             dirPath = outObjD["dst1"].getDirPathReference()
             chkPath = outObjD["dst2"].getFilePathReference()
 
-            logPath = os.path.join(dirPath, "upload-chemical-shift-check.log")
+            logPath = os.path.join(cast("str", dirPath), "upload-chemical-shift-check.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -198,7 +200,7 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def atomNameCheckCsXyzOp(self, **kwArgs):
+    def atomNameCheckCsXyzOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report,
         status (text=ok,warning,error), and both  warnings and error messages as a list of strings.
 
@@ -212,7 +214,7 @@ class NmrUtils(UtilsBase):
             csOutPath = outObjD["dst1"].getFilePathReference()
             chkPath = outObjD["dst2"].getFilePathReference()
             dirPath = outObjD["dst2"].getDirPathReference()
-            logPath = os.path.join(dirPath, "atom-name-check-cs-xyz.log")
+            logPath = os.path.join(cast("str", dirPath), "atom-name-check-cs-xyz.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -227,7 +229,7 @@ class NmrUtils(UtilsBase):
             dp.expLog(logPath)
             dp.exp(csOutPath)
 
-            csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)
+            csr = PdbxChemShiftReport(inputPath=chkPath, verbose=self._verbose, log=self._lfh)  # type: ignore[arg-type]  # a None chkPath gives an empty report
             status = str("".join(csr.getStatus())).lower()
             warnings = csr.getWarnings()
             errors = csr.getErrors()
@@ -250,7 +252,7 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def atomNameCheckCsXyzAltOp(self, **kwArgs):
+    def atomNameCheckCsXyzAltOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
         * workflow version * returns chemical shift file and check report output --
@@ -265,7 +267,7 @@ class NmrUtils(UtilsBase):
             csOutPath = outObjD["dst1"].getFilePathReference()
             chkPath = outObjD["dst2"].getFilePathReference()
             dirPath = outObjD["dst2"].getDirPathReference()
-            logPath = os.path.join(dirPath, "atom-name-check-cs-xyz.log")
+            logPath = os.path.join(cast("str", dirPath), "atom-name-check-cs-xyz.log")
             #
             cI = ConfigInfo()
             siteId = cI.get("SITE_PREFIX")
@@ -290,7 +292,7 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def autoChemShiftProcessOp(self, **kwArgs):
+    def autoChemShiftProcessOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
         * workflow version * returns chemical shift file and check report output --
@@ -341,7 +343,7 @@ class NmrUtils(UtilsBase):
     #   src2.content: model,                src2.format: pdbx
     #   prc2.content: model (deposit),      prc2.format: pdbx
     #   dst.content:  nmr-data-nef-report,  dst.format:  json
-    def nefConsistencyCheckOp(self, **kwArgs):
+    def nefConsistencyCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs consistency check on input NEF with the coordinates,
            then outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -350,7 +352,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -370,7 +372,7 @@ class NmrUtils(UtilsBase):
 
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-nef-consistency-check")
+            stat: bool = dp.op("nmr-nef-consistency-check")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.nefConsistencyCheckOp() - NEF input file path:      %s\n" % nefInpPath)
@@ -388,7 +390,7 @@ class NmrUtils(UtilsBase):
     #   src2.content: model,                src2.format: pdbx
     #   prc2.content: model (deposit),      prc2.format: pdbx
     #   dst.content:  nmr-data-str-report,  dst.format:  json
-    def strConsistencyCheckOp(self, **kwArgs):
+    def strConsistencyCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs consistency check on input NMR-STAR V3.2 with the coordinates,
            then outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -397,7 +399,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -417,7 +419,7 @@ class NmrUtils(UtilsBase):
 
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-str-consistency-check")
+            stat: bool = dp.op("nmr-str-consistency-check")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
@@ -436,7 +438,7 @@ class NmrUtils(UtilsBase):
     #   prc2.content: model (deposit),      prc2.format: pdbx
     #   src3.content: cs-mr-merge-report,   src3.format: json
     #   dst.content:  nmr-data-str-report,  dst.format:  json
-    def mrgConsistencyCheckOp(self, **kwArgs):
+    def mrgConsistencyCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs consistency check on input NMR-STAR V3.2 with the coordinates,
            then outputs a JSON report file, which provides diagnostic information to depositor.
 
@@ -445,7 +447,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -467,7 +469,7 @@ class NmrUtils(UtilsBase):
 
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-str-consistency-check")
+            stat: bool = dp.op("nmr-str-consistency-check")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.strConsistencyCheckOp() - NMR-STAR V3.2 input file path:    %s\n" % strInpPath)
@@ -486,7 +488,7 @@ class NmrUtils(UtilsBase):
     #   src3.content: model,                src3.format: pdbx
     #   prc3.content: model (deposit),      prc3.format: pdbx
     #   dst.content:  nmr-data-str-report,  dst.format:  json
-    def csStrConsistencyCheckOp(self, **kwArgs):
+    def csStrConsistencyCheckOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs consistency check on input chemical shifts/restraints with the coordinates,
            then outputs a JSON report file, which provides diagnostic information to depositor.
         @deprecated: Please use csMrMergeOp() for initial file upload since V5.18 (DAOTHER-7407)
@@ -496,17 +498,17 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            csPathList = []
+            csPathList: List[str] = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             #
-            with open(csPathListFilePath) as ifh:
+            with open(cast("str", csPathListFilePath)) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append(txt)
             #
-            mrPathList = []
-            arPathList = []
-            mrInpPath = inpObjD["src2"].getFilePathReference()
+            mrPathList: List[str] = []
+            arPathList: List[Dict[str, str]] = []
+            mrInpPath = cast("str", inpObjD["src2"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             #
             if os.path.exists(mrInpPath):
                 with open(mrInpPath) as file:
@@ -571,7 +573,7 @@ class NmrUtils(UtilsBase):
 
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-cs-str-consistency-check")
+            stat: bool = dp.op("nmr-cs-str-consistency-check")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.csStrConsistencyCheckOp() - CS file path list:        %s\n" % csPathList)
@@ -596,7 +598,7 @@ class NmrUtils(UtilsBase):
     #   dst1.content: nmr-data-str,               dst1.format: nmr-star
     #   dst2.content: nmr-data-str-report,        dst2.format: json
     #   dst3.content: nmrif,                      dst3.format: pdbx
-    def csMrMergeOp(self, **kwArgs):
+    def csMrMergeOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs consistency check on input chemical shifts/restraints with the coordinates,
            then outputs a combined NMR-STAR v3.2 file and a JSON report file, which provides diagnostic information to depositor.
 
@@ -605,23 +607,23 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            csPathList = []
+            csPathList: List[Dict[str, str]] = []
             csPathListFilePath = inpObjD["src1"].getFilePathReference()
             csAuthFileNamePath = inpObjD["src2"].getFilePathReference()
             #
-            with open(csPathListFilePath) as ifh:
+            with open(cast("str", csPathListFilePath)) as ifh:
                 for tline in ifh:
                     txt = str(tline[:-1]).strip()
                     csPathList.append({"file_name": txt, "file_type": "nmr-star"})
-            with open(csAuthFileNamePath) as ifh:
+            with open(cast("str", csAuthFileNamePath)) as ifh:
                 for fid, tline in enumerate(ifh):
                     txt = str(tline[:-1]).strip()
                     if fid < len(csPathList) and len(txt) > 0:
                         csPathList[fid]["original_file_name"] = txt
             #
-            mrPathList = []
-            arPathList = []
-            mrInpPath = inpObjD["src3"].getFilePathReference()
+            mrPathList: List[str] = []
+            arPathList: List[Dict[str, str]] = []
+            mrInpPath = cast("str", inpObjD["src3"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             #
             if os.path.exists(mrInpPath):
                 with open(mrInpPath) as file:
@@ -695,7 +697,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-cs-mr-merge")
+            stat: bool = dp.op("nmr-cs-mr-merge")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.csMrMergeOp() - CS file path list:          %s\n" % csPathList)
@@ -723,7 +725,7 @@ class NmrUtils(UtilsBase):
     #   dst2.content: nmr-data-str,         dst2.format: nmr-star
     #   dst3.content: nmr-data-nef-report,  dst3.format: json
     #   dst4.content: nmr-data-str-report,  dst4.format: json
-    def nef2strDepositOp(self, **kwArgs):
+    def nef2strDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NEF to NMR-STAR V3.2 file conversion
         @deprecated: Please use nef2cifDepositOp() for initial file upload since V5.18 (DAOTHER-7407)
 
@@ -732,7 +734,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             nefInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -761,7 +763,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath1)
 
-            stat = dp.op("nmr-nef2str-deposit")
+            stat: bool = dp.op("nmr-nef2str-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.nef2strDepositOp() - NEF input file path:        %s\n" % nefInpPath)
@@ -790,7 +792,7 @@ class NmrUtils(UtilsBase):
     #   dst4.content: nmr-data-nef-report,        dst4.format: json
     #   dst5.content: nmr-data-str-report,        dst5.format: json
     #   dst6.content: nmrif,                      dst6.format: pdbx
-    def nef2cifDepositOp(self, **kwArgs):
+    def nef2cifDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NEF to CIF formated NMR-STAR V3.2 file conversion
 
         Returns True for success or False for warnings/errors.
@@ -798,7 +800,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             nefInpPath = inpObjD["src1"].getFilePathReference()
             authFileNamePath = inpObjD["src2"].getFilePathReference()
             cifInpPath = inpObjD["src3"].getFilePathReference()
@@ -811,8 +813,8 @@ class NmrUtils(UtilsBase):
             logOutPath2 = outObjD["dst5"].getFilePathReference()
             nifOutPath = outObjD["dst6"].getFilePathReference()
             #
-            originalFileName = None
-            with open(authFileNamePath) as ifh:
+            originalFileName: Optional[str] = None
+            with open(cast("str", authFileNamePath)) as ifh:
                 for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
                     if len(originalFileName) == 0:
@@ -840,7 +842,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath1)
 
-            stat = dp.op("nmr-nef2cif-deposit")
+            stat: bool = dp.op("nmr-nef2cif-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.nef2cifDepositOp() - NEF input file path:               %s\n" % nefInpPath)
@@ -866,7 +868,7 @@ class NmrUtils(UtilsBase):
     #   src3.content: nmr-data-str-report,  src3.format: json
     #   dst1.content: nmr-data-str,         dst1.format: nmr-star
     #   dst2.content: nmr-data-str-report,  dst2.format: json
-    def str2strDepositOp(self, **kwArgs):
+    def str2strDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NMR-STAR V3.2 file conversion
         @deprecated: Please use str2cifDepositOp() for initial file upload since V5.18 (DAOTHER-7407)
 
@@ -875,7 +877,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             prcInpPath = inpObjD["prc2"].getFilePathReference()
@@ -900,7 +902,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="leave_intl_note", value=False, type="param")
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-str2str-deposit")
+            stat: bool = dp.op("nmr-str2str-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.str2strDepositOp() - NMR-STAR input file path:   %s\n" % strInpPath)
@@ -925,7 +927,7 @@ class NmrUtils(UtilsBase):
     #   dst2.content: nmr-data-str,               dst2.format: pdbx
     #   dst3.content: nmr-data-str-report,        dst3.format: json
     #   dst4.content: nmrif,                      dst4.format: pdbx
-    def str2cifDepositOp(self, **kwArgs):
+    def str2cifDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NMR-STAR V3.2 to CIF file conversion
 
         Returns True for success or False for warnings/errors.
@@ -933,7 +935,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             strInpPath = inpObjD["src1"].getFilePathReference()
             authFileNamePath = inpObjD["src2"].getFilePathReference()
             cifInpPath = inpObjD["src3"].getFilePathReference()
@@ -944,8 +946,8 @@ class NmrUtils(UtilsBase):
             logOutPath = outObjD["dst3"].getFilePathReference()
             nifOutPath = outObjD["dst4"].getFilePathReference()
             #
-            originalFileName = None
-            with open(authFileNamePath) as ifh:
+            originalFileName: Optional[str] = None
+            with open(cast("str", authFileNamePath)) as ifh:
                 for tline in ifh:
                     originalFileName = str(tline[:-1]).strip()
                     if len(originalFileName) == 0:
@@ -971,7 +973,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmrif_file_path", value=nifOutPath, type="file")  # DAOTHER-1728, 9846
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-str2cif-deposit")
+            stat: bool = dp.op("nmr-str2cif-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.str2cifDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
@@ -993,7 +995,7 @@ class NmrUtils(UtilsBase):
     #   src2.content: model,           src2.format: pdbx
     #   src3.content: nmrif,           src3.format: pdbx
     #   dst1.content: nmr-data-str,    dst1.format: pdbx
-    def nmrIfMergeDepositOp(self, **kwArgs):
+    def nmrIfMergeDepositOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Merge NMRIF to NMR data on submission
 
         Returns True for success or False for warnings/errors.
@@ -1001,7 +1003,7 @@ class NmrUtils(UtilsBase):
         """
         try:
             (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
-            cnfInpPath = inpObjD["src0"].getFilePathReference()
+            cnfInpPath = cast("str", inpObjD["src0"].getFilePathReference())  # None raises TypeError in os.path.exists(), caught below
             strInpPath = inpObjD["src1"].getFilePathReference()
             cifInpPath = inpObjD["src2"].getFilePathReference()
             nifInpPath = inpObjD["src3"].getFilePathReference()
@@ -1021,7 +1023,7 @@ class NmrUtils(UtilsBase):
             dp.addOutput(name="nmr_cif_file_path", value=s2cOutPath, type="file")
             dp.addInput(name="nmrif_file_path", value=nifInpPath, type="file")  # DAOTHER-1728, 9846
 
-            stat = dp.op("nmr-if-merge-deposit")
+            stat: bool = dp.op("nmr-if-merge-deposit")
             #
             if self._verbose:
                 self._lfh.write("+NmrUtils.mergeNmrIfDepositOp() - NMR-STAR input file path:          %s\n" % strInpPath)
@@ -1042,7 +1044,7 @@ class NmrUtils(UtilsBase):
     #   dst2.content: nmr-data-nef,         dst2.format: nmr-star
     #   dst3.content: nmr-data-str-report,  dst3.format: json
     #   dst4.content: nmr-data-nef-report,  dst4.format: json
-    def str2nefReleaseOp(self, **kwArgs):
+    def str2nefReleaseOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Perform NMR-STAR V3.2 to NEF format conversion operation for public release
 
         Returns True for success or False for warnings/errors.
@@ -1067,7 +1069,7 @@ class NmrUtils(UtilsBase):
             dp.addInput(name="check_mandatory_tag", value=True, type="param")
             dp.setLog(logOutPath)
 
-            stat = dp.op("nmr-str-consistency-check")
+            stat: bool = dp.op("nmr-str-consistency-check")
             #
             dp.setSource(strInpPath)
             dp.addInput(name="coordinate_file_path", value=cifInpPath, type="file")
@@ -1093,7 +1095,7 @@ class NmrUtils(UtilsBase):
             traceback.print_exc(file=self._lfh)
             return False
 
-    def autoNmrNefProcessOp(self, **kwArgs):
+    def autoNmrNefProcessOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool:
         """Performs chemical shift file update & nomenclature and format check on input CS and XYZ files and returns an updated CS file, a CIF check report.
 
         * workflow version * returns chemical shift file and check report output --

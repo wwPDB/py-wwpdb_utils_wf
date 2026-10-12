@@ -19,6 +19,7 @@ __version__ = "V0.01"
 # For python 2/3 compatible comparison with isinstace
 from builtins import str  # noqa: UP029,A004
 from datetime import date, datetime
+from typing import Any, Optional, Type
 
 
 class DataValueContainer:
@@ -30,11 +31,11 @@ class DataValueContainer:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(DataValueContainer, self).__init__()
         # sys.stderr.write("DataValueContainer.__init_()\n")
         #
-        self.__valueTypeName = None
+        self.__valueTypeName: Optional[str] = None
         """ A supported data type name such:
             - boolean
             - int or integer
@@ -44,13 +45,13 @@ class DataValueContainer:
             - datetime
             """
         #
-        self.__valueType = type(None)
+        self.__valueType: Type[Any] = type(None)
         """ Intrinsic Python type corresponding to the valueTypeName.
 
             Types are defined in the Python class `types`.
         """
         #
-        self.__containerTypeName = None
+        self.__containerTypeName: Optional[str] = None
         """ Container type setting:
             - value, a single value
             - list,  a list/vector of values
@@ -58,9 +59,9 @@ class DataValueContainer:
 
         """
         #
-        self.__value = None
+        self.__value: Any = None
 
-    def isValueValid(self):
+    def isValueValid(self) -> bool:
         """Performs a sanity type check on the current value and container types.
 
         Returns:
@@ -83,7 +84,7 @@ class DataValueContainer:
             return True
         return False
 
-    def isValueSet(self):
+    def isValueSet(self) -> bool:
         """Performs a check if the current data value has been set.
 
         Returns:
@@ -93,13 +94,13 @@ class DataValueContainer:
         """
         return self.__value is not None
 
-    def setValue(self, value):
+    def setValue(self, value: Any) -> None:
         self.__value = value
 
-    def getValue(self):
+    def getValue(self) -> Any:
         return self.__value
 
-    def setValueTypeName(self, typeName):
+    def setValueTypeName(self, typeName: str) -> bool:
         """Set the data type name for the container.
 
         Supported types include:
@@ -133,7 +134,7 @@ class DataValueContainer:
             return True
         return False
 
-    def setContainerTypeName(self, containerName):
+    def setContainerTypeName(self, containerName: str) -> bool:
         """Set the container type name.
 
         Supported container types include:
@@ -151,8 +152,8 @@ class DataValueContainer:
             return True
         return False
 
-    def getContainerTypeName(self):
+    def getContainerTypeName(self) -> Optional[str]:
         return self.__containerTypeName
 
-    def getValueTypeName(self):
+    def getValueTypeName(self) -> Optional[str]:
         return self.__valueTypeName

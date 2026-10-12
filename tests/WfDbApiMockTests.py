@@ -10,7 +10,7 @@ import io
 import sys
 import unittest
 from decimal import Decimal
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 from unittest.mock import MagicMock, call, patch
 
 if __package__ is None or __package__ == "":
@@ -24,6 +24,9 @@ else:
 import MySQLdb
 
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
+
+if TYPE_CHECKING:
+    from wwpdb.utils.wf.schema.SchemaMapTypes import SchemaTableDef
 
 MODULE = "wwpdb.utils.wf.dbapi.WfDbApi"
 NOW = Decimal("845000000.5")
@@ -272,9 +275,9 @@ class WfDbApiObjectTests(WfDbApiTestBase):
         self.assertEqual(self.api.getStatus("D_1"), "")
 
     def testAssignStatus(self) -> None:
-        inst = self.api.getTableDef({"DEP_SET_ID": 1, "WF_CLASS_ID": 1, "WF_INST_ID": 1})
+        inst = cast("SchemaTableDef", self.api.getTableDef({"DEP_SET_ID": 1, "WF_CLASS_ID": 1, "WF_INST_ID": 1}))
         self.assertEqual(self.api.assignStatus(inst, "open"), {"INST_STATUS": "open", "STATUS_TIMESTAMP": NOW})
-        dep = self.api.getTableDef({"DEP_SET_ID": 1})
+        dep = cast("SchemaTableDef", self.api.getTableDef({"DEP_SET_ID": 1}))
         self.assertEqual(self.api.assignStatus(dep, "PROC"), {"STATUS_CODE": "PROC"})
 
     def testUpdateStatus(self) -> None:
@@ -298,7 +301,7 @@ class WfDbApiObjectTests(WfDbApiTestBase):
         self.assertIsNone(self.api.updateStatus({"DEP_SET_ID": "D_1"}, "x"))
 
     def testMakeDataDict(self) -> None:
-        dep = self.api.getTableDef({"DEP_SET_ID": 1})
+        dep = cast("SchemaTableDef", self.api.getTableDef({"DEP_SET_ID": 1}))
         self.assertEqual(self.api.makeDataDict(dep, {"DEP_SET_ID": "D_1", "BOGUS": 1}), {"DEP_SET_ID": "D_1"})
         self.assertEqual(self.api.makeDataDict(dep, ["DEP_SET_ID"]), {})
         self.assertIn("not a dictionary", self.log.getvalue())
@@ -507,7 +510,7 @@ class WfDbApiQueryTests(WfDbApiTestBase):
         self.assertEqual(self.api.doQuery(1, {"STATUS_CODE": "PROC"}), [])
 
     def testGetValueString(self) -> None:
-        refDef = {"TABLE_NAME": "database_ref", "ATTRIBUTES": {}}
+        refDef: SchemaTableDef = {"TABLE_NAME": "database_ref", "ATTRIBUTES": {}}
         self.cmd.selectRows.return_value = {"DATABASE_CODE": "PDB"}
         self.assertEqual(self.api.getValueString(refDef, {"DEP_SET_ID": "D_1"}, "DATABASE_CODE"), "PDB")
         self.cmd.selectRows.assert_called_once_with(refDef, {"DEP_SET_ID": "D_1"}, [], ["DATABASE_CODE"])
@@ -517,10 +520,10 @@ class WfDbApiQueryTests(WfDbApiTestBase):
 
     def testGetValueStringErrors(self) -> None:
         self.cmd.selectRows.return_value = None
-        self.assertIsNone(self.api.getValueString({}, {}, "DB_ID"))
+        self.assertIsNone(self.api.getValueString(cast("SchemaTableDef", {}), {}, "DB_ID"))
         self._lostConnection()
         self.myDb.connect.side_effect = MySQLdb.OperationalError(2003, "no server")
-        self.assertIsNone(self.api.getValueString({}, {}, "DB_ID"))
+        self.assertIsNone(self.api.getValueString(cast("SchemaTableDef", {}), {}, "DB_ID"))
 
 
 if __name__ == "__main__":
