@@ -911,7 +911,7 @@ class WfDbApi:
                         + " in (select "
                         + self.__idList[0]
                         + " from "
-                        + self.__schemaWf[otherOpt]["TABLE_NAME"]  # type: ignore[index]  # see ERRORS.md #8
+                        + self.__schemaWf[otherOpt]["TABLE_NAME"]  # type: ignore[index]  # see ERRORS.md #7
                         + ")"
                     )  # noqa: S608
                     parameterDict["EXTERNAL_TABLE"] = sqlStr

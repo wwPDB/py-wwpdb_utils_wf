@@ -243,9 +243,9 @@ class ActionRegistryTempTests(unittest.TestCase):
         # Output value type check works on the right field (contrast with the input variant below)
         self.assertFalse(self.__aR.isSetOutputValueType("gamma", "dst"))
 
-    @unittest.expectedFailure
     def testInputValueTypeUnsetWhenOnlyContainerTypeGiven(self) -> None:
-        # Bug: ActionRegistry.isSetInputValueType() tests "containerType" instead of "valueType"
+        # Regression test: isSetInputValueType() used to test "containerType" instead of "valueType"
+        self.assertTrue(self.__aR.isSetInputContainerType("gamma", "src"))
         self.assertFalse(self.__aR.isSetInputValueType("gamma", "src"))
 
     def testDefaultInputName(self) -> None:

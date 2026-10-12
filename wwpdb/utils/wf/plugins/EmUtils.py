@@ -23,7 +23,7 @@ __version__ = "V0.01"
 import json
 import sys
 import traceback
-from typing import TextIO, Union, cast
+from typing import TextIO, cast
 
 from typing_extensions import Unpack
 from wwpdb.io.locator.PathInfo import PathInfo
@@ -216,9 +216,6 @@ class EmUtils(UtilsBase):
             dp = RcsbDpUtility(tmpPath=dirPath, siteId=siteId, verbose=self._verbose, log=self._lfh)
             dp.imp(inpMapPath)
             #  add any extra command line options
-            pixelSpacingX: Union[float, str] = 1.0
-            pixelSpacingY: Union[float, str] = 1.0
-            pixelSpacingZ: Union[float, str] = 1.0
             pixelSpacingX = str(uD["pixel-spacing-x"])
             pixelSpacingY = str(uD["pixel-spacing-y"])
             pixelSpacingZ = str(uD["pixel-spacing-z"])
@@ -312,7 +309,8 @@ class EmUtils(UtilsBase):
             arg = None
             cTupL = []
             try:
-                cD = json.load(open(cast("str", inpCfgPath)))  # noqa: SIM115  # None (unset reference) raises TypeError -> caught just below
+                with open(cast("str", inpCfgPath)) as ifh:  # None (unset reference) raises TypeError -> caught just below
+                    cD = json.load(ifh)
                 pL = cD["part-list"]
                 inpMileStone = cD.get("map-content-milestone", None)
                 mapContentType = cD["map-content-type"]

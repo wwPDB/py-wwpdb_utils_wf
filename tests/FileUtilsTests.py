@@ -297,10 +297,10 @@ class FileUtilsTests(unittest.TestCase):
             self.assertTrue(fu.batchCopyOp(inputObjectD={"src": fileObj(cfg)}, outputObjectD={}, userParameterD={}, internalParameterD={}))
         self.assertTrue(os.path.exists(os.path.join(self.__tmp, "deposit", "D_000001_model_P1.pdbx.V1")))
 
-    # Bug: FileUtils.batchCopyOp verbose error message references src_path/dst_path before assignment when an
-    # instruction is malformed -> UnboundLocalError escapes the inner handler and aborts the whole batch (returns False).
-    @unittest.expectedFailure
     def testBatchCopyOpMalformedInstructionVerbose(self) -> None:
+        # Regression test: in verbose mode the inner error handler used to log src_path/dst_path before they were
+        # assigned, so a malformed instruction raised UnboundLocalError and aborted the whole batch.  The bad entry is
+        # now logged and skipped, and the next instruction still runs.
         FakeWfDataObject.instances = []
         FakeWfDataObject.topPath = self.__tmp
         os.makedirs(os.path.join(self.__tmp, "archive"))
@@ -313,6 +313,7 @@ class FileUtilsTests(unittest.TestCase):
         with patch("wwpdb.utils.wf.plugins.FileUtils.WfDataObject", FakeWfDataObject):
             self.assertTrue(self.__run("batchCopyOp", {"src": fileObj(cfg)}))
         self.assertTrue(os.path.exists(os.path.join(self.__tmp, "deposit", "D_000001_model_P1.pdbx.V1")))
+        self.assertIn("+FileUtils.batchCopyOp Failed copy: None -> None", self.__lfh.getvalue())
 
     def testBatchCopyOpNoInstructions(self) -> None:
         cfg = self.__write("batch.json", json.dumps({"deposition-id": "D_000001"}))

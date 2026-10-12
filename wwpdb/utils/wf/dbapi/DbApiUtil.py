@@ -210,11 +210,11 @@ class DbApiUtil:
                 sql += " where " + " and ".join(["%s = '%s'" % (k, v.replace("'", "\\'")) for k, v in where.items()])
             #
         else:
-            sql = "insert into " + str(table) + " (" + ",".join(["%s" % (k) for k, v in where.items()])  # type: ignore[union-attr]  # see ERRORS.md #7
+            sql = "insert into " + str(table) + " (" + ",".join(["%s" % (k) for k, v in where.items()])  # type: ignore[union-attr]  # see ERRORS.md #6
             if data:
                 sql += "," + ",".join(["%s" % (k) for k, v in data.items()])
             #
-            sql += ") values (" + ",".join(["'%s'" % (v.replace("'", "\\'")) for k, v in where.items()])  # type: ignore[union-attr]  # see ERRORS.md #7
+            sql += ") values (" + ",".join(["'%s'" % (v.replace("'", "\\'")) for k, v in where.items()])  # type: ignore[union-attr]  # see ERRORS.md #6
             if data:
                 sql += "," + ",".join(["'%s'" % (v.replace("'", "\\'")) for k, v in data.items()])
             #

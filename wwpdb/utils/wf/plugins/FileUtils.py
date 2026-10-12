@@ -23,7 +23,7 @@ import os
 import shutil
 import sys
 import traceback
-from typing import TextIO, cast
+from typing import Optional, TextIO, cast
 
 from typing_extensions import Unpack
 
@@ -209,6 +209,11 @@ class FileUtils(UtilsBase):
             for op, spec in pending_archive_copy_instructions:
                 if op != "copy":
                     continue
+
+                # In case exception is reached, ensure variable set
+                src_path: Optional[str] = None
+                dst_path: Optional[str] = None
+
                 try:
                     src = spec["src"]
                     dst = spec["dst"]

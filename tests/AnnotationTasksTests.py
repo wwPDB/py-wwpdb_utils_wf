@@ -836,18 +836,18 @@ class BcifConversionTests(AnnotationUtilsTestBase):
             ],
         )
 
-    @unittest.expectedFailure
     def testEmVolumeConversionFailureReturnsFalse(self) -> None:
-        # Library bug: emVolumeBcifConversionOp() ignores the result of DensityWrapper.convert_em_volume() and always returns
-        # True, although its docstring promises False on failure (xrayBcifConversionOp() does return the result).  See ERRORS.md #18
-        text = "data_X\nloop_\n_em_map.id\n_em_map.file\n1 emd-map1.map\n"
+        # Regression test: emVolumeBcifConversionOp() used to ignore the result of DensityWrapper.convert_em_volume() and
+        # always return True.  A failed map now makes the op return False, and the remaining maps are still converted.
+        text = "data_X\nloop_\n_em_map.id\n_em_map.file\n1 emd-map1.map\n2 emd-map2.map\n"
         modelPath = _writeFile(self._path("model.cif"), text)
         pi = MagicMock()
         pi.parseFileName.return_value = (DEP_ID, "em-volume", "map", 1)
         pi.getFilePath.return_value = "/x/map"
         self._patch("PathInfo", create=True, return_value=pi)
-        self.dw.convert_em_volume.return_value = False
+        self.dw.convert_em_volume.side_effect = [False, True]
         self.assertFalse(self._run(self.au.emVolumeBcifConversionOp, {"src": _fileObj(modelPath, self.dirPath)}, {}))
+        self.assertEqual(self.dw.convert_em_volume.call_count, 2)
 
     def _xrayObjects(self) -> Tuple[Dict[str, Any], Dict[str, Any], List[str]]:
         paths = [self._path("model.cif"), self._path("2fofc.cif"), self._path("fofc.cif")]

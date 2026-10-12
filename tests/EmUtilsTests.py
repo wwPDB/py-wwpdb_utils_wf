@@ -6,12 +6,14 @@
 ##
 """Unit tests for the EmUtils plugin (RcsbDpUtility, ConfigInfo and PathInfo are mocked)"""
 
+import gc
 import io
 import json
 import os
 import sys
 import tempfile
 import unittest
+import warnings
 from typing import TYPE_CHECKING, Any, Dict, Optional
 from unittest.mock import ANY, MagicMock, call, patch
 
@@ -258,6 +260,20 @@ class EmUtilsTests(unittest.TestCase):
             self.assertIn(call.exp("/archive/D_000001/mapfix-header-report.json.P%d.next.None" % p), self.__dp.method_calls)
             self.assertIn(call.expLog("/archive/D_000001/mapfix-report.txt.P%d.next.None" % p), self.__dp.method_calls)
         self.assertEqual(self.__dp.op.call_args_list, [call("deposit-update-map-header-in-place")] * 2)
+
+    def testMapFixInPlaceCfgOpClosesConfigFile(self) -> None:
+        # Regression test: the configuration file used to be read with json.load(open(...)) and never closed, which
+        # emitted a ResourceWarning once the file object was garbage collected
+        cfgPath = os.path.join(self.__tmp, "mapfix.json")
+        with open(cfgPath, "w") as ofh:
+            json.dump({"part-list": [1], "map-content-type": "em-volume", "cmd-line-arg-list": ["-x"]}, ofh)
+        eu = EmUtils(verbose=False, log=self.__lfh)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", ResourceWarning)
+            self.assertTrue(eu.mapFixInPlaceCfgOp(**self.__cfgArgs(cfgPath)))
+            gc.collect()
+        leaks = [str(w.message) for w in caught if issubclass(w.category, ResourceWarning) and cfgPath in str(w.message)]
+        self.assertEqual(leaks, [])
 
     def testMapFixInPlaceCfgOpNoMilestone(self) -> None:
         cfgPath = os.path.join(self.__tmp, "mapfix.json")

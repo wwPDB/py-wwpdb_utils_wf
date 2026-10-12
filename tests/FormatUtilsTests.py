@@ -104,9 +104,6 @@ class FormatUtilsTests(unittest.TestCase):
         self.assertFalse(fu.nmrstar2pdbxOp(**self.__args()))
         self.assertIn("KeyError", self.__lfh.getvalue())
 
-    # Bug: FormatUtils.pdbx2nmrstarAnnotOp reads its source from outputObjectD["src"] and its destination from
-    # inputObjectD["dst"] (swapped), so the standard src/dst calling convention fails with a KeyError.
-    @unittest.expectedFailure
     def testPdbx2nmrstarAnnotOp(self) -> None:
         fu = FormatUtils(verbose=True, log=self.__lfh)
         self.assertTrue(fu.pdbx2nmrstarAnnotOp(**self.__args({"data_set_id": "1ABC"})))
@@ -115,8 +112,9 @@ class FormatUtilsTests(unittest.TestCase):
             [call.imp(self.__inp), call.addInput(name="pdb_id", value="1ABC"), call.op("annot-pdbx2nmrstar"), call.exp(self.__out), call.cleanup()],
         )
 
-    def testPdbx2nmrstarAnnotOpAsImplemented(self) -> None:
-        # Document current behaviour: source comes from outputObjectD["src"], destination from inputObjectD["dst"]
+    def testPdbx2nmrstarAnnotOpRejectsSwappedObjects(self) -> None:
+        # Regression test: the op used to read its source from outputObjectD["src"] and its destination from
+        # inputObjectD["dst"].  That swapped layout must now fail, since there is no inputObjectD["src"]
         fu = FormatUtils(verbose=True, log=self.__lfh)
         args: PluginKwargs = {
             "inputObjectD": {"dst": mockObj(self.__out)},
@@ -124,11 +122,9 @@ class FormatUtilsTests(unittest.TestCase):
             "userParameterD": {"data_set_id": "1ABC"},
             "internalParameterD": {},
         }
-        self.assertTrue(fu.pdbx2nmrstarAnnotOp(**args))
-        self.assertEqual(
-            self.__dp.method_calls,
-            [call.imp(self.__inp), call.addInput(name="pdb_id", value="1ABC"), call.op("annot-pdbx2nmrstar"), call.exp(self.__out), call.cleanup()],
-        )
+        self.assertFalse(fu.pdbx2nmrstarAnnotOp(**args))
+        self.assertIn("KeyError", self.__lfh.getvalue())
+        self.__dp.op.assert_not_called()
 
     def __mtzArgs(self, uD: Dict[str, Any], xyzPath: Optional[str], status: WfDataObject) -> Dict[str, Any]:
         return {

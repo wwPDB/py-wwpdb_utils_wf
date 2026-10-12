@@ -702,7 +702,7 @@ class AnnotationUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-link-ssbond-with-ptm")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath])
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -731,7 +731,7 @@ class AnnotationUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-link-ssbond-with-ptm-mcc")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -764,7 +764,7 @@ class AnnotationUtils(UtilsBase):
             dp.addInput(name="check_skip_option", value="add")
             dp.op("annot-link-ssbond-with-ptm-mcc")
             dp.expLog(logPath)
-            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])  # type: ignore[list-item]  # an unset dst path is passed through to DataFile.copy(None)
+            dp.expList(dstPathList=[pdbxOutputPath, csvOutputPath, txtOutputPath])
             if self.__cleanUp:
                 dp.cleanup()
             #
@@ -1653,6 +1653,8 @@ class AnnotationUtils(UtilsBase):
             pi = PathInfo(siteId=siteId)
 
             # loop through all the map file names in the mmcif file and convert to Bcif files
+
+            ret = True
             for mapNumber in range(len(cObj)):
                 mapName = cObj.getValue("file", mapNumber)
                 mapNameInfo = pi.parseFileName(mapName)
@@ -1661,8 +1663,10 @@ class AnnotationUtils(UtilsBase):
                 mapBcifPath = pi.getFilePath(mapNameInfo[0], contentType=mapNameInfo[1], formatType="bcif", partNumber=mapNameInfo[3])  # type: ignore[arg-type]
                 dw = DensityWrapper()
                 # mapPath is None when the map file name cannot be parsed; dirPath is set because the src file exists (checked above)
-                dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=cast("str", dirPath))  # type: ignore[arg-type]
-            return True
+                ok = dw.convert_em_volume(in_em_volume=mapPath, out_binary_volume=mapBcifPath, working_dir=cast("str", dirPath))  # type: ignore[arg-type]
+                if ok is False:
+                    ret = False
+            return ret
         except Exception as _e:  # noqa: F841,BLE001
             traceback.print_exc(file=self._lfh)
             return False

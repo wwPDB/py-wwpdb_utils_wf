@@ -12,7 +12,7 @@ This file guides Claude Code (claude.ai/code) when it works in this repository.
 - **Plugins**: thin wrappers that call out to other OneDep packages (`wwpdb.utils.dp`, `wwpdb.apps.*`, `wwpdb.utils.nmr`, and others).
 - **Status DB access**: MySQL access to the WF status database through the `MySQLdb` module from `mysqlclient`.
 
-Most of the code is older and untyped: Python 2-era style, `%` formatting, and logging to `sys.stderr` through a `log=` file handle. Type annotations are being added one package at a time. The whole package (`dbapi/`, `plugins/`, `process/`, `schema/` and the top-level modules) is fully annotated, and a strict mypy override in `pyproject.toml` enforces this. Plugin action methods are `xxxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool`, where `PluginKwargs` (a TypedDict in `plugins/UtilsBase.py`) declares the four keyword arguments `ProcessRunner.run()` passes: `inputObjectD`, `outputObjectD`, `userParameterD` and `internalParameterD`. `UtilsBase._getArgs()` takes a `PluginKwargs` and returns the `PluginArgs` tuple, and plugin `log` arguments are `TextIO`, which is what `RcsbDpUtility` and the other typed libraries expect. The action registry uses the TypedDicts in `process/ActionRegistryTypes.py`. Table definitions use the `SchemaTableDef` TypedDict (from `typing_extensions`) defined in `schema/SchemaMapTypes.py`. `EmptySchemaTableDef` and `MaybeSchemaTableDef` in the same module cover the `{}` that `WfDbApi` returns when no table matches. Import these instead of redefining them. Where accurate types expose a known bug, the line carries a narrow `# type: ignore[code]` with a comment pointing to ERRORS.md. Leave those bugs in place unless you are fixing them on purpose.
+Most of the code is older and untyped: Python 2-era style, `%` formatting, and logging to `sys.stderr` through a `log=` file handle. Type annotations are being added one package at a time. The whole package (`dbapi/`, `plugins/`, `process/`, `schema/` and the top-level modules) is fully annotated. `strict = true` under `[tool.mypy]` in `pyproject.toml` enforces this for every mypy run, including a plain mypy run and editor integrations. When checking by hand, run `mypy wwpdb/utils/wf tests` on explicit paths: the tox `mypy` and `lint_pylint` environments contain an installed, non-editable copy of this package, and `mypy -p wwpdb` resolves to that copy instead of the working tree. tox itself is unaffected, because it reinstalls the package on every run. Plugin action methods are `xxxOp(self, **kwArgs: Unpack[PluginKwargs]) -> bool`, where `PluginKwargs` (a TypedDict in `plugins/UtilsBase.py`) declares the four keyword arguments `ProcessRunner.run()` passes: `inputObjectD`, `outputObjectD`, `userParameterD` and `internalParameterD`. `UtilsBase._getArgs()` takes a `PluginKwargs` and returns the `PluginArgs` tuple, and plugin `log` arguments are `TextIO`, which is what `RcsbDpUtility` and the other typed libraries expect. The action registry uses the TypedDicts in `process/ActionRegistryTypes.py`. Table definitions use the `SchemaTableDef` TypedDict (from `typing_extensions`) defined in `schema/SchemaMapTypes.py`. `EmptySchemaTableDef` and `MaybeSchemaTableDef` in the same module cover the `{}` that `WfDbApi` returns when no table matches. Import these instead of redefining them. Where accurate types expose a known bug, the line carries a narrow `# type: ignore[code]` with a comment pointing to ERRORS.md. Leave those bugs in place unless you are fixing them on purpose.
 
 ## Commands
 
@@ -20,7 +20,7 @@ Most of the code is older and untyped: Python 2-era style, `%` formatting, and l
 # Full tox suite: pep8 (flake8), pylint, mypy, black, unit tests, coverage
 tox
 tox -e py310                 # unit tests only
-tox -e mypy-py310            # mypy -p wwpdb -p tests
+tox -e mypy-py310            # mypy --strict -p wwpdb -p tests
 tox -e lint_pylint-py310
 tox -e format_black-py310    # black --check --line-length 180
 
@@ -30,7 +30,7 @@ python -m unittest tests.WfTrackingTests.WfTrackingTests.testName
 
 # Hatch helpers (pyproject.toml)
 hatch run format             # ruff format plus ruff check --fix-only
-hatch run check              # ruff check plus mypy
+hatch run check              # ruff check plus mypy --strict
 hatch run check-ruff
 ```
 
@@ -46,7 +46,7 @@ Line length is 180 for ruff and black, and 189 for flake8.
 - When running tests outside tox, put the tox venv first on `PATH` (`export PATH=$PWD/.tox/py310/bin:$PATH`). `SiteConfigSetup` shells out to `python`; if that resolves to a different interpreter, the site config ends up empty and the tests fail with `None` paths.
 - Tests that need a live database (`WfDbApiDbTests.py`, `WfTrackingTests.py`) are gated with `@unittest.skipUnless(Features().haveMySqlTestServer(), ...)`. Everything else mocks `MySQLdb`, `RcsbDpUtility` and the other collaborators. Patch them as module-level names in the module under test, for example `patch("wwpdb.utils.wf.plugins.FileUtils.RcsbDpUtility")`.
 - Optional packages (`wwpdb.apps.*`, `wwpdb.utils.nmr.*`) are imported at module load inside try/suppress, so they are missing in the test environment. Patch them with `patch("<module>.<Name>", create=True)`.
-- Test files are fully type-annotated. The `tests.*` mypy override in `pyproject.toml` enforces this.
+- Test files are fully type-annotated, and `mypy --strict` checks them along with the library.
 - Library bugs found by tests are marked `@unittest.expectedFailure`, with a comment describing the bug. When a library bug is fixed, remove the decorator.
 
 ## Architecture
@@ -87,6 +87,16 @@ wwpdb/utils/wf/
 - `WfTracking` records instance status. `dbAPI` is a thin wrapper over `WfDbApi`.
 - `StatusDbApi` connects through `ConfigInfo` site settings (`SITE_DB_*`). `LocalDbApi` reads from a local database.
 - `WFEtime` handles WF timestamps, measured as offsets from 2000-01-01.
+
+## ERRORS.md
+
+ERRORS.md tracks known library bugs (each with an `@unittest.expectedFailure` test) and concerns. Do **not** add, or report, any of these; they are known and accepted:
+
+- The `# type: ignore[no-untyped-call]` comments on MySQL connection `commit()`/`rollback()`/`close()` calls, needed because `types-mysqlclient` leaves mysqlclient's C extension untyped.
+- black formatting failures in library files under `wwpdb/utils/wf`.
+- `tests/WfSchemaMapTests.py` reading `WfSchemaMap`'s single-underscore class tables (`_schemaMap`, `_tables`, `_usefulItems`) directly. This is an accepted exception to the AGENTS.md rule against accessing internal variables: the class has no public methods, and `WfDbApi` reads the same tables.
+- Plugin tests patching in the optional OneDep packages (`wwpdb.apps.*`, `wwpdb.utils.nmr.*`) with `patch(..., create=True)` because they are not installed in the test environment. Those tests check the calls the plugins make, not the real behaviour of those packages; that limitation is accepted.
+- The test environment's dependence on `PATH`: `SiteConfigSetup` runs whatever `python` is first on `PATH`. Run tests with the tox virtualenv first on `PATH`, as described under Testing notes.
 
 ## Conventions and gotchas
 

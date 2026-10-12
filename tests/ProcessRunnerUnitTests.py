@@ -157,7 +157,7 @@ class ProcessRunnerRegistryTests(unittest.TestCase):
     def testPreCheckWrongInputNameReturnsFalse(self) -> None:
         # Library bug: preCheck() only compares input/output counts, not names.  With type constraints declared, an input
         # set under a name the registry does not expect raises KeyError out of preCheck() instead of returning False.
-        # See ERRORS.md #17
+        # See ERRORS.md #14
         pR = self.__pR
         self.assertTrue(pR.setAction("check-op"))
         pR.setInput("wrong", _dataObject())
@@ -375,7 +375,7 @@ class ProcessRunnerMockRegistryTests(unittest.TestCase):
     @unittest.expectedFailure
     def testPreCheckWrongInputNameWithoutConstraints(self) -> None:
         # Library bug: with no type constraints, an input set under the wrong name passes preCheck(), and run() then hands
-        # the plugin an inputObjectD without the name it expects.  See ERRORS.md #17
+        # the plugin an inputObjectD without the name it expects.  See ERRORS.md #14
         aReg = self.__aReg
         aReg.isDefinedAction.return_value = True
         aReg.getUserParameterDict.return_value = {}

@@ -18,7 +18,7 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
 ]
 dependencies = [
     "mmcif",
@@ -146,6 +146,7 @@ module = ["mmcif.*", "wwpdb.apps.*", "wwpdb.utils.nmr.*", "commonsetup"]
 ignore_missing_imports = true
 
 [tool.mypy]
+strict = true
 exclude = [
 	"test-output",
 ]

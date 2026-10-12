@@ -162,21 +162,21 @@ class DbConnectionTests(unittest.TestCase):
     @unittest.expectedFailure
     def testMissingPortIsNotPassedToDriver(self) -> None:
         # Library bug: with no port configured, port=None is passed to MySQLdb.connect(); mysqlclient then raises a
-        # TypeError (not a MySQLdb.Error), which escapes connect() instead of exiting cleanly.  See ERRORS.md #4
+        # TypeError (not a MySQLdb.Error), which escapes connect() instead of exiting cleanly.  See ERRORS.md #3
         with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
             DbConnection(dbHost="h1", dbName="db1", dbUser="u1", dbPw="p1").connect()
         self.assertIsInstance(mConnect.call_args.kwargs.get("port", 3306), int)
 
     @unittest.expectedFailure
     def testNonNumericPortIsNotPassedToDriver(self) -> None:
-        # Library bug: a non-numeric port is passed through unchanged, and mysqlclient raises TypeError.  See ERRORS.md #4
+        # Library bug: a non-numeric port is passed through unchanged, and mysqlclient raises TypeError.  See ERRORS.md #3
         with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
             DbConnection(dbHost="h1", dbName="db1", dbUser="u1", dbPw="p1", dbPort="abc").connect()
         self.assertIsInstance(mConnect.call_args.kwargs.get("port", 3306), int)
 
     @unittest.expectedFailure
     def testUnsetCredentialsAreNotStringNone(self) -> None:
-        # Library bug: unset db/user/password are formatted with "%s", so the driver receives the string "None".  See ERRORS.md #5
+        # Library bug: unset db/user/password are formatted with "%s", so the driver receives the string "None".  See ERRORS.md #4
         with patch.dict(os.environ, _cleanEnv(), clear=True), patch(CONNECT) as mConnect:
             DbConnection(dbPort=3306).connect()
         kwargs = mConnect.call_args.kwargs

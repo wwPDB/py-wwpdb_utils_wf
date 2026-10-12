@@ -221,7 +221,7 @@ class FormatUtils(UtilsBase):
 
             dp.op("annot-sf-convert")
             dp.expLog(logFilePath)
-            dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])  # type: ignore[list-item]  # expList() is typed List[str], but DataFile.copy() accepts None
+            dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])
 
             #
             myStatus = self.__checkMergeStatus(cast("str", logFilePath))  # None (unset reference) makes os.access() raise -> caught
@@ -270,8 +270,8 @@ class FormatUtils(UtilsBase):
         """Perform PDBx(cif) to NMRSTAR format conversion operation.  (using annotation package stack)"""
         try:
             (inpObjD, outObjD, uD, _pD) = self._getArgs(kwArgs)
-            pdbxPath = outObjD["src"].getFilePathReference()
-            strPath = inpObjD["dst"].getFilePathReference()
+            pdbxPath = inpObjD["src"].getFilePathReference()
+            strPath = outObjD["dst"].getFilePathReference()
             dirPath = outObjD["dst"].getDirPathReference()
             #
             dId = uD["data_set_id"]

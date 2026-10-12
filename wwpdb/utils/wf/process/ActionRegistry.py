@@ -266,7 +266,7 @@ class ActionRegistry:
         """
 
         try:
-            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["containerType"] is not None
+            return self.__D[actionId]["INPUT_INFO_LIST"][inpName]["valueType"] is not None
         except Exception as _e:  # noqa: F841,BLE001
             return False
 

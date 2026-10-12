@@ -35,7 +35,7 @@ import os
 import shutil
 import sys
 import traceback
-from typing import TYPE_CHECKING, Any, Optional, TextIO, cast
+from typing import Any, Optional, TextIO, cast
 
 from typing_extensions import Unpack
 from wwpdb.io.file.DataExchange import DataExchange
@@ -45,9 +45,6 @@ from wwpdb.utils.dp.ValidationWrapper import ValidationWrapper
 from wwpdb.utils.session.WebRequest import InputRequest
 
 from wwpdb.utils.wf.plugins.UtilsBase import PluginKwargs, UtilsBase
-
-if TYPE_CHECKING:
-    from typing import List
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing without
@@ -205,18 +202,15 @@ class ValidationUtils(UtilsBase):
             dp.expLog(logPath)
             # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             dp.expList(
-                dstPathList=cast(
-                    "List[str]",
-                    [
-                        validationReportPath,
-                        xmlReportPath,
-                        validationFullReportPath,
-                        pngReportPath,
-                        svgReportPath,
-                        imageTarPath,
-                        cifReportPath,
-                    ],
-                )
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                ]
             )
 
             if self._verbose:
@@ -348,20 +342,17 @@ class ValidationUtils(UtilsBase):
             vw.expLog(logPath)
             # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             vw.expList(
-                dstPathList=cast(
-                    "List[str]",
-                    [
-                        validationReportPath,
-                        xmlReportPath,
-                        validationFullReportPath,
-                        pngReportPath,
-                        svgReportPath,
-                        imageTarPath,
-                        cifReportPath,
-                        coeffoReportPath,
-                        coef2foReportPath,
-                    ],
-                )
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                    coeffoReportPath,
+                    coef2foReportPath,
+                ]
             )
 
             if self._verbose:
@@ -517,20 +508,17 @@ class ValidationUtils(UtilsBase):
             vw.expLog(logPath)
             # A None destination only comes from a misconfigured output object; DataFile.copy(None) raises ValueError, caught below
             vw.expList(
-                dstPathList=cast(
-                    "List[str]",
-                    [
-                        validationReportPath,
-                        xmlReportPath,
-                        validationFullReportPath,
-                        pngReportPath,
-                        svgReportPath,
-                        imageTarPath,
-                        cifReportPath,
-                        coeffoReportPath,
-                        coef2foReportPath,
-                    ],
-                )
+                dstPathList=[
+                    validationReportPath,
+                    xmlReportPath,
+                    validationFullReportPath,
+                    pngReportPath,
+                    svgReportPath,
+                    imageTarPath,
+                    cifReportPath,
+                    coeffoReportPath,
+                    coef2foReportPath,
+                ]
             )
 
             if self._verbose:
