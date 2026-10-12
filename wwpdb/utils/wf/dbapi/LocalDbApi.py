@@ -63,7 +63,7 @@ class LocalDbApi:
         )  # noqa: S608
         returnList: List[str] = []
         try:
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs = self.__dbcon.cursor()
             curs.execute(query)
             while True:
@@ -75,7 +75,7 @@ class LocalDbApi:
         except MySQLdb.Error as e:
             self.__lfh.write("Database error %s: %s\n" % (e.args[0], e.args[1]))
             curs.close()
-            self.__dbcon.close()
+            self.__dbcon.close()  # type: ignore[no-untyped-call]
             sys.exit(1)
 
         return returnList

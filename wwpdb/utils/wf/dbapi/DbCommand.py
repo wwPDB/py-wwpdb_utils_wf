@@ -230,12 +230,12 @@ class DbCommand:
                 nrows = curs.execute(query, args)
             else:
                 nrows = curs.execute(query)
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs.execute("set autocommit=1")
             curs.close()
             return nrows
         except MySQLdb.Error as e:
-            self.__dbcon.rollback()
+            self.__dbcon.rollback()  # type: ignore[no-untyped-call]
             # TOm : no curs defined
             #            curs.execute("set autocommit=1")
             #            curs.close()
@@ -255,7 +255,7 @@ class DbCommand:
         if query is not None:
             row: List[Any] = []
             try:
-                self.__dbcon.commit()
+                self.__dbcon.commit()  # type: ignore[no-untyped-call]
                 curs = self.__dbcon.cursor()
                 curs.execute(query)
                 while True:
@@ -274,7 +274,7 @@ class DbCommand:
                 self.__lfh.write("DbCommand::runSelectSQL(): Failing on query %s\n" % query)
                 # no curs defined here
                 #                curs.close()
-                self.__dbcon.close()
+                self.__dbcon.close()  # type: ignore[no-untyped-call]
                 self.dbState = e.args[0]
                 return None
         #            sys.exit (1)
@@ -342,7 +342,7 @@ class DbCommand:
         returnList: List[DbCommandDictRow] = []
         row: DbCommandDictRow = {}
         try:
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs = self.__dbcon.cursor()
             curs.execute(query)
             while True:
@@ -359,7 +359,7 @@ class DbCommand:
             self.__lfh.write("DbCommand::selectRows(): Failing on query %s\n" % query)
             # Tom : no curs defined here
             #            curs.close()
-            self.__dbcon.close()
+            self.__dbcon.close()  # type: ignore[no-untyped-call]
             self.dbState = e.args[0]
             return None
         #            sys.exit (1)
@@ -421,15 +421,15 @@ class DbCommand:
         except MySQLdb.Error as e:
             self.__lfh.write("DbCommand::update(): Database error %s: %s\n" % (e.args[0], e.args[1]))
 
-            self.__dbcon.rollback()
+            self.__dbcon.rollback()  # type: ignore[no-untyped-call]
             # no curs defined here
             #            curs.execute("set autocommit=1")
             #            curs.close()
-            self.__dbcon.close()
+            self.__dbcon.close()  # type: ignore[no-untyped-call]
             self.dbState = e.args[0]
             return None
 
-        self.__dbcon.commit()
+        self.__dbcon.commit()  # type: ignore[no-untyped-call]
         curs.execute("set autocommit=1")
         if self.__verbose:
             self.__lfh.write("DbCommand::update(): SQL command successfully executed.\n")
@@ -463,7 +463,7 @@ class DbCommand:
         row: DbCommandDictRow = {}
 
         try:
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs = self.__dbcon.cursor()
             curs.execute(query)
             while True:

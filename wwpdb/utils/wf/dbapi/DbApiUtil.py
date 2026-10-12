@@ -109,7 +109,7 @@ class DbApiUtil:
         """ """
         rows: DbApiDictRows = ()
         try:
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs = self.__dbcon.cursor(MySQLdb.cursors.DictCursor)
             curs.execute(query)
             rows = curs.fetchall()
@@ -125,12 +125,12 @@ class DbApiUtil:
             curs = self.__dbcon.cursor()
             curs.execute("set autocommit=0")
             _nrows = curs.execute(query)  # noqa: F841
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
             curs.execute("set autocommit=1")
             curs.close()
             return "OK"
         except MySQLdb.Error as e:
-            self.__dbcon.rollback()
+            self.__dbcon.rollback()  # type: ignore[no-untyped-call]
             self.__dbState = e.args[0]
             self.__lfh.write("Database error %s: %s\n" % (e.args[0], e.args[1]))
         #

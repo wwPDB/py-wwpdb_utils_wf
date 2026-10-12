@@ -152,7 +152,7 @@ class DbConnection:
         """
         Consistent db close connection method...
         """
-        dbcon.close()
+        dbcon.close()  # type: ignore[no-untyped-call]
         self.__dbcon = None
 
     def commit(self) -> None:
@@ -160,11 +160,11 @@ class DbConnection:
         Consistent db commit() method...
         """
         if self.__dbcon:
-            self.__dbcon.commit()
+            self.__dbcon.commit()  # type: ignore[no-untyped-call]
 
     def rollback(self) -> None:
         """
         Consistent db rollback() method...
         """
         if self.__dbcon:
-            self.__dbcon.rollback()
+            self.__dbcon.rollback()  # type: ignore[no-untyped-call]
