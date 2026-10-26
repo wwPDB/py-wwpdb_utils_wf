@@ -32,6 +32,8 @@ jobs:
   - template: azure-template-tox-job.yml
     parameters: {tox: 'test_coverage', python: '3.11', os: 'linux', fixtures: 'mysql'}
   - template: azure-template-tox-job.yml
+    parameters: {tox: 'py311', python: '3.11', os: 'linux', fixtures: 'mysql'}
+  - template: azure-template-tox-job.yml
     parameters: {tox: 'mypy', python: '3.11', os: 'linux', fixtures: 'mysql'}
     #
   - template: azure-template-publish-job.yml
