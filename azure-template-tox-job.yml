@@ -131,14 +131,13 @@ jobs:
       #
     - task: Cache@2
       inputs:
-        key: 'python | "$(Agent.OS)" | "$(python.version)" | pyproject.toml'
+        key: 'python | "$(Agent.OS)" | "${{ parameters.python }}" | pyproject.toml'
         restoreKeys: | 
-          python | "$(Agent.OS)" | "$(python.version)"
-          python
+          python | "$(Agent.OS)" | "${{ parameters.python }}"
         path: $(PIP_CACHE_DIR)
       displayName: Cache pip packages
 
-    # - script: pip install -r requirements.txt --cache-dir=$(Pipeline.Workspace)/.pip_cache
+    # - script: pip install -r requirements.txt --cache-dir=$(PIP_CACHE_DIR)
     #  displayName: 'Install dependencies'
     #
     - ${{ if startsWith(parameters.tox, 'py') }}:
