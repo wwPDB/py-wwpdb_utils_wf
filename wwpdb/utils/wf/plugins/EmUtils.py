@@ -26,6 +26,7 @@ import traceback
 
 from wwpdb.io.locator.PathInfo import PathInfo
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
@@ -81,6 +82,9 @@ class EmUtils(UtilsBase):
             ret = dp.op("fsc_check")
             dp.expLog(logPath)
             dp.exp(outPath)
+            # Log activity for the exported output file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+EmUtils.fsc_check_options() - input FSC file path:  %s\n" % inputPath)
@@ -116,6 +120,9 @@ class EmUtils(UtilsBase):
             dp.op("mapfix-big")
             dp.expLog(logPath)
             dp.exp(outMapPath)
+            # Log activity for the exported output file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outMapPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+EmUtils.mapFixOp() - input map  file path:  %s\n" % inpMapPath)
@@ -154,6 +161,9 @@ class EmUtils(UtilsBase):
             dp.op("deposit-update-map-header-in-place")
             # dp.op("annot-update-map-header-in-place")
             dp.exp(rptPath)
+            # Log activity for the exported report file
+            oSt = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(rptPath, oSt)
             dp.expLog(logPath)
 
             if self._verbose:
@@ -186,6 +196,9 @@ class EmUtils(UtilsBase):
             dp.addInput(name="input_file_path", value=input_file)
             dp.addInput(name="output_file_path", value=output_file)
             dp.op("em-map-model-upload-check")
+            # Log activity for the output file (assuming it's created by the operation)
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(output_file, oSt)
 
             if self._verbose:
                 self._lfh.write("+EmUtils.emmapcheck() - input json file path:  %s\n" % input_file)
@@ -227,6 +240,9 @@ class EmUtils(UtilsBase):
             dp.op("em2em-spider")
             dp.expLog(logPath)
             dp.exp(outMapPath)
+            # Log activity for the exported output map file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outMapPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+EmUtils.em2emSpiderOp() - input map  file path:  %s\n" % inpMapPath)
@@ -272,6 +288,9 @@ class EmUtils(UtilsBase):
             dp.addInput(name="output_map_file_path", value=outMapPath)
             dp.op("annot-update-map-header-in-place")
             dp.exp(rptPath)
+            # Log activity for the exported report file
+            oSt = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(rptPath, oSt)
             dp.expLog(logPath)
 
             if self._verbose:
@@ -300,7 +319,7 @@ class EmUtils(UtilsBase):
 
         """
         try:
-            (inpObjD, _outObjD, _uD, _pD) = self._getArgs(kwArgs)
+            (inpObjD, outObjD, _uD, _pD) = self._getArgs(kwArgs)
             inpCfgPath = inpObjD["src1"].getFilePathReference()
             dataSetId = inpObjD["src1"].getDepositionDataSetId()
             dirPath = inpObjD["src1"].getDirPathReference()
@@ -370,6 +389,11 @@ class EmUtils(UtilsBase):
                 dp.addInput(name="output_map_file_path", value=outMapPath)
                 dp.op("deposit-update-map-header-in-place")
                 dp.exp(rptPath)
+                # Log activity for the exported report file
+                oSt = outObjD["dst1"].getStorageType()
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(rptPath, oSt)
+                # Also log activity for the output map file
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outMapPath, oSt)
                 dp.expLog(logPath)
 
                 if self._verbose:
@@ -412,6 +436,9 @@ class EmUtils(UtilsBase):
             ret = dp.op("img-convert")
             dp.expLog(logPath)
             dp.exp(outImgPath)
+            # Log activity for the exported output image file
+            oSt = outObjD["dst1"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outImgPath, oSt)
 
             if self._verbose:
                 self._lfh.write("+EmUtils.imageMagickOp() - input image  file path:  %s\n" % inpImgPath)

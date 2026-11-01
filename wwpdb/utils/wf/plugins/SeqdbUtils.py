@@ -28,6 +28,7 @@ import traceback
 from wwpdb.utils.config.ConfigInfo import getSiteId
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 with contextlib.suppress(ImportError):
     # We will have present on annotation system - but allow testing
@@ -199,6 +200,9 @@ class SeqdbUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-merge-sequence-data")
             dp.exp(outputModelPdbxPath)
+            # Log activity for the exported output file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(outputModelPdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:

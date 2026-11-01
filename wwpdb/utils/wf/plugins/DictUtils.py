@@ -21,6 +21,7 @@ import traceback
 
 from mmcif_utils.trans.InstanceMapper import InstanceMapper
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppEm
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -64,6 +65,12 @@ class DictUtils(UtilsBase):
             im.setMappingFilePath(mappingInfoPath)
             ok = im.translate(pdbxPath, dstPath, mode="src-dst")
             self._lfh.write("+DictUtils em2emdOp return status %r \n" % ok)
+
+            # Log activity for the output EMD file
+            if ok:
+                oSt = outObjD["dst"].getStorageType()
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(dstPath, oSt)
+
             #
             if self._verbose:
                 self._lfh.write("+DictUtils.em2emdOp() - Input model PDBx file path: %s\n" % pdbxPath)
@@ -90,6 +97,12 @@ class DictUtils(UtilsBase):
             im.setMappingFilePath(mappingInfoPath)
             ok = im.translate(pdbxPath, dstPath, mode="dst-src")
             self._lfh.write("+DictUtils emd2emOp return status %r \n" % ok)
+
+            # Log activity for the output EM file
+            if ok:
+                oSt = outObjD["dst"].getStorageType()
+                FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(dstPath, oSt)
+
             #
             if self._verbose:
                 self._lfh.write("+DictUtils.emd2emOp() - Input model PDBx file path: %s\n" % pdbxPath)

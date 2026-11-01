@@ -29,6 +29,7 @@ import traceback
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -77,6 +78,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("annot-cif2pdb")
             dp.exp(pdbPath)
+            # Log activity for the output PDB file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -101,6 +105,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif")
             dp.exp(pdbxPath)
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -125,6 +132,9 @@ class FormatUtils(UtilsBase):
             dp.imp(pdbPath)
             dp.op("annot-pdb2cif-dep")
             dp.exp(pdbxPath)
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -149,6 +159,9 @@ class FormatUtils(UtilsBase):
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif")
             dp.exp(pdbxPath)
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -173,6 +186,9 @@ class FormatUtils(UtilsBase):
             dp.imp(rcsbPath)
             dp.op("annot-cif2cif-dep")
             dp.exp(pdbxPath)
+            # Log activity for the output PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -221,6 +237,12 @@ class FormatUtils(UtilsBase):
             dp.expLog(logFilePath)
             dp.expList(dstPathList=[sfPdbxFilePath, sfDiagFilePath, dmpPath])
 
+            # Log activity for the exported files
+            oSt1 = outObjD["dst1"].getStorageType()
+            oSt2 = outObjD["dst2"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(sfPdbxFilePath, oSt1)
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(sfDiagFilePath, oSt2)
+
             #
             myStatus = self.__checkMergeStatus(logFilePath)
             outObjD["dst4"].setValue(myStatus)
@@ -254,6 +276,9 @@ class FormatUtils(UtilsBase):
             dp.addInput(name="data_set_id", value=dId)
             dp.op("annot-nmrstar2pdbx")
             dp.exp(pdbxPath)
+            # Log activity for the exported PDBx file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(pdbxPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:
@@ -280,6 +305,9 @@ class FormatUtils(UtilsBase):
             dp.addInput(name="pdb_id", value=dId)
             dp.op("annot-pdbx2nmrstar")
             dp.exp(strPath)
+            # Log activity for the exported NMRSTAR file
+            oSt = inpObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(strPath, oSt)
             if self.__cleanUp:
                 dp.cleanup()
             if self._verbose:

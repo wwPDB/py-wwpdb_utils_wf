@@ -22,6 +22,7 @@ import traceback
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.db.FileActivityDb import FileActivityDb
 
 from wwpdb.utils.wf.plugins.UtilsBase import UtilsBase
 
@@ -71,6 +72,11 @@ class PrdSearchUtils(UtilsBase):
             dp.imp(pdbxPath)
             dp.op("prd-search")
             dp.exp(resultFilePath)
+
+            # Log activity for the output result file
+            oSt = outObjD["dst"].getStorageType()
+            FileActivityDb(verbose=self._verbose, log=self._lfh).logActivity(resultFilePath, oSt)
+
             if self.__cleanUp:
                 dp.cleanup()
             if not os.access(resultFilePath, os.R_OK):
